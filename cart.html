@@ -122,7 +122,7 @@
         return;
       }
 
-      cart.forEach((item, index) => {
+    cart.forEach((item, index) => {
         const itemTotal = item.price * item.quantity;
         total += itemTotal;
 
@@ -172,7 +172,7 @@
       // Отправляем данные в бота
       webApp.sendData(JSON.stringify({ action: "checkout", cart }));
       webApp.showAlert("Заказ оформлен! Бот свяжется с вами.");
-      
+
       // Очищаем корзину после оформления
       localStorage.removeItem("cart");
     }
