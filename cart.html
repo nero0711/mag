@@ -104,11 +104,6 @@
   <script>
     const webApp = window.Telegram.WebApp;
 
-    function goBack() {
-      // Возвращаемся на главную страницу магазина
-      window.location.href = "https://nero0711.github.io/mag/";
-    }
-
     function renderCart() {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
       const container = document.getElementById("cart-items");
@@ -182,7 +177,7 @@
       localStorage.removeItem("cart");
     }
 
-    tg.BackButton.onClick(() => {
+    webApp.BackButton.onClick(() => {
       // Возвращаемся на главную страницу магазина
       window.location.href = "https://nero0711.github.io/mag/";
     }
