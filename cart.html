@@ -186,25 +186,8 @@
       localStorage.removeItem("cart");
     }
 
-    const fromMain = sessionStorage.getItem('fromMain');
-
-    if (fromMain === 'true') {
-      // Показываем кнопку "Назад" в Telegram
-      webApp.BackButton.show();
-      
-      // Обрабатываем нажатие кнопки "Назад"
-      webApp.BackButton.onClick(() => {
-        goBack();
-      });
-    }
-
-    // Функция возврата на главную
-    function goBack() {
-      sessionStorage.removeItem('fromMain'); // Очищаем флаг
-      window.location.href = 'index.html';
-    }
-
-   
+    
+    webApp.BackButton.show();   
     webApp.ready();
     renderCart();
   </script>
