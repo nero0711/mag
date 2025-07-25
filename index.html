@@ -11,35 +11,45 @@
       padding: 16px;
       background: #f4f4f4;
       margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 600px;
     }
     .product {
       background: white;
-      margin-bottom: 16px;
-      padding: 16px;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+      padding: 16px;
+      position: relative;
     }
-    .product-image {
+    .product img {
       width: 100%;
       height: 150px;
       object-fit: cover;
       border-radius: 4px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     .product-title {
-      margin: 0 0 8px 0;
-      font-size: 18px;
+      font-size: 16px;
+      margin: 0;
     }
     .product-price {
-      font-size: 16px;
-      font-weight: bold;
+      font-size: 14px;
       color: #333;
-      margin: 8px 0;
+      margin: 4px 0;
     }
     .quantity-control {
       display: flex;
-      align-items: center;
-      margin: 10px 0;
+      justify-content: center;
+      gap: 8px;
     }
     .quantity-btn {
       background-color: #27ae60;
@@ -54,50 +64,16 @@
       align-items: center;
       justify-content: center;
     }
-    .quantity-input {
-      width: 50px;
-      text-align: center;
-      margin: 0 10px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .max-info {
-      font-size: 12px;
-      color: #666;
-      margin: 5px 0;
-    }
-    button.add-to-cart {
-      background-color: #3390ec;
+    .add-btn {
+      background-color: #ff9f00;
       color: white;
       border: none;
-      padding: 12px 16px;
+      padding: 8px 16px;
       border-radius: 4px;
       cursor: pointer;
-      width: 100%;
-      font-size: 16px;
+      font-size: 14px;
       margin-top: 8px;
-    }
-    button.add-to-cart:hover {
-      background-color: #2878cc;
-    }
-    .cart-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #ff6b00;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 24px;
-      cursor: pointer;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
+      width: 100%;
     }
     .cart-badge {
       position: absolute;
@@ -112,6 +88,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    .view-order-btn {
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 18px;
+      width: 100%;
+      max-width: 600px;
+      margin-top: 24px;
     }
     .loading {
       text-align: center;
@@ -131,15 +119,12 @@
 </head>
 <body>
 
-  <h1>🛍️ Магазин</h1>
-  <div id="products-container">
+  <h1 style="text-align: center;">🛍️ Магазин</h1>
+  <div id="products-container" class="product-grid">
     <div class="loading">Загрузка товаров...</div>
   </div>
 
-  <button class="cart-btn" onclick="openCart()">
-    🛒
-    <span class="cart-badge" id="cart-count">0</span>
-  </button>
+  <button class="view-order-btn" onclick="openCart()">Посмотреть заказ</button>
 
   <script>
     const webApp = window.Telegram.WebApp;
@@ -174,16 +159,24 @@
         productElement.className = 'product';
         productElement.innerHTML = `
           <img src="${product.img}" alt="${name}" class="product-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2RkZCIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzMzMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0JTQsNC9PC90ZXh0Pjwvc3ZnPg=='">
-          <h2 class="product-title">${name}</h2>
-          <div class="product-price">${product.price} ₽</div>
-          <div class="max-info">Максимум: ${product.max_count} шт.</div>
+          <h3 class="product-title">${name}</h3>
+          <div class="product-price">$${product.price.toFixed(2)}</div>
           <div class="quantity-control">
             <button class="quantity-btn" onclick="changeQuantity('${qtyId}', -1)">-</button>
             <input type="text" class="quantity-input" id="${qtyId}" value="1" readonly>
             <button class="quantity-btn" onclick="changeQuantity('${qtyId}', 1)">+</button>
           </div>
-          <button class="add-to-cart" onclick="addToCart('${name}', ${product.price}, '${qtyId}', ${product.max_count})">Добавить в корзину</button>
+          <button class="add-btn" onclick="addToCart('${name}', ${product.price}, '${qtyId}', ${product.max_count})">Добавить</button>
         `;
+
+        // Добавляем счетчик товаров в корзине
+        const cartCount = getCartItemCount(name);
+        if (cartCount > 0) {
+          const badge = document.createElement('div');
+          badge.className = 'cart-badge';
+          badge.textContent = cartCount;
+          productElement.appendChild(badge);
+        }
 
         container.appendChild(productElement);
       });
@@ -241,6 +234,13 @@
         badge.textContent = count > 99 ? '99+' : count;
         badge.style.display = count > 0 ? 'flex' : 'none';
       }
+    }
+
+    // Получение количества товара в корзине
+    function getCartItemCount(name) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const item = cart.find(item => item.name === name);
+      return item ? item.quantity : 0;
     }
 
     // Инициализация
