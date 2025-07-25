@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Корзина</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 16px;
+      background: #f4f4f4;
+    }
+    .cart-item {
+      background: white;
+      margin-bottom: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    button {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .total {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .checkout-btn {
+      background-color: #27ae60;
+      padding: 12px 20px;
+      font-size: 16px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🛒 Ваша корзина</h1>
+  <div id="cart-items"></div>
+  <div class="total">Итого: <span id="total">0</span> ₽</div>
+  <br>
+  <button class="checkout-btn" onclick="checkout()">Оформить заказ</button>
+  <br><br>
+  <button onclick="clearCart()">Очистить корзину</button>
+
+  <script>
+    const webApp = window.Telegram.WebApp;
+
+    function renderCart() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const container = document.getElementById("cart-items");
+      container.innerHTML = "";
+
+      let total = 0;
+
+      if (cart.length === 0) {
+        container.innerHTML = "<p>Корзина пуста</p>";
+        document.getElementById("total").textContent = "0";
+        return;
+      }
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+          <div>
+            <strong>${item.name}</strong> × ${item.quantity}<br>
+            ${item.price} ₽ за шт.
+          </div>
+          <div>
+            ${itemTotal} ₽
+            <button onclick="removeItem(${index})">✖</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+
+      document.getElementById("total").textContent = total;
+    }
+
+    function removeItem(index) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    function clearCart() {
+      localStorage.removeItem("cart");
+      renderCart();
+      webApp.showAlert("Корзина очищена");
+    }
+
+    function checkout() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      if (cart.length === 0) {
+        webApp.showAlert("Корзина пуста");
+        return;
+      }
+
+      // Отправляем данные в бота
+      webApp.sendData(JSON.stringify({ action: "checkout", cart }));
+      webApp.showAlert("Заказ оформлен! Бот свяжется с вами.");
+    }
+
+    webApp.ready();
+    renderCart();
+  </script>
+
+</body>
+</html>
