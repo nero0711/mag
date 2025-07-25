@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    /* ... остальные стили остаются без изменений ... */
     body {
       font-family: Arial, sans-serif;
       padding: 16px;
@@ -74,7 +73,6 @@
       align-items: center;
       justify-content: center;
     }
-    /* Добавим стиль для счетчика в корзине */
     .cart-badge {
       position: absolute;
       top: -5px;
@@ -156,19 +154,18 @@
       cart.push({ name, price, quantity });
       localStorage.setItem("cart", JSON.stringify(cart));
       
+      // СБРАСЫВАЕМ количество до 1 после добавления
+      document.getElementById(qtyId).value = "1";
+      
       updateCartCount();
       webApp.showAlert(`Добавлено в корзину: ${name} × ${quantity}`);
     }
 
-    // Открываем корзину как WebApp страницу (не через openTelegramLink)
     function openCart() {
-      // Используем expand() чтобы открыть полноэкранную WebApp страницу
       webApp.expand();
-      // Переходим на страницу корзины
       window.location.href = "https://nero0711.github.io/mag/cart.html";
     }
 
-    // Обновляем счетчик товаров в корзине
     function updateCartCount() {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
       const count = cart.reduce((sum, item) => sum + item.quantity, 0);
