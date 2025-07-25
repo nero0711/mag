@@ -10,17 +10,16 @@
       font-family: Arial, sans-serif;
       padding: 16px;
       background: #f4f4f4;
-      margin: 0;
-      padding-bottom: 80px; /* Отступ для фиксированной кнопки */
-      width: 380px; /* Фиксированная ширина страницы */
-      margin: 0 auto; /* Центрирование страницы */
+      margin: 0 auto;
+      padding-bottom: 80px;
+      width: 380px;
+      box-sizing: border-box;
     }
     .product-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
       width: 100%;
-      margin: 0 auto;
     }
     .product {
       background: white;
@@ -31,11 +30,12 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      width: 180px; /* Фиксированная ширина карточки */
+      width: 180px; /* Ширина карточки 180px */
+      box-sizing: border-box;
     }
     .product-image {
-      width: 160px; /* Ширина изображения */
-      height: 160px; /* Высота изображения (пропорции 1:1) */
+      width: 160px;
+      height: 160px;
       object-fit: cover;
       border-radius: 4px;
       margin: 0 auto;
@@ -65,7 +65,7 @@
       width: 100%;
     }
     .add-btn {
-      background-color: #f39c12; /* Желтый цвет как у кнопки "+" */
+      background-color: #f39c12;
       color: white;
       border: none;
       padding: 8px 6px;
@@ -74,10 +74,11 @@
       font-size: 12px;
       width: 100%;
       text-align: center;
-      height: 32px; /* Фиксированная высота */
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-sizing: border-box;
     }
     .quantity-btn {
       background-color: #f39c12;
@@ -92,7 +93,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 32px; /* Та же высота, что и у кнопки "Добавить" */
+      height: 32px;
+      box-sizing: border-box;
     }
     .minus-btn {
       background-color: #e74c3c;
@@ -123,16 +125,17 @@
       border-radius: 4px;
       cursor: pointer;
       font-size: 15px;
-      width: 100%; /* По всей ширине страницы */
+      width: 100%;
       margin: 0;
       display: block;
       position: fixed;
       bottom: 0;
       left: 50%;
-      transform: translateX(-50%); /* Центрирование */
+      transform: translateX(-50%);
       z-index: 1000;
       box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-      max-width: 380px; /* Максимальная ширина как у страницы */
+      max-width: 380px;
+      box-sizing: border-box;
     }
     .loading {
       text-align: center;
@@ -149,7 +152,6 @@
       text-align: center;
       font-size: 13px;
     }
-    /* Адаптивность для маленьких экранов */
     @media (max-width: 400px) {
       body {
         width: 100%;
@@ -157,11 +159,6 @@
       }
       .product-grid {
         grid-template-columns: 1fr;
-        max-width: 192px; /* 180px + padding */
-      }
-      .product {
-        width: 180px;
-        margin: 0 auto;
       }
       body {
         padding-bottom: 70px;
@@ -187,7 +184,6 @@
     const webApp = window.Telegram.WebApp;
     let productsData = {};
 
-    // Загрузка товаров из JSON
     async function loadProducts() {
       try {
         const response = await fetch('products.json');
@@ -203,7 +199,6 @@
       }
     }
 
-    // Рендеринг товаров
     function renderProducts() {
       const container = document.getElementById('products-container');
       container.innerHTML = '';
@@ -211,9 +206,7 @@
       Object.entries(productsData).forEach(([name, product], index) => {
         const productElement = document.createElement('div');
         productElement.className = 'product';
-        productElement.id = `product-${index}`;
         
-        // Проверяем, есть ли этот товар в корзине
         const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
         const existingItem = cartItems.find(item => item.name === name);
         const quantity = existingItem ? existingItem.quantity : 0;
@@ -224,43 +217,37 @@
             <span class="product-name">${name}</span>
             <span class="product-price">${product.price.toFixed(2)} ₽</span>
           </div>
-          <div class="product-actions" id="actions-${index}">
+          <div class="product-actions">
             ${quantity > 0 ? 
               `<button class="quantity-btn minus-btn" onclick="changeQuantity('${name}', ${product.max_count}, -1)">-</button>
                <button class="quantity-btn plus-btn" onclick="changeQuantity('${name}', ${product.max_count}, 1)">+</button>` :
               `<button class="add-btn" onclick="addToCart('${name}', ${product.price}, ${product.max_count})">Добавить</button>`
             }
           </div>
-          ${quantity > 0 ? `<div class="quantity-badge" id="badge-${index}">${quantity}</div>` : ''}
+          ${quantity > 0 ? `<div class="quantity-badge">${quantity}</div>` : ''}
         `;
 
         container.appendChild(productElement);
       });
     }
 
-    // Добавление в корзину
     function addToCart(name, price, maxCount) {
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      
-      // Проверяем, есть ли уже такой товар
       const existingItemIndex = cart.findIndex(item => item.name === name);
       
       if (existingItemIndex >= 0) {
-        // Увеличиваем количество
         if (cart[existingItemIndex].quantity < maxCount) {
           cart[existingItemIndex].quantity += 1;
         }
       } else {
-        // Добавляем новый товар
         cart.push({ name, price, quantity: 1 });
       }
       
       localStorage.setItem("cart", JSON.stringify(cart));
-      renderProducts(); // Перерисовываем все товары
+      renderProducts();
       updateCartCount();
     }
 
-    // Изменение количества
     function changeQuantity(name, maxCount, delta) {
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
       const existingItemIndex = cart.findIndex(item => item.name === name);
@@ -268,17 +255,15 @@
       if (existingItemIndex >= 0) {
         cart[existingItemIndex].quantity += delta;
         
-        // Если количество меньше 1, удаляем товар
         if (cart[existingItemIndex].quantity < 1) {
           cart.splice(existingItemIndex, 1);
         } else if (cart[existingItemIndex].quantity > maxCount) {
-          // Проверяем максимальное количество
           cart[existingItemIndex].quantity = maxCount;
         }
       }
       
       localStorage.setItem("cart", JSON.stringify(cart));
-      renderProducts(); // Перерисовываем все товары
+      renderProducts();
       updateCartCount();
     }
 
@@ -290,10 +275,8 @@
     function updateCartCount() {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
       const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-      // Здесь можно обновить общий счетчик корзины, если он есть
     }
 
-    // Инициализация
     webApp.ready();
     loadProducts();
     updateCartCount();
