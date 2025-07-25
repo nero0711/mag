@@ -10,6 +10,7 @@
       font-family: Arial, sans-serif;
       padding: 16px;
       background: #f4f4f4;
+      margin: 0;
     }
     .product {
       background: white;
@@ -17,6 +18,23 @@
       padding: 16px;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .product-image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+    .product-title {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+    }
+    .product-price {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin: 8px 0;
     }
     .quantity-control {
       display: flex;
@@ -44,14 +62,21 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
+    .max-info {
+      font-size: 12px;
+      color: #666;
+      margin: 5px 0;
+    }
     button.add-to-cart {
       background-color: #3390ec;
       color: white;
       border: none;
-      padding: 10px 16px;
+      padding: 12px 16px;
       border-radius: 4px;
       cursor: pointer;
       width: 100%;
+      font-size: 16px;
+      margin-top: 8px;
     }
     button.add-to-cart:hover {
       background-color: #2878cc;
@@ -72,6 +97,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 1000;
     }
     .cart-badge {
       position: absolute;
@@ -87,43 +113,27 @@
       align-items: center;
       justify-content: center;
     }
+    .loading {
+      text-align: center;
+      padding: 50px;
+      font-size: 18px;
+      color: #666;
+    }
+    .error {
+      background: #ffebee;
+      color: #c62828;
+      padding: 16px;
+      border-radius: 4px;
+      margin: 16px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
 
   <h1>🛍️ Магазин</h1>
-
-  <div class="product">
-    <h2>Товар 1</h2>
-    <p>Цена: <span id="price1">500</span> ₽</p>
-    <div class="quantity-control">
-      <button class="quantity-btn" onclick="changeQuantity('qty1', -1)">-</button>
-      <input type="text" class="quantity-input" id="qty1" value="1" readonly>
-      <button class="quantity-btn" onclick="changeQuantity('qty1', 1)">+</button>
-    </div>
-    <button class="add-to-cart" onclick="addToCart('Товар 1', 500, 'qty1')">Добавить в корзину</button>
-  </div>
-
-  <div class="product">
-    <h2>Товар 2</h2>
-    <p>Цена: <span id="price2">1200</span> ₽</p>
-    <div class="quantity-control">
-      <button class="quantity-btn" onclick="changeQuantity('qty2', -1)">-</button>
-      <input type="text" class="quantity-input" id="qty2" value="1" readonly>
-      <button class="quantity-btn" onclick="changeQuantity('qty2', 1)">+</button>
-    </div>
-    <button class="add-to-cart" onclick="addToCart('Товар 2', 1200, 'qty2')">Добавить в корзину</button>
-  </div>
-
-  <div class="product">
-    <h2>Товар 3</h2>
-    <p>Цена: <span id="price3">750</span> ₽</p>
-    <div class="quantity-control">
-      <button class="quantity-btn" onclick="changeQuantity('qty3', -1)">-</button>
-      <input type="text" class="quantity-input" id="qty3" value="1" readonly>
-      <button class="quantity-btn" onclick="changeQuantity('qty3', 1)">+</button>
-    </div>
-    <button class="add-to-cart" onclick="addToCart('Товар 3', 750, 'qty3')">Добавить в корзину</button>
+  <div id="products-container">
+    <div class="loading">Загрузка товаров...</div>
   </div>
 
   <button class="cart-btn" onclick="openCart()">
@@ -133,20 +143,77 @@
 
   <script>
     const webApp = window.Telegram.WebApp;
+    let productsData = {};
+
+    // Загрузка товаров из JSON
+    async function loadProducts() {
+      try {
+        const response = await fetch('products.json');
+        if (!response.ok) {
+          throw new Error('Не удалось загрузить товары');
+        }
+        productsData = await response.json();
+        renderProducts();
+      } catch (error) {
+        console.error('Ошибка загрузки товаров:', error);
+        document.getElementById('products-container').innerHTML = 
+          `<div class="error">Ошибка загрузки товаров: ${error.message}</div>`;
+      }
+    }
+
+    // Рендеринг товаров
+    function renderProducts() {
+      const container = document.getElementById('products-container');
+      container.innerHTML = '';
+
+      Object.entries(productsData).forEach(([name, product], index) => {
+        const productId = `product-${index}`;
+        const qtyId = `qty-${index}`;
+
+        const productElement = document.createElement('div');
+        productElement.className = 'product';
+        productElement.innerHTML = `
+          <img src="${product.img}" alt="${name}" class="product-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2RkZCIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzMzMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+0JTQsNC9PC90ZXh0Pjwvc3ZnPg=='">
+          <h2 class="product-title">${name}</h2>
+          <div class="product-price">${product.price} ₽</div>
+          <div class="max-info">Максимум: ${product.max_count} шт.</div>
+          <div class="quantity-control">
+            <button class="quantity-btn" onclick="changeQuantity('${qtyId}', -1)">-</button>
+            <input type="text" class="quantity-input" id="${qtyId}" value="1" readonly>
+            <button class="quantity-btn" onclick="changeQuantity('${qtyId}', 1)">+</button>
+          </div>
+          <button class="add-to-cart" onclick="addToCart('${name}', ${product.price}, '${qtyId}', ${product.max_count})">Добавить в корзину</button>
+        `;
+
+        container.appendChild(productElement);
+      });
+    }
 
     // Функция изменения количества
     function changeQuantity(inputId, delta) {
       const input = document.getElementById(inputId);
       let value = parseInt(input.value) || 1;
+      const productId = inputId.replace('qty-', '');
+      const product = Object.values(productsData)[productId];
+      
       value += delta;
       if (value < 1) value = 1;
+      if (value > product.max_count) value = product.max_count;
+      
       input.value = value;
     }
 
-    function addToCart(name, price, qtyId) {
+    // Добавление в корзину
+    function addToCart(name, price, qtyId, maxCount) {
       const quantity = parseInt(document.getElementById(qtyId).value);
+      
       if (quantity <= 0) {
         webApp.showAlert("Количество должно быть больше 0");
+        return;
+      }
+      
+      if (quantity > maxCount) {
+        webApp.showAlert(`Максимальное количество: ${maxCount}`);
         return;
       }
 
@@ -154,7 +221,7 @@
       cart.push({ name, price, quantity });
       localStorage.setItem("cart", JSON.stringify(cart));
       
-      // СБРАСЫВАЕМ количество до 1 после добавления
+      // Сбрасываем количество до 1
       document.getElementById(qtyId).value = "1";
       
       updateCartCount();
@@ -176,7 +243,9 @@
       }
     }
 
+    // Инициализация
     webApp.ready();
+    loadProducts();
     updateCartCount();
   </script>
 
