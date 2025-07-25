@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
+    /* ... остальные стили остаются без изменений ... */
     body {
       font-family: Arial, sans-serif;
       padding: 16px;
@@ -73,6 +74,21 @@
       align-items: center;
       justify-content: center;
     }
+    /* Добавим стиль для счетчика в корзине */
+    .cart-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: red;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
@@ -112,7 +128,10 @@
     <button class="add-to-cart" onclick="addToCart('Товар 3', 750, 'qty3')">Добавить в корзину</button>
   </div>
 
-  <button class="cart-btn" onclick="openCart()">🛒</button>
+  <button class="cart-btn" onclick="openCart()">
+    🛒
+    <span class="cart-badge" id="cart-count">0</span>
+  </button>
 
   <script>
     const webApp = window.Telegram.WebApp;
@@ -136,15 +155,32 @@
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
       cart.push({ name, price, quantity });
       localStorage.setItem("cart", JSON.stringify(cart));
-
+      
+      updateCartCount();
       webApp.showAlert(`Добавлено в корзину: ${name} × ${quantity}`);
     }
 
+    // Открываем корзину как WebApp страницу (не через openTelegramLink)
     function openCart() {
-      webApp.openTelegramLink("https://nero0711.github.io/mag/cart.html");
+      // Используем expand() чтобы открыть полноэкранную WebApp страницу
+      webApp.expand();
+      // Переходим на страницу корзины
+      window.location.href = "https://nero0711.github.io/mag/cart.html";
+    }
+
+    // Обновляем счетчик товаров в корзине
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const badge = document.getElementById('cart-count');
+      if (badge) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
+      }
     }
 
     webApp.ready();
+    updateCartCount();
   </script>
 
 </body>
