@@ -22,20 +22,17 @@
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .back-btn {
-      background: #3390ec;
-      color: white;
+    .edit-btn {
+      background: transparent;
+      color: #f39c12;
       border: none;
-      padding: 10px 20px;
-      border-radius: 4px;
       cursor: pointer;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 4px;
     }
-    .back-btn:hover {
-      background: #2878cc;
+    .edit-btn:hover {
+      background: #fef9e7;
     }
     .order-summary {
       background: white;
@@ -49,25 +46,35 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #eee;
     }
-    .order-item img {
-      width: 40px;
-      height: 40px;
+    .order-item:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    .order-item-image {
+      width: 60px;
+      height: 60px;
       object-fit: cover;
+      border-radius: 4px;
       margin-right: 16px;
+    }
+    .order-item-info {
+      flex: 1;
     }
     .order-item-name {
       font-weight: bold;
+      margin-bottom: 4px;
     }
     .order-item-count {
       color: #f39c12; /* Желтый цвет для количества */
-    }
-    .order-item-description {
-      color: #666;
-      font-size: 12px;
+      font-weight: bold;
     }
     .order-item-price {
       font-weight: bold;
+      font-size: 16px;
     }
     .comment-section {
       background: #f8f9fa;
@@ -76,17 +83,20 @@
       margin-bottom: 20px;
     }
     .comment-section label {
+      display: block;
       font-size: 14px;
       margin-bottom: 8px;
+      font-weight: bold;
     }
     .comment-section textarea {
       width: 100%;
       resize: vertical;
-      padding: 8px;
-      border: none;
+      padding: 12px;
+      border: 1px solid #ddd;
       border-radius: 4px;
       font-size: 14px;
       background: #fff;
+      box-sizing: border-box;
     }
     .pay-btn {
       background-color: #2ecc71;
@@ -99,20 +109,21 @@
       cursor: pointer;
       margin-top: 10px;
     }
-    .edit-btn {
-      background: transparent;
-      color: #f39c12;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
+    .pay-btn:hover {
+      background-color: #27ae60;
+    }
+    .empty-cart {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
     }
   </style>
 </head>
 <body>
 
   <div class="header">
-    <h1 style="margin: 0;">YOUR ORDER</h1>
-    <button class="edit-btn">Edit</button>
+    <h1 style="margin: 0;">Ваш заказ</h1>
+    <button class="edit-btn" onclick="GoBack()">Изменить</button>
   </div>
 
   <div id="order-summary" class="order-summary">
@@ -120,14 +131,18 @@
   </div>
 
   <div class="comment-section">
-    <label for="comment">Add comment...</label>
-    <textarea id="comment" placeholder="Any special requests, details, final wishes etc." rows="4"></textarea>
+    <label for="comment">Добавить комментарий к заказу</label>
+    <textarea id="comment" placeholder="Любые особые пожелания, детали, окончательные решения и т. д." rows="4"></textarea>
   </div>
 
-  <button class="pay-btn" onclick="checkout()">PAY $<span id="total">0</span></button>
+  <button class="pay-btn" onclick="checkout()">Купить <span id="total">0</span> ₽</button>
 
   <script>
     const webApp = window.Telegram.WebApp;
+
+    function GoBack() {
+      window.location.href = "https://nero0711.github.io/mag/";
+    }
 
     function renderOrder() {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -138,7 +153,7 @@
 
       if (cart.length === 0) {
         container.innerHTML = `
-          <div style="background: white; padding: 30px; text-align: center; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="empty-cart">
             <h3>Ваша корзина пуста</h3>
             <p>Добавьте товары из магазина</p>
           </div>
@@ -153,16 +168,17 @@
 
         const div = document.createElement("div");
         div.className = "order-item";
+        
+        // Используем изображение из products.json или заглушку
+        const imgSrc = item.img || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iMzAiIHk9IjM1IiBmb250LXNpemU9IjE0IiBmaWxsPSIjMzMzIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QlNCw0L08L3RleHQ+PC9zdmc+';
+        
         div.innerHTML = `
-          <div>
-            <img src="${item.img}" alt="${item.name}">
-            <div>
-              <strong class="order-item-name">${item.name}</strong><br>
-              <span class="order-item-count">${item.quantity}x</span>
-              <span class="order-item-description">${item.description}</span>
-            </div>
+          <img src="${imgSrc}" alt="${item.name}" class="order-item-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iMzAiIHk9IjM1IiBmb250LXNpemU9IjE0IiBmaWxsPSIjMzMzIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QlNCw0L08L3RleHQ+PC9zdmc+'">
+          <div class="order-item-info">
+            <div class="order-item-name">${item.name || 'Товар'}</div>
+            <div class="order-item-count">${item.quantity}x</div>
           </div>
-          <div class="order-item-price">$${itemTotal.toFixed(2)}</div>
+          <div class="order-item-price">${itemTotal.toFixed(2)} ₽</div>
         `;
         container.appendChild(div);
       });
@@ -186,6 +202,12 @@
       renderOrder();
     }
 
+    // Настройка кнопки "Назад" Telegram
+    webApp.BackButton.onClick(() => {
+      GoBack();
+    });
+    
+    webApp.BackButton.show();  
     webApp.ready();
     renderOrder();
   </script>
