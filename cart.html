@@ -37,36 +37,59 @@
     .back-btn:hover {
       background: #2878cc;
     }
-    .cart-item {
+    .order-summary {
       background: white;
-      margin-bottom: 12px;
       padding: 16px;
       border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .order-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 16px;
     }
-    button.remove {
-      background-color: #e74c3c;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 4px;
-      cursor: pointer;
+    .order-item img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      margin-right: 16px;
     }
-    .total {
-      font-size: 20px;
+    .order-item-name {
       font-weight: bold;
-      margin: 20px 0;
-      text-align: right;
-      background: white;
+    }
+    .order-item-count {
+      color: #f39c12; /* Желтый цвет для количества */
+    }
+    .order-item-description {
+      color: #666;
+      font-size: 12px;
+    }
+    .order-item-price {
+      font-weight: bold;
+    }
+    .comment-section {
+      background: #f8f9fa;
       padding: 16px;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
     }
-    .checkout-btn {
-      background-color: #27ae60;
+    .comment-section label {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .comment-section textarea {
+      width: 100%;
+      resize: vertical;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      background: #fff;
+    }
+    .pay-btn {
+      background-color: #2ecc71;
       color: white;
       border: none;
       padding: 16px 20px;
@@ -76,37 +99,39 @@
       cursor: pointer;
       margin-top: 10px;
     }
-    .clear-btn {
-      background-color: #95a5a6;
-      color: white;
+    .edit-btn {
+      background: transparent;
+      color: #f39c12;
       border: none;
-      padding: 12px 16px;
-      border-radius: 4px;
       cursor: pointer;
-      width: 100%;
-      margin-top: 10px;
-      font-size: 16px;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
 
   <div class="header">
-    <h1 style="margin: 0;">🛒 Корзина</h1>
+    <h1 style="margin: 0;">YOUR ORDER</h1>
+    <button class="edit-btn">Edit</button>
   </div>
-  
-  <div id="cart-items"></div>
-  <div class="total">Итого: <span id="total">0</span> ₽</div>
-  
-  <button class="checkout-btn" onclick="checkout()">Оформить заказ</button>
-  <button class="clear-btn" onclick="clearCart()">Очистить корзину</button>
+
+  <div id="order-summary" class="order-summary">
+    <!-- Товары будут отображаться здесь -->
+  </div>
+
+  <div class="comment-section">
+    <label for="comment">Add comment...</label>
+    <textarea id="comment" placeholder="Any special requests, details, final wishes etc." rows="4"></textarea>
+  </div>
+
+  <button class="pay-btn" onclick="checkout()">PAY $<span id="total">0</span></button>
 
   <script>
     const webApp = window.Telegram.WebApp;
 
-    function renderCart() {
+    function renderOrder() {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const container = document.getElementById("cart-items");
+      const container = document.getElementById("order-summary");
       container.innerHTML = "";
 
       let total = 0;
@@ -122,44 +147,27 @@
         return;
       }
 
-    cart.forEach((item, index) => {
+      cart.forEach((item, index) => {
         const itemTotal = item.price * item.quantity;
         total += itemTotal;
 
         const div = document.createElement("div");
-        div.className = "cart-item";
+        div.className = "order-item";
         div.innerHTML = `
           <div>
-            <strong>${item.name}</strong><br>
-            <span style="color: #666;">${item.quantity} × ${item.price} ₽ = ${itemTotal} ₽</span>
+            <img src="${item.img}" alt="${item.name}">
+            <div>
+              <strong class="order-item-name">${item.name}</strong><br>
+              <span class="order-item-count">${item.quantity}x</span>
+              <span class="order-item-description">${item.description}</span>
+            </div>
           </div>
-          <div>
-            <button class="remove" onclick="removeItem(${index})">✖ Удалить</button>
-          </div>
+          <div class="order-item-price">$${itemTotal.toFixed(2)}</div>
         `;
         container.appendChild(div);
       });
 
-      document.getElementById("total").textContent = total;
-    }
-
-    function removeItem(index) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      cart.splice(index, 1);
-      localStorage.setItem("cart", JSON.stringify(cart));
-      renderCart();
-      // Обновляем счетчик в главном окне (если нужно)
-      if (window.opener) {
-        window.opener.updateCartCount();
-      }
-    }
-
-    function clearCart() {
-      if (confirm("Вы уверены, что хотите очистить корзину?")) {
-        localStorage.removeItem("cart");
-        renderCart();
-        webApp.showAlert("Корзина очищена");
-      }
+      document.getElementById("total").textContent = total.toFixed(2);
     }
 
     function checkout() {
@@ -175,16 +183,11 @@
 
       // Очищаем корзину после оформления
       localStorage.removeItem("cart");
+      renderOrder();
     }
 
-    webApp.BackButton.onClick(() => {
-      // Возвращаемся на главную страницу магазина
-      window.location.href = "https://nero0711.github.io/mag/";
-    });
-    
-    webApp.BackButton.show();   
     webApp.ready();
-    renderCart();
+    renderOrder();
   </script>
 
 </body>
