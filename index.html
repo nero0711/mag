@@ -181,7 +181,7 @@
     <div class="loading">Загрузка товаров...</div>
   </div>
 
-  <button class="view-order-btn" onclick="openCart()">Посмотреть заказ</button>
+  <button id="view-order-btn" class="view-order-btn" onclick="openCart()" style="display: none;">Посмотреть заказ</button>
 
   <script>
     const webApp = window.Telegram.WebApp;
@@ -232,6 +232,9 @@
 
         container.appendChild(productElement);
       });
+
+      // Проверяем корзину и отображаем/скрываем кнопку
+      updateViewOrderButton();
     }
 
     function addToCart(name, price, maxCount, img) {
@@ -278,6 +281,18 @@
     function updateCartCount() {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
       const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    }
+
+    // Функция для отображения/скрытия кнопки "Посмотреть заказ"
+    function updateViewOrderButton() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const viewOrderBtn = document.getElementById('view-order-btn');
+      
+      if (cart.length > 0) {
+        viewOrderBtn.style.display = 'block';
+      } else {
+        viewOrderBtn.style.display = 'none';
+      }
     }
 
     webApp.ready();
