@@ -170,7 +170,7 @@
         div.className = "order-item";
         
         // Используем изображение из products.json или заглушку
-        const imgSrc = item.img || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iMzAiIHk9IjM1IiBmb250LXNpemU9IjE0IiBmaWxsPSIjMzMzIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QlNCw0L08L3RleHQ+PC9zdmc+';
+        const imgSrc = item.img || 'image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iMzAiIHk9IjM1IiBmb250LXNpemU9IjE0IiBmaWxsPSIjMzMzIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QlNCw0L08L3RleHQ+PC9zdmc+';
         
         div.innerHTML = `
           <img src="${imgSrc}" alt="${item.name}" class="order-item-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iMzAiIHk9IjM1IiBmb250LXNpemU9IjE0IiBmaWxsPSIjMzMzIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7QlNCw0L08L3RleHQ+PC9zdmc+'">
@@ -193,14 +193,27 @@
         return;
       }
 
-      // Отправляем данные в бота
-      webApp.sendData(JSON.stringify({ action: "checkout", cart }));
+      // Получаем комментарий
+      const comment = document.getElementById("comment").value;
+
+      // Создаем копию корзины без изображений
+      const cartWithoutImages = cart.map(item => {
+        const { img, ...itemWithoutImg } = item;
+        return itemWithoutImg;
+      });
+
+      // Отправляем данные в бота (с комментарием и без изображений)
+      webApp.sendData(JSON.stringify({ 
+        action: "checkout", 
+        cart: cartWithoutImages,
+        comment: comment
+      }));
+      
       webApp.showAlert("Заказ оформлен! Бот свяжется с вами.");
 
       // Очищаем корзину после оформления
       localStorage.removeItem("cart");
-      //renderOrder();
-      GoBack();
+      renderOrder();
     }
 
     // Настройка кнопки "Назад" Telegram
