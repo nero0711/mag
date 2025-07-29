@@ -90,6 +90,19 @@
           qrbox: { width: 250, height: 250 }
         },
         (decodedText) => {
+          html5QrcodeScanner.stop();
+          qrResult.textContent = decodedText;
+          resultDiv.style.display = "block";
+          startButton.textContent = "Запустить сканер";
+          startButton.disabled = false;
+          closeButton.style.display = "block";
+        
+          // Отправляем результат в бота
+          if (tg) {
+            tg.sendData(decodedText);  // Это попадёт в бота как WebAppData
+          }
+        }
+        /*(decodedText) => {
           // Успешно отсканировано
           html5QrcodeScanner.stop();
           qrResult.textContent = decodedText;
@@ -102,7 +115,7 @@
           if (tg) {
             tg.sendData(decodedText); // можно обработать в боте
           }
-        },
+        },*/
         (errorMessage) => {
           // Ошибки сканирования (не выводим, чтобы не засорять)
         }
