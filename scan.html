@@ -8,9 +8,6 @@
   <!-- Подключаем Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <!-- Подключаем библиотеку для сканирования QR-кодов -->
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18,6 +15,7 @@
       background-color: #f7f8fa;
       color: #2c3e50;
       margin: 0;
+      min-height: 100vh;
     }
 
     h2 {
@@ -25,22 +23,17 @@
       color: #34495e;
     }
 
-    #reader {
-      width: 100%;
-      max-width: 400px;
+    .container {
+      max-width: 480px;
       margin: 0 auto;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      background-color: #fff;
     }
 
     #result {
       margin-top: 24px;
-      padding: 16px;
-      background-color: #ecf0f1;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      padding: 18px;
+      background-color: #dfe6e9;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       word-break: break-all;
       font-size: 16px;
       line-height: 1.5;
@@ -48,7 +41,7 @@
 
     #qr-result {
       font-family: monospace;
-      color: #2c3e50;
+      color: #2d3436;
       margin: 8px 0 0;
       font-size: 15px;
     }
@@ -67,131 +60,94 @@
       transition: background-color 0.3s;
     }
 
-    #start-scan {
-      background-color: #3498db;
+    #scan-btn {
+      background-color: #0088cc;
       color: white;
     }
 
-    #start-scan:hover {
-      background-color: #2980b9;
+    #scan-btn:hover {
+      background-color: #0077bb;
     }
 
-    #start-scan:disabled {
+    #scan-btn:disabled {
       background-color: #95a5a6;
       cursor: not-allowed;
     }
 
-    #close-app {
-      background-color: #95a5a6;
-      color: #fff;
+    #close-btn {
+      background-color: #27ae60;
+      color: white;
       display: none;
     }
 
-    #close-app:hover {
-      background-color: #7f8c8d;
+    #close-btn:hover {
+      background-color: #219955;
     }
   </style>
 </head>
 <body>
-  <h2>📷 Сканер QR-кода</h2>
+  <div class="container">
+    <h2>📱 Сканер QR-кода</h2>
 
-  <!-- Контейнер для сканера -->
-  <div id="reader"></div>
+    <p style="text-align: center; color: #7f8c8d;">
+      Нажмите кнопку ниже, чтобы открыть встроенный сканер Telegram.
+    </p>
 
-  <!-- Отображение результата -->
-  <div id="result" style="display: none;">
-    <strong>Результат:</strong>
-    <p id="qr-result"></p>
+    <!-- Кнопка для открытия сканера -->
+    <button id="scan-btn">Открыть сканер QR</button>
+
+    <!-- Кнопка закрытия -->
+    <button id="close-btn">Закрыть</button>
+
+    <!-- Отображение результата -->
+    <div id="result" style="display: none;">
+      <strong>Отсканировано:</strong>
+      <p id="qr-result"></p>
+    </div>
   </div>
-
-  <!-- Кнопка запуска/остановки сканера -->
-  <button id="start-scan">Запустить сканер</button>
-
-  <!-- Кнопка закрытия Web App -->
-  <button id="close-app">Закрыть</button>
 
   <script>
     // Инициализация Telegram WebApp
     const tg = window.Telegram.WebApp;
     tg.ready();
 
-    // Элементы DOM
+    // Элементы
+    const scanButton = document.getElementById("scan-btn");
+    const closeButton = document.getElementById("close-btn");
     const resultDiv = document.getElementById("result");
     const qrResult = document.getElementById("qr-result");
-    const startButton = document.getElementById("start-scan");
-    const closeButton = document.getElementById("close-app");
 
-    let html5QrcodeScanner = null;
+    // Обработчик результата сканирования
+    function onScanResult(qrData) {
+      // Закрываем popup
+      tg.closeScanQrPopup();
 
-    // Обработчик кнопки "Запустить/Остановить"
-    startButton.addEventListener("click", function () {
-      if (startButton.textContent.trim() === "Остановить") {
-        stopScanner();
-        return;
-      }
+      // Показываем результат
+      qrResult.textContent = qrData;
+      resultDiv.style.display = "block";
+      scanButton.disabled = false;
+      closeButton.style.display = "block";
 
-      // Подготовка к запуску
-      resultDiv.style.display = "none";
-      startButton.disabled = true;
-      startButton.textContent = "Загрузка...";
-
-      // Создаём сканер
-      html5QrcodeScanner = new Html5Qrcode("reader");
-
-      // Запускаем сканер
-      html5QrcodeScanner.start(
-        { facingMode: "environment" }, // Используем заднюю камеру
-        {
-          fps: 10, // Кадры в секунду
-          qrbox: { width: 280, height: 280 } // Размер области сканирования
-        },
-        (decodedText) => {
-          // Успешно отсканировано
-          stopScanner();
-
-          // Показываем результат
-          qrResult.textContent = decodedText;
-          resultDiv.style.display = "block";
-          startButton.textContent = "Запустить сканер";
-          startButton.disabled = false;
-          closeButton.style.display = "block";
-
-          // Отправляем данные в бота
-          if (tg) {
-            const data = JSON.stringify({ action: "send_message", message: decodedText });
-            tg.sendData(data); // Передаем данные в бот
-            //tg.sendData(decodedText);
-          }
-        },
-        (errorMessage) => {
-          // Ошибки распознавания (можно игнорировать)
-        }
-      ).catch((err) => {
-        console.error("Ошибка инициализации камеры:", err);
-        alert("Не удалось запустить камеру: " + (err.message || err));
-        startButton.disabled = false;
-        startButton.textContent = "Запустить сканер";
-      });
-
-      startButton.textContent = "Остановить";
-      startButton.disabled = false;
-    });
-
-    // Функция остановки сканера
-    function stopScanner() {
-      if (html5QrcodeScanner) {
-        html5QrcodeScanner.stop().then(() => {
-          html5QrcodeScanner.clear();
-          html5QrcodeScanner = null;
-        }).catch((err) => {
-          console.error("Ошибка остановки сканера:", err);
-        });
+      // Отправляем данные в бота
+      if (tg) {
+        tg.sendData(qrData);
       }
     }
 
-    // Кнопка "Закрыть" — закрывает Web App
+    // Кнопка "Сканировать"
+    scanButton.addEventListener("click", () => {
+      scanButton.disabled = true;
+      tg.openScanQrPopup(onScanResult);
+    });
+
+    // Кнопка "Закрыть"
     closeButton.addEventListener("click", () => {
       tg.close();
+    });
+
+    // Если пользователь вручную закрыл popup — разблокируем кнопку
+    tg.onEvent("scanQrPopupClosed", () => {
+      scanButton.disabled = false;
     });
   </script>
 </body>
