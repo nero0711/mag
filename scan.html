@@ -158,7 +158,9 @@
 
           // Отправляем данные в бота
           if (tg) {
-            tg.sendData(decodedText);
+            const data = JSON.stringify({ action: "send_message", message: decodedText });
+            tg.sendData(data); // Передаем данные в бот
+            //tg.sendData(decodedText);
           }
         },
         (errorMessage) => {
