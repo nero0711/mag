@@ -44,23 +44,23 @@
           {{ code }}
         </p>
         <v-btn
-          v-if="is_url"
-          size="large"
-          color="primary"
-          @click="openLink"
-        >
-          Открыть ссылку
-        </v-btn>
-        <v-btn
           size="large"
           color="success"
           @click="sendToBot"
         >
           ✅ Отправить код
         </v-btn>
+        <v-btn
+          size="large"
+          color="error"
+          @click="closeApp"
+        >
+          ❌ Закрыть
+        </v-btn>
       </div>
       <div v-else>
-        <h3>Нажмите кнопку ниже для сканирования</h3>
+        <h3>Сканирование QR-кода...</h3>
+        <p>Пожалуйста, наведите камеру на QR-код</p>
       </div>
     </div>
 
@@ -78,7 +78,6 @@
   </div>
 
   <script>
-    // --- Функция проверки и подготовки URL ---
     function prepareUrl(code) {
       const strictOptions = {
         protocols: ['http', 'https', 'ftp'],
@@ -97,7 +96,6 @@
       return { is_url: false, value: code };
     }
 
-    // --- Vue 3 + Vuetify App ---
     const { createApp } = Vue;
     const { createVuetify } = Vuetify;
     const vuetify = createVuetify();
@@ -117,10 +115,14 @@
       },
       created() {
         if (this.is_telegram_client && this.is_telegram_api_updated) {
-          TWA.MainButton.setText("Сканировать QR");
-          TWA.MainButton.show();
-          TWA.MainButton.onClick(this.showQRScanner);
+          // Автоматически открываем сканер при загрузке
+          setTimeout(() => {
+            TWA.showScanQrPopup({
+              text: "Наведите на QR-код"
+            });
+          }, 500); // небольшая задержка, чтобы всё прогрузилось
 
+          // Обработчик получения QR-кода
           TWA.onEvent('qrTextReceived', (data) => {
             this.code = data.data;
             const result = prepareUrl(this.code);
@@ -128,34 +130,29 @@
             this.url = result.value;
 
             TWA.HapticFeedback?.impactOccurred?.("heavy");
-            TWA.closeScanQrPopup?.();
+            TWA.closeScanQrPopup?.(); // закрываем сканер после получения
           });
+
+          // Скрываем MainButton, если он был
+          TWA.MainButton.hide();
         }
       },
       mounted() {
         TWA.ready();
       },
       methods: {
-        showQRScanner() {
-          TWA.showScanQrPopup({ text: "Наведите на QR-код" });
-        },
-        openLink() {
-          TWA.openLink(this.url);
-        },
         sendToBot() {
           if (this.code) {
             console.log("📤 Отправка кода в бота:", this.code);
-      
-            TWA.sendData(this.code); // Отправляем код в бот
-      
+            TWA.sendData(this.code);
             TWA.HapticFeedback?.notificationOccurred?.("success");
-      
-            // Визуальное подтверждение
             TWA.showAlert?.("✅ Код отправлен боту!");
           } else {
-            console.warn("❗ Нет кода для отправки");
             TWA.showAlert?.("⚠️ Сначала отсканируйте QR-код.");
           }
+        },
+        closeApp() {
+          TWA.close(); // Закрывает веб-приложение в Telegram
         }
       }
     });
