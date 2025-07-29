@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Сканер QR-кода</title>
+  <!-- Подключаем SDK Telegram WebApp -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- Подключаем библиотеку для сканирования QR -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    #reader {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      word-break: break-all;
+      font-size: 16px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 12px;
+      background-color: #0088cc;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align: center;">Сканер QR-кода</h2>
+  <div id="reader"></div>
+  <div id="result" style="display: none;">
+    <strong>Результат сканирования:</strong>
+    <p id="qr-result"></p>
+  </div>
+  <button id="start-scan">Запустить сканер</button>
+  <button id="close-app" style="background-color: #666; display: none;">Закрыть</button>
+
+  <script>
+    // Инициализация Telegram WebApp
+    const tg = window.Telegram?.WebApp;
+    tg.ready();
+
+    const resultDiv = document.getElementById("result");
+    const qrResult = document.getElementById("qr-result");
+    const startButton = document.getElementById("start-scan");
+    const closeButton = document.getElementById("close-app");
+    let html5QrcodeScanner;
+
+    startButton.addEventListener("click", function () {
+      if (startButton.textContent === "Остановить") {
+        stopScanner();
+        return;
+      }
+
+      resultDiv.style.display = "none";
+      startButton.disabled = true;
+      startButton.textContent = "Загрузка...";
+
+      html5QrcodeScanner = new Html5Qrcode("reader");
+      html5QrcodeScanner.start(
+        { facingMode: "environment" }, // задняя камера
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 }
+        },
+        (decodedText) => {
+          // Успешно отсканировано
+          html5QrcodeScanner.stop();
+          qrResult.textContent = decodedText;
+          resultDiv.style.display = "block";
+          startButton.textContent = "Запустить сканер";
+          startButton.disabled = false;
+          closeButton.style.display = "block";
+
+          // Отправляем результат в Telegram (если нужно)
+          if (tg) {
+            tg.sendData(decodedText); // можно обработать в боте
+          }
+        },
+        (errorMessage) => {
+          // Ошибки сканирования (не выводим, чтобы не засорять)
+        }
+      ).catch((err) => {
+        alert("Ошибка камеры: " + (err.message || err));
+        startButton.disabled = false;
+        startButton.textContent = "Запустить сканер";
+      });
+
+      startButton.textContent = "Остановить";
+      startButton.disabled = false;
+    });
+
+    function stopScanner() {
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.stop().then(() => {
+          html5QrcodeScanner.clear();
+          startButton.textContent = "Запустить сканер";
+        }).catch((err) => {
+          console.error("Ошибка остановки сканера:", err);
+        });
+      }
+    }
+
+    // Кнопка "Закрыть" — закрывает Web App
+    closeButton.addEventListener("click", () => {
+      tg.close();
+    });
+  </script>
+</body>
+</html>
