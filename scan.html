@@ -8,7 +8,7 @@
   <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <!-- Vue 3 -->
+  <!-- Vue 3 (CDN) -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
   <!-- Vuetify 3 (CDN) -->
@@ -29,6 +29,9 @@
       max-width: 480px;
       margin: 0 auto;
       text-align: center;
+    }
+    .v-btn {
+      margin: 10px 0;
     }
   </style>
 </head>
@@ -62,13 +65,13 @@
       <p style="color: #e67e22;">
         ⚠️ Требуется обновление Telegram.<br>
         Нужна версия с API 6.4 или выше.<br>
-        Ваша версия: {{ TWA.version }}
+        Ваша версия: {{ version }}
       </p>
     </div>
   </div>
 
   <script>
-    // --- Вспомогательная функция: проверка и подготовка URL ---
+    // --- Функция проверки URL ---
     function prepareUrl(code) {
       const strictOptions = {
         protocols: ['http', 'https', 'ftp'],
@@ -87,69 +90,55 @@
       return { is_url: false, value: code };
     }
 
-    // --- Главное приложение Vue ---
+    // --- Vue 3 App ---
     const { createApp } = Vue;
     const { createVuetify } = Vuetify;
-
-    // Создаём Vuetify (с минимальной конфигурацией)
     const vuetify = createVuetify();
 
-    // Создаём приложение
+    const TWA = window.Telegram.WebApp; // Локальная ссылка
+
     const app = createApp({
       data() {
         return {
-          TWA: window.Telegram.WebApp,
-          is_telegram_client: false,
-          is_telegram_api_updated: false,
+          version: TWA.version,
+          is_telegram_client: TWA.platform !== 'unknown',
+          is_telegram_api_updated: TWA.isVersionAtLeast('6.4'),
           code: null,
           is_url: false,
           url: null,
         };
       },
       created() {
-        this.is_telegram_api_updated = this.TWA.isVersionAtLeast('6.4');
-        this.is_telegram_client = this.TWA.platform !== 'unknown';
-
         if (this.is_telegram_client && this.is_telegram_api_updated) {
-          // Показываем кнопку в интерфейсе Telegram
-          this.TWA.MainButton.setText("Сканировать QR");
-          this.TWA.MainButton.show();
-          this.TWA.MainButton.onClick(this.showQRScanner);
+          TWA.MainButton.setText("Сканировать QR");
+          TWA.MainButton.show();
+          TWA.MainButton.onClick(this.showQRScanner);
 
-          // Обработка результата
-          this.TWA.onEvent('qrTextReceived', (data) => {
+          TWA.onEvent('qrTextReceived', (data) => {
             this.code = data.data;
             const result = prepareUrl(this.code);
             this.is_url = result.is_url;
             this.url = result.value;
 
-            // Тактильная отдача
-            this.TWA.HapticFeedback?.impactOccurred?.("heavy");
-
-            // Закрываем popup
-            this.TWA.closeScanQrPopup?.();
-
-            // Можно показать alert (опционально)
-            // this.TWA.showAlert?.(`Отсканировано: ${this.code}`);
+            TWA.HapticFeedback?.impactOccurred?.("heavy");
+            TWA.closeScanQrPopup?.();
           });
         }
       },
       mounted() {
-        this.TWA.ready();
+        TWA.ready();
       },
       methods: {
         showQRScanner() {
-          this.TWA.showScanQrPopup({ text: "Наведите на QR-код" });
+          TWA.showScanQrPopup({ text: "Наведите на QR-код" });
         },
         openLink() {
-          this.TWA.openLink(this.url);
+          TWA.openLink(this.url);
         }
       }
     });
 
-    // Подключаем Vuetify
     app.use(vuetify);
-    // Монтируем
     app.mount('#app');
   </script>
 </body>
