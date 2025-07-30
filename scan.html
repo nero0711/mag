@@ -1,164 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QR Scanner</title>
-
   <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-  <!-- Vue 3 -->
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-  <!-- Vuetify 3 -->
-  <link href="https://cdn.jsdelivr.net/npm/vuetify@3.6.4/dist/vuetify.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/vuetify@3.6.4/dist/vuetify.min.js"></script>
-
-  <!-- Validator.js -->
-  <script src="https://unpkg.com/validator@13.11.0/validator.min.js"></script>
-
-  <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      background-color: var(--tg-theme-bg-color, #fff);
-      color: var(--tg-theme-text-color, #000);
-    }
-    #app {
-      max-width: 480px;
-      margin: 0 auto;
-      text-align: center;
-    }
-    .v-btn {
-      margin: 8px;
-    }
-  </style>
 </head>
 <body>
-  <div id="app">
-    <div v-if="is_telegram_client && is_telegram_api_updated" class="text-center">
-      <div v-if="code">
-        <h3>QR найден:</h3>
-        <p style="word-break: break-all; padding: 16px; background: #f0f0f0; border-radius: 8px; font-size: 16px;">
-          {{ code }}
-        </p>
-        <v-btn
-          size="large"
-          color="success"
-          @click="sendToBot"
-        >
-          ✅ Отправить код
-        </v-btn>
-        <v-btn
-          size="large"
-          color="error"
-          @click="closeApp"
-        >
-          ❌ Закрыть
-        </v-btn>
-      </div>
-      <div v-else>
-        <h3>Сканирование QR-кода...</h3>
-        <p>Пожалуйста, наведите камеру на QR-код</p>
-      </div>
-    </div>
-
-    <div v-else-if="!is_telegram_client" class="text-center">
-      <p style="color: red;">❌ Откройте это приложение через Telegram.</p>
-    </div>
-
-    <div v-else class="text-center">
-      <p style="color: #e67e22;">
-        ⚠️ Требуется обновление Telegram.<br>
-        Нужна версия с API 6.4 или выше.<br>
-        Ваша версия: {{ version }}
-      </p>
-    </div>
-  </div>
-
   <script>
-    function prepareUrl(code) {
-      const strictOptions = {
-        protocols: ['http', 'https', 'ftp'],
-        require_tld: true,
-        require_protocol: true,
-        require_host: true,
-        validate_length: true
-      };
-
-      if (window.validator.isURL(code, strictOptions)) {
-        return { is_url: true, value: code };
-      }
-      if (window.validator.isURL(code)) {
-        return { is_url: true, value: 'http://' + code };
-      }
-      return { is_url: false, value: code };
-    }
-
-    const { createApp } = Vue;
-    const { createVuetify } = Vuetify;
-    const vuetify = createVuetify();
-
+    // Проверяем, что мы в Telegram и API поддерживается
     const TWA = window.Telegram.WebApp;
+    
+    // Проверяем, что это Telegram и версия API >= 6.4
+    const isTelegram = TWA.platform !== 'unknown';
+    const isSupportedVersion = TWA.isVersionAtLeast('6.4');
 
-    const app = createApp({
-      data() {
-        return {
-          version: TWA.version,
-          is_telegram_client: TWA.platform !== 'unknown',
-          is_telegram_api_updated: TWA.isVersionAtLeast('6.4'),
-          code: null,
-          is_url: false,
-          url: null,
-        };
-      },
-      created() {
-        if (this.is_telegram_client && this.is_telegram_api_updated) {
-          // Автоматически открываем сканер при загрузке
-          setTimeout(() => {
-            TWA.showScanQrPopup({
-              text: "Наведите на QR-код"
-            });
-          }, 500); // небольшая задержка, чтобы всё прогрузилось
+    if (!isTelegram) {
+      TWA.showAlert?.("❌ Откройте это приложение через Telegram.");
+      setTimeout(() => TWA.close(), 1500);
+    } else if (!isSupportedVersion) {
+      TWA.showAlert?.(`⚠️ Требуется Telegram с поддержкой API 6.4. Ваша версия: ${TWA.version}`);
+      setTimeout(() => TWA.close(), 1500);
+    } else {
+      // Готовимся к сканированию
+      TWA.ready();
 
-          // Обработчик получения QR-кода
-          TWA.onEvent('qrTextReceived', (data) => {
-            this.code = data.data;
-            const result = prepareUrl(this.code);
-            this.is_url = result.is_url;
-            this.url = result.value;
+      // Открываем сканер QR-кода при загрузке
+      setTimeout(() => {
+        TWA.showScanQrPopup({
+          text: "Наведите на QR-код"
+        });
+      }, 300);
 
-            TWA.HapticFeedback?.impactOccurred?.("heavy");
-            TWA.closeScanQrPopup?.(); // закрываем сканер после получения
-          });
+      // Обработчик успешного считывания QR-кода
+      TWA.onEvent('qrTextReceived', (data) => {
+        const code = data.data;
 
-          // Скрываем MainButton, если он был
-          TWA.MainButton.hide();
-        }
-      },
-      mounted() {
-        TWA.ready();
-      },
-      methods: {
-        sendToBot() {
-          if (this.code) {
-            console.log("📤 Отправка кода в бота:", this.code);
-            TWA.sendData(this.code);
-            TWA.HapticFeedback?.notificationOccurred?.("success");
-            TWA.showAlert?.("✅ Код отправлен боту!");
-          } else {
-            TWA.showAlert?.("⚠️ Сначала отсканируйте QR-код.");
-          }
-        },
-        closeApp() {
-          TWA.close(); // Закрывает веб-приложение в Telegram
-        }
-      }
-    });
+        // Отправляем данные в бота
+        TWA.sendData(code);
 
-    app.use(vuetify);
-    app.mount('#app');
+        // Вибрация (если поддерживается)
+        TWA.HapticFeedback?.notificationOccurred?.("success");
+
+        // Закрываем сканер и приложение
+        TWA.closeScanQrPopup?.();
+        TWA.close();
+      });
+
+      // Если пользователь закрыл сканер вручную — закрываем приложение
+      TWA.onEvent('scanQrPopupClosed', () => {
+        TWA.close();
+      });
+    }
   </script>
 </body>
 </html>
