@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PNG → плитки по зелёным разделителям (0,255,0) + DnD swap</title>
+  <title>pazzle</title>
   <style>
     :root {
       --bg: #0b1020;
@@ -87,7 +87,7 @@
     <div id="container">
       <h2>Нажмите для загрузки PNG</h2>
     </div>
-    <input id="fileInput" type="file" accept="image/png" hidden />
+    <input id="fileInput" type="file"  hidden />
 
     <div class="hint" id="hint"></div>
 
@@ -122,7 +122,7 @@
   }
 
   async function handleFile(file) {
-    if (file.type !== 'image/png') { errorMsg('Пожалуйста, выберите PNG-файл.'); return; }
+    // if (file.type !== 'image/png') { errorMsg('Пожалуйста, выберите PNG-файл.'); return; }
     const url = URL.createObjectURL(file);
     try {
       const img = await loadImage(url);
