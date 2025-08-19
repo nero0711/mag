@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Кодовый сейф — ванильный JS</title>
+  <style>
+    :root {
+      --w: 370px;
+      --h: 600px;
+      --bg: #0f172a;         /* slate-900 */
+      --panel: #111827;      /* gray-900 */
+      --muted: #64748b;      /* slate-500 */
+      --text: #e5e7eb;       /* gray-200 */
+      --accent: #22c55e;     /* green-500 */
+      --accent-2: #ef4444;   /* red-500 */
+      --border: #1f2937;     /* gray-800 */
+      --btn: #334155;        /* slate-700 */
+      --btn-hover: #475569;  /* slate-600 */
+    }
+
+    html, body {
+      height: 100%;
+      background: #0b1022;
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      display: grid;
+      place-items: center;
+    }
+
+    .safe-app {
+      width: var(--w);
+      height: var(--h);
+      background: linear-gradient(180deg, #0f172a 0%, #0b1226 100%);
+      border: 1px solid #0b1020;
+      border-radius: 20px;
+      box-shadow: 0 20px 70px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.03);
+      display: grid;
+      grid-template-rows: 240px 1fr auto;
+      overflow: hidden;
+    }
+
+    .safe-viewport {
+      display: grid;
+      place-items: center;
+      background: radial-gradient(1200px 500px at 50% -200px, rgba(100,116,139,.15), transparent 60%),
+                  radial-gradient(800px 400px at 10% 20%, rgba(34,197,94,.10), transparent 40%);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .safe-img { width: 140px; height: 140px; transition: opacity .35s ease, transform .35s ease; }
+    .safe-img.hidden { opacity: 0; transform: scale(.95); position: absolute; }
+
+    .panel {
+      padding: 30px 5px 30px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .dials {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      justify-items: center;
+    }
+
+    .dial {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      width: 70px;
+      padding: 8px 6px;
+      display: grid;
+      grid-template-rows: auto 52px auto;
+      align-items: center;
+      justify-items: center;
+      box-shadow: inset 0 -8px 18px rgba(0,0,0,.35);
+    }
+
+    .dial button {
+      appearance: none;
+      border: 0;
+      background: var(--btn);
+      color: var(--text);
+      width: 44px;
+      height: 34px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: transform .05s ease, background .15s ease, opacity .2s ease;
+      outline: none;
+    }
+    .dial button:hover { background: var(--btn-hover); }
+    .dial button:active { transform: translateY(1px) scale(.98); }
+
+    .digit {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      background: #0b1222;
+      border: 1px solid var(--border);
+      width: 56px; height: 52px;
+      border-radius: 10px;
+      display: grid; place-items: center;
+      user-select: none;
+      box-shadow: inset 0 -10px 16px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    .actions { padding: 0 18px 22px; display: grid; gap: 12px; }
+
+    .open-btn {
+      appearance: none;
+      border: 0;
+      background: linear-gradient(180deg, #2563eb, #1d4ed8);
+      color: white;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: .02em;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(37,99,235,.35), inset 0 1px 0 rgba(255,255,255,.15);
+      transition: transform .05s ease, filter .15s ease, opacity .25s ease;
+    }
+    .open-btn:hover { filter: brightness(1.08); }
+    .open-btn:active { transform: translateY(1px) scale(.995); }
+    .open-btn:disabled {
+      cursor: not-allowed;
+      filter: grayscale(.35) brightness(.85);
+      opacity: .75;
+    }
+
+    .status {
+      min-height: 22px;
+      font-size: 14px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .status.ok { color: var(--accent); }
+    .status.err { color: var(--accent-2); }
+
+    /* tiny arrow icons */
+    .chev { width: 18px; height: 18px; pointer-events: none; }
+
+    /* fun shake for wrong code */
+    @keyframes shake {
+      10%, 90% { transform: translateX(-1px); }
+      20%, 80% { transform: translateX(2px); }
+      30%, 50%, 70% { transform: translateX(-4px); }
+      40%, 60% { transform: translateX(4px); }
+    }
+    .shake { animation: shake .4s linear; }
+  </style>
+</head>
+<body>
+  <div class="safe-app" id="app" aria-live="polite">
+    <div class="safe-viewport">
+      <!-- Закрытый сейф -->
+      <svg class="safe-img" id="safeClosed" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Закрытый сейф">
+        <rect x="28" y="36" width="200" height="180" rx="18" fill="#0e141f" stroke="#334155" stroke-width="6"/>
+        <rect x="40" y="50" width="176" height="152" rx="12" fill="#111827" stroke="#1f2937" stroke-width="4"/>
+        <circle cx="168" cy="126" r="36" fill="#0b1222" stroke="#334155" stroke-width="6"/>
+        <circle cx="168" cy="126" r="22" fill="#111827" stroke="#475569" stroke-width="4"/>
+        <circle cx="168" cy="126" r="6" fill="#94a3b8"/>
+        <rect x="72" y="100" width="40" height="52" rx="8" fill="#0b1222" stroke="#334155" stroke-width="6"/>
+        <rect x="78" y="108" width="28" height="36" rx="6" fill="#111827" stroke="#475569" stroke-width="3"/>
+        <rect x="34" y="186" width="188" height="22" rx="8" fill="#0a0f1c" opacity=".6"/>
+      </svg>
+      <!-- Открытый сейф -->
+      <svg class="safe-img hidden" id="safeOpen" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Открытый сейф">
+        <rect x="28" y="36" width="200" height="180" rx="18" fill="#0e141f" stroke="#334155" stroke-width="6"/>
+        <rect x="40" y="50" width="176" height="152" rx="12" fill="#111827" stroke="#1f2937" stroke-width="4"/>
+        <path d="M56 60h40v136H56c-6.6 0-12-5.4-12-12V72c0-6.6 5.4-12 12-12Z" fill="#0b1222" stroke="#334155" stroke-width="6"/>
+        <circle cx="168" cy="126" r="36" fill="#0b1222" stroke="#334155" stroke-width="6"/>
+        <circle cx="168" cy="126" r="22" fill="#111827" stroke="#10b981" stroke-width="4"/>
+        <circle cx="168" cy="126" r="6" fill="#34d399"/>
+        <rect x="34" y="186" width="188" height="22" rx="8" fill="#0a0f1c" opacity=".6"/>
+        <path d="M108 92h24v68h-24z" fill="#10b981" opacity=".6"/>
+      </svg>
+    </div>
+
+    <div class="panel">
+      <div class="dials" id="dials" aria-label="Кодовый замок из четырёх цифр">
+        <!-- Dials will be generated by JS -->
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="open-btn" id="openBtn" type="button">Открыть</button>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <script>
+    // === НАСТРОЙКИ ===
+    // Задайте правильный код из 4 цифр ниже:
+    const PASSWORD = [1, 2, 3, 4];
+
+    // === ЛОГИКА ===
+    const dialsEl = document.getElementById('dials');
+    const openBtn = document.getElementById('openBtn');
+    const statusEl = document.getElementById('status');
+    const safeClosed = document.getElementById('safeClosed');
+    const safeOpen = document.getElementById('safeOpen');
+
+    let digits = [0, 0, 0, 0];
+
+    function renderDial(index) {
+      const wrap = document.createElement('div');
+      wrap.className = 'dial';
+      wrap.setAttribute('role', 'group');
+      wrap.setAttribute('aria-label', `Цифра ${index + 1}`);
+
+      const up = document.createElement('button');
+      up.type = 'button';
+      up.title = 'Увеличить';
+      up.setAttribute('aria-label', 'Увеличить');
+      up.innerHTML = chevUp();
+
+      const digit = document.createElement('div');
+      digit.className = 'digit';
+      digit.textContent = digits[index];
+
+      const down = document.createElement('button');
+      down.type = 'button';
+      down.title = 'Уменьшить';
+      down.setAttribute('aria-label', 'Уменьшить');
+      down.innerHTML = chevDown();
+
+      up.addEventListener('click', () => {
+        digits[index] = (digits[index] + 1) % 10;
+        digit.textContent = digits[index];
+      });
+      down.addEventListener('click', () => {
+        digits[index] = (digits[index] + 9) % 10; // wrap backwards
+        digit.textContent = digits[index];
+      });
+
+      // колёсико мыши
+      wrap.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (e.deltaY < 0) { // вверх
+          digits[index] = (digits[index] + 1) % 10;
+        } else {
+          digits[index] = (digits[index] + 9) % 10;
+        }
+        digit.textContent = digits[index];
+      }, { passive: false });
+
+      // клавиатура: стрелки
+      wrap.tabIndex = 0;
+      wrap.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp') { digits[index] = (digits[index] + 1) % 10; digit.textContent = digits[index]; e.preventDefault(); }
+        if (e.key === 'ArrowDown') { digits[index] = (digits[index] + 9) % 10; digit.textContent = digits[index]; e.preventDefault(); }
+      });
+
+      wrap.appendChild(up);
+      wrap.appendChild(digit);
+      wrap.appendChild(down);
+      return wrap;
+    }
+
+    function chevUp() {
+      return `<svg class="chev" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 14l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    }
+    function chevDown() {
+      return `<svg class="chev" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 10l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    }
+
+    // создать 4 крутилки
+    for (let i = 0; i < 4; i++) {
+      dialsEl.appendChild(renderDial(i));
+    }
+
+    function arraysEqual(a, b) {
+      return a.length === b.length && a.every((v, i) => v === b[i]);
+    }
+
+    function setStatus(msg, type) {
+      statusEl.textContent = msg || '';
+      statusEl.className = 'status' + (type ? ' ' + type : '');
+    }
+
+    function toggleSafe(open) {
+      if (open) {
+        safeClosed.classList.add('hidden');
+        safeOpen.classList.remove('hidden');
+      } else {
+        safeOpen.classList.add('hidden');
+        safeClosed.classList.remove('hidden');
+      }
+    }
+
+    openBtn.addEventListener('click', () => {
+      // блокируем кнопку на 4 секунды
+      openBtn.disabled = true;
+      const originalText = openBtn.textContent;
+      let t = 4;
+      openBtn.textContent = `Открываем… ${t}`;
+      setStatus('Проверяем код… подождите 4 секунды.', '');
+
+      const countdown = setInterval(() => {
+        t -= 1;
+        if (t > 0) openBtn.textContent = `Открываем… ${t}`;
+      }, 1000);
+
+      setTimeout(() => {
+        clearInterval(countdown);
+        openBtn.textContent = originalText;
+
+        if (arraysEqual(digits, PASSWORD)) {
+          toggleSafe(true);
+          setStatus('Верный код! Сейф открыт.', 'ok');
+          // опционально блокируем дальнейшие действия
+          openBtn.disabled = true;
+          Array.from(dialsEl.querySelectorAll('button')).forEach(b => b.disabled = true);
+          dialsEl.classList.remove('shake');
+        } else {
+          // ошибка
+          toggleSafe(false);
+          setStatus('Неверный код. Попробуйте ещё раз.', 'err');
+          dialsEl.classList.remove('shake');
+          void dialsEl.offsetWidth; // restart animation
+          dialsEl.classList.add('shake');
+          openBtn.disabled = false;
+        }
+      }, 4000);
+    });
+  </script>
+</body>
+</html>

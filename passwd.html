@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Проверка пароля</title>
+  <style>
+    body {
+        /*display: flex;*/
+        /*justify-content: center;*/
+        /*align-items: center;*/
+        /*height: 50vh;*/
+        /*margin: 0;*/
+        /*background-color: #f0f0f0;*/
+        /*font-family: Arial, sans-serif;*/
+    }
+
+    .container {
+        /*width: 370px;*/
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .input-group {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input {
+        padding: 15px 0px 15px 0px;
+        width: 100%;
+        font-size: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    button {
+        padding: 12px;
+        width: 100%;
+        font-size: 18px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .success {
+      color: #4CAF50;
+    }
+
+    #winImage {
+      display: none;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    .status {
+      min-height: 22px;
+      font-size: 14px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .status.ok { color: var(--accent); }
+    .status.err { color: var(--accent-2); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Изображение победы (поверх всего) -->
+    <img id="winImage" src="pazzle_qr3.png" width="100%" height="100%" alt="Win" />
+
+    <!-- Форма ввода (скроется при успехе) -->
+    <div class="input-group" id="inputSection">
+      <input type="password" id="passwordInput" placeholder="••••••" />
+
+      <div class="actions">
+          <button id="checkButton">Проверить</button>
+          <div class="status" id="status" role="status" aria-live="polite"></div>
+        </div>
+    </div>
+
+  </div>
+
+  <script>
+    const correctPassword = "12345";
+
+    const passwordInput = document.getElementById("passwordInput");
+    const checkButton = document.getElementById("checkButton");
+    const inputSection = document.getElementById("inputSection");
+    const messageElement = document.getElementById("message");
+    const winImage = document.getElementById("winImage");
+    const statusEl = document.getElementById('status');
+
+    function setStatus(msg, type) {
+      statusEl.textContent = msg || '';
+      statusEl.className = 'status' + (type ? ' ' + type : '');
+    }
+
+    function toggleBtn(open) {
+      if (open) {
+        checkButton.classList.add('hidden');
+        checkButton.classList.remove('hidden');
+      } else {
+        checkButton.classList.add('hidden');
+        checkButton.classList.remove('hidden');
+      }
+    }
+    function arraysEqual(a, b) {
+      return a.length === b.length && a.every((v, i) => v === b[i]);
+    }
+
+    checkButton.addEventListener('click', () => {
+      // блокируем кнопку на 4 секунды
+      checkButton.disabled = true;
+      const originalText = checkButton.textContent;
+      let t = 5;
+      checkButton.textContent = `Проверяем… ${t}`;
+      setStatus('Проверяем код… подождите 5 секунды.', '');
+
+      const countdown = setInterval(() => {
+        t -= 1;
+        if (t > 0) checkButton.textContent = `Проверяем… ${t}`;
+      }, 1000);
+
+      setTimeout(() => {
+        clearInterval(countdown);
+        checkButton.textContent = originalText;
+        if (passwordInput.value === correctPassword) {
+          toggleBtn(true);
+          setStatus('Верный код!', 'ok');
+          inputSection.style.display = "none";
+          winImage.style.display = "block";
+        } else {
+          toggleBtn(false);
+          setStatus('Неверный код. Попробуйте ещё раз.', 'err');
+          checkButton.disabled = false;
+        }
+      }, 5000);
+    });
+  </script>
+
+</body>
+</html>
