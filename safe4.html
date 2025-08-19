@@ -232,11 +232,11 @@
       down.innerHTML = chevDown();
 
       up.addEventListener('click', () => {
-        digits[index] = (digits[index] + 1) % 10;
+        digits[index] = (digits[index] + 1) % 31;
         digit.textContent = digits[index];
       });
       down.addEventListener('click', () => {
-        digits[index] = (digits[index] + 9) % 10; // wrap backwards
+        digits[index] = (digits[index] + 30) % 31; // wrap backwards
         digit.textContent = digits[index];
       });
 
@@ -244,9 +244,9 @@
       wrap.addEventListener('wheel', (e) => {
         e.preventDefault();
         if (e.deltaY < 0) { // вверх
-          digits[index] = (digits[index] + 1) % 10;
+          digits[index] = (digits[index] + 1) % 31;
         } else {
-          digits[index] = (digits[index] + 9) % 10;
+          digits[index] = (digits[index] + 30) % 31;
         }
         digit.textContent = digits[index];
       }, { passive: false });
@@ -254,8 +254,8 @@
       // клавиатура: стрелки
       wrap.tabIndex = 0;
       wrap.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowUp') { digits[index] = (digits[index] + 1) % 10; digit.textContent = digits[index]; e.preventDefault(); }
-        if (e.key === 'ArrowDown') { digits[index] = (digits[index] + 9) % 10; digit.textContent = digits[index]; e.preventDefault(); }
+        if (e.key === 'ArrowUp') { digits[index] = (digits[index] + 1) % 31; digit.textContent = digits[index]; e.preventDefault(); }
+        if (e.key === 'ArrowDown') { digits[index] = (digits[index] + 30) % 31; digit.textContent = digits[index]; e.preventDefault(); }
       });
 
       wrap.appendChild(up);
