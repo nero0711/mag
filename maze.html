@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Лабиринт</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #222;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .timer {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #0f0;
+    }
+
+    #container {
+      width: 350px;
+      height: 350px;
+      border: 4px solid #000;
+      position: relative;
+      background: #000;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #win-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+      z-index: 10;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      grid-template-rows: repeat(3, 60px);
+      gap: 5px;
+    }
+
+    .btn {
+      width: 60px;
+      height: 60px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border: 2px solid #fff;
+      color: white;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+
+    .btn:active {
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-up { grid-column: 2; grid-row: 1; }
+    .btn-left { grid-column: 1; grid-row: 2; }
+    .btn-right { grid-column: 3; grid-row: 2; }
+    .btn-down { grid-column: 2; grid-row: 3; }
+
+    .instructions {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      font-size: 12px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Лабиринт</h1>
+  <div class="timer">Время: <span id="time">5:00</span></div>
+
+  <div id="container">
+    <canvas id="maze" width="350" height="350"></canvas>
+    <img id="win-image" src="source_qr.png" alt="Победа!" />
+    <div class="instructions"></div>
+  </div>
+
+  <div class="controls">
+    <div class="btn btn-up" id="up">↑</div>
+    <div class="btn btn-left" id="left">←</div>
+    <div class="btn btn-right" id="right">→</div>
+    <div class="btn btn-down" id="down">↓</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('maze');
+    const ctx = canvas.getContext('2d');
+    const winImage = document.getElementById('win-image');
+    const timeDisplay = document.getElementById('time');
+
+    // Новые размеры
+    const CELL_SIZE = 20;
+    const COLS = Math.floor(canvas.width / CELL_SIZE); // 17
+    const ROWS = Math.floor(canvas.height / CELL_SIZE); // 17
+
+    let grid = [];
+    let player = { x: 1, y: 1 };
+    let exit = { x: COLS - 2, y: ROWS - 2 };
+    let gameWon = false;
+
+    // === Класс Cell ===
+    class Cell {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.walls = {
+          top: true,
+          right: true,
+          bottom: true,
+          left: true
+        };
+        this.visited = false;
+      }
+
+      draw() {
+        const x = this.x * CELL_SIZE;
+        const y = this.y * CELL_SIZE;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+
+        if (this.walls.top) {
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + CELL_SIZE, y);
+          ctx.stroke();
+        }
+        if (this.walls.right) {
+          ctx.beginPath();
+          ctx.moveTo(x + CELL_SIZE, y);
+          ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+          ctx.stroke();
+        }
+        if (this.walls.bottom) {
+          ctx.beginPath();
+          ctx.moveTo(x + CELL_SIZE, y + CELL_SIZE);
+          ctx.lineTo(x, y + CELL_SIZE);
+          ctx.stroke();
+        }
+        if (this.walls.left) {
+          ctx.beginPath();
+          ctx.moveTo(x, y + CELL_SIZE);
+          ctx.lineTo(x, y);
+          ctx.stroke();
+        }
+
+        if (this.visited) {
+          ctx.fillStyle = 'rgba(31,135,206,0.38)';
+          ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+        }
+      }
+
+      getNeighbors(grid) {
+        const neighbors = [];
+        const dirs = [
+          { dx: -1, dy: 0, wall: 'left', opp: 'right' },
+          { dx: 1, dy: 0, wall: 'right', opp: 'left' },
+          { dx: 0, dy: -1, wall: 'top', opp: 'bottom' },
+          { dx: 0, dy: 1, wall: 'bottom', opp: 'top' }
+        ];
+
+        for (const dir of dirs) {
+          const nx = this.x + dir.dx;
+          const ny = this.y + dir.dy;
+          if (nx >= 0 && ny >= 0 && nx < COLS && ny < ROWS && !grid[ny][nx].visited) {
+            neighbors.push({ cell: grid[ny][nx], wall: dir.wall, opposite: dir.opp });
+          }
+        }
+        return neighbors;
+      }
+    }
+
+    function setupGrid() {
+      grid = [];
+      for (let y = 0; y < ROWS; y++) {
+        const row = [];
+        for (let x = 0; x < COLS; x++) {
+          row.push(new Cell(x, y));
+        }
+        grid.push(row);
+      }
+    }
+
+    function generateMaze() {
+      setupGrid();
+
+      const stack = [];
+      let current = grid[0][0];
+      current.visited = true;
+
+      while (true) {
+        const neighbors = current.getNeighbors(grid);
+
+        if (neighbors.length > 0) {
+          const r = Math.floor(Math.random() * neighbors.length);
+          const { cell: next, wall, opposite } = neighbors[r];
+
+          current.walls[wall] = false;
+          next.walls[opposite] = false;
+
+          stack.push(current);
+          current = next;
+          current.visited = true;
+        } else if (stack.length > 0) {
+          current = stack.pop();
+        } else {
+          break;
+        }
+      }
+
+      // Открываем выход
+      grid[exit.y][exit.x].walls.bottom = false;
+    }
+
+    function drawMaze() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+          grid[y][x].draw();
+        }
+      }
+
+      // Игрок
+      const px = player.x * CELL_SIZE + CELL_SIZE / 2;
+      const py = player.y * CELL_SIZE + CELL_SIZE / 2;
+      ctx.font = `${CELL_SIZE -7 }px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = 'red';
+      ctx.beginPath();
+      ctx.arc(px, py, CELL_SIZE / 3, 0, Math.PI * 2);
+      ctx.fillText('😄', px, py);
+
+      // Выход
+      const ex = exit.x * CELL_SIZE + CELL_SIZE / 2;
+      const ey = exit.y * CELL_SIZE + CELL_SIZE / 2;
+      //ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+      //ctx.fillRect(exit.x * CELL_SIZE, exit.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+      ctx.fillText('🚪', ex, ey);
+    }
+
+    function canMoveTo(newX, newY) {
+      if (newX < 0 || newY < 0 || newX >= COLS || newY >= ROWS) return false;
+
+      if (newX < player.x) return !grid[player.y][player.x].walls.left;
+      if (newX > player.x) return !grid[player.y][player.x].walls.right;
+      if (newY < player.y) return !grid[player.y][player.x].walls.top;
+      if (newY > player.y) return !grid[player.y][player.x].walls.bottom;
+
+      return false;
+    }
+
+    function movePlayer(dx, dy) {
+      if (gameWon) return;
+
+      const newX = player.x + dx;
+      const newY = player.y + dy;
+
+      if (canMoveTo(newX, newY)) {
+        player.x = newX;
+        player.y = newY;
+        drawMaze();
+
+        if (player.x === exit.x && player.y === exit.y) {
+          gameWon = true;
+          winImage.style.display = 'block';
+          // stopTimer(); // Останавливаем таймер при победе
+        }
+      }
+    }
+
+    let timeLeft = 2 * 60;
+    let timerInterval;
+
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      timeDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+
+    function startTimer() {
+      updateTimer();
+      timerInterval = setInterval(() => {
+        timeLeft--;
+
+        if (timeLeft <= 0) {
+          stopTimer();
+          setTimeout(() => {
+            location.reload(); // Обновляем страницу — новый лабиринт
+          }, 500);
+        } else {
+          updateTimer();
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+    }
+
+    // Управление с клавиатуры
+    document.addEventListener('keydown', (e) => {
+      if (gameWon) return;
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          movePlayer(0, -1);
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          movePlayer(0, 1);
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          movePlayer(-1, 0);
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          movePlayer(1, 0);
+          break;
+      }
+    });
+
+    // Сенсорные кнопки
+    document.getElementById('up').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      movePlayer(0, -1);
+    });
+    document.getElementById('down').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      movePlayer(0, 1);
+    });
+    document.getElementById('left').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      movePlayer(-1, 0);
+    });
+    document.getElementById('right').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      movePlayer(1, 0);
+    });
+
+    // Клики (для ПК)
+    document.getElementById('up').addEventListener('click', () => movePlayer(0, -1));
+    document.getElementById('down').addEventListener('click', () => movePlayer(0, 1));
+    document.getElementById('left').addEventListener('click', () => movePlayer(-1, 0));
+    document.getElementById('right').addEventListener('click', () => movePlayer(1, 0));
+
+    // Запуск игры
+    window.onload = () => {
+      generateMaze();
+      drawMaze();
+      startTimer();
+    };
+  </script>
+</body>
+</html>
