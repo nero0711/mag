@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Чекер</title>
   <style>
+    :root {
+      --w: 370px;
+      --h: 600px;
+      --bg: #0f172a;         /* slate-900 */
+      --panel: #111827;      /* gray-900 */
+      --muted: #64748b;      /* slate-500 */
+      --text: #e5e7eb;       /* gray-200 */
+      --accent: #22c55e;     /* green-500 */
+      --accent-2: #ef4444;   /* red-500 */
+      --border: #1f2937;     /* gray-800 */
+      --btn: #334155;        /* slate-700 */
+      --btn-hover: #475569;  /* slate-600 */
+    }
     body {
         /*display: flex;*/
         /*justify-content: center;*/
@@ -34,7 +47,6 @@
     .input-group {
       width: 100%;
       text-align: center;
-      margin-bottom: 20px;
     }
 
     input {
@@ -84,7 +96,13 @@
       color: var(--muted);
       text-align: center;
     }
-
+    .title_dev {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0px 0px 20px 0px;
+        justify-content: center;
+        display: flex;
+    }
     .status.ok { color: var(--accent); }
     .status.err { color: var(--accent-2); }
   </style>
@@ -92,14 +110,10 @@
 <body>
 
   <div class="container">
-    <!-- Изображение победы (поверх всего) -->
-    <img id="winImage" src="https://nero0711.github.io/mag/pazzle_qr3.png" width="100%" height="100%" alt="Win" />
-
-    <!-- Форма ввода (скроется при успехе) -->
+    <img id="winImage" src="" width="100%" height="100%" alt="Win" />
     <div class="input-group" id="inputSection">
-      <div>Чекер</div>
-      <input type="password" id="passwordInput" placeholder="••••••" />
-
+      <div class="title_dev" > 🪪 &nbsp;&nbsp;Чекер</div>
+      <input type="password" id="passwordInput" placeholder="введите код" />
       <div class="actions">
           <button id="checkButton">Проверить</button>
           <div class="status" id="status" role="status" aria-live="polite"></div>
@@ -109,7 +123,7 @@
   </div>
 
   <script>
-    const correctPassword = "12345";
+    // const correctPassword = "12345";
 
     const passwordInput = document.getElementById("passwordInput");
     const checkButton = document.getElementById("checkButton");
@@ -137,12 +151,11 @@
     }
 
     checkButton.addEventListener('click', () => {
-      // блокируем кнопку на 4 секунды
       checkButton.disabled = true;
       const originalText = checkButton.textContent;
       let t = 5;
       checkButton.textContent = `Проверяем… ${t}`;
-      setStatus('Проверяем код… подождите 5 секунды.', '');
+      setStatus('Проверяем код… подождите '+ t +' секунд.', '');
 
       const countdown = setInterval(() => {
         t -= 1;
@@ -152,12 +165,26 @@
       setTimeout(() => {
         clearInterval(countdown);
         checkButton.textContent = originalText;
-        if (passwordInput.value === correctPassword) {
+        if (passwordInput.value === '123') {
           toggleBtn(true);
           setStatus('Верный код!', 'ok');
           inputSection.style.display = "none";
+          winImage.src = 'pazzle_qr3.png'
           winImage.style.display = "block";
-        } else {
+        } else if (passwordInput.value === '1234') {
+          toggleBtn(true);
+          setStatus('Верный код!', 'ok');
+          inputSection.style.display = "none";
+          winImage.src = 'source_qr.png'
+          winImage.style.display = "block";
+        } else if (passwordInput.value === '12345') {
+          toggleBtn(true);
+          setStatus('Верный код!', 'ok');
+          inputSection.style.display = "none";
+          winImage.src = 'source_qr__.png'
+          winImage.style.display = "block";
+        }
+        else {
           toggleBtn(false);
           setStatus('Неверный код. Попробуйте ещё раз.', 'err');
           checkButton.disabled = false;

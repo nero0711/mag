@@ -153,6 +153,13 @@
       30%, 50%, 70% { transform: translateX(-4px); }
       40%, 60% { transform: translateX(4px); }
     }
+    .title_dev {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 20px 0px 0px 0px;
+        justify-content: center;
+        display: flex;
+    }
     .shake { animation: shake .4s linear; }
   </style>
 </head>
@@ -161,6 +168,7 @@
 
       <div id="safe-viewport" class="safe-viewport">
         <!-- Закрытый сейф -->
+        <div class="title_dev" > 🎛 &nbsp;&nbsp;Сейф</div>
         <svg class="safe-img" id="safeClosed" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Закрытый сейф">
           <rect x="28" y="36" width="200" height="180" rx="18" fill="#0e141f" stroke="#334155" stroke-width="6"/>
           <rect x="40" y="50" width="176" height="152" rx="12" fill="#111827" stroke="#1f2937" stroke-width="4"/>

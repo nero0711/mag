@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Викторина</title>
+  <title>Кроссворд</title>
   <style>
     :root {
       --w: 370px;
@@ -33,7 +33,6 @@
       height: 600px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      padding: 20px;
       background-color: white;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       display: flex;
@@ -42,8 +41,8 @@
     }
 
     .image {
-      width: 350px;
-      height: 350px;
+      width: 300px;
+      height: 300px;
       margin-bottom: 15px;
       object-fit: cover;
       border-radius: 4px;
@@ -56,29 +55,31 @@
     }
 
     label {
-      font-size: 18px;
+      font-size: 12px;
       margin-bottom: 10px;
       text-align: center;
       color: #333;
     }
 
     input {
-      width: 90%;
+      width: 278px;
       padding: 10px;
       margin-bottom: 15px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 10px;
       font-size: 16px;
     }
 
     button {
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      cursor: pointer;
+        padding: 10px;
+        width: 300px;
+        font-size: 16px;
+        background-color: #1f87ce;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
     }
 
     button:disabled {
@@ -95,7 +96,7 @@
     .title_dev {
         font-size: 20px;
         font-weight: 700;
-        margin: 0px 0px 20px 0px;
+        margin: 20px 0px 20px 0px;
         justify-content: center;
         display: flex;
     }
@@ -105,12 +106,12 @@
 
   <div class="container">
     <div class="title_dev">🗂 &nbsp;&nbsp;Кроссворд</div>
-    <img src="img0.png" alt="Start image" class="image" id="questionImage" />
-    <div class="progress" id="progressBar"></div>
-    <label for="answerInput" id="questionLabel"></label>
-    <input type="text" id="answerInput" placeholder="Введите ваш ответ" />
-    <button id="submitBtn">Отправить</button>
-    <div class="status" id="status"></div>
+    <img src="start.png" alt="Start image" class="image" id="questionImage" />
+        <div class="progress" id="progressBar"></div>
+        <label for="answerInput" id="questionLabel"></label>
+        <input type="text" id="answerInput" placeholder=" Введите ваш ответ" />
+        <button id="submitBtn">Отправить</button>
+        <div class="status" id="status"></div>
   </div>
 
   <script>

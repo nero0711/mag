@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>pazzle</title>
+  <title>PNG → плитки по зелёным разделителям (0,255,0) + DnD swap</title>
   <style>
     :root {
       --bg: #0b1020;
@@ -77,24 +77,28 @@
       color: var(--muted);
       font-size: 13px;
     }
-
+    .title_dev {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 20px 0px 0px 0px;
+        justify-content: center;
+        display: flex;
+    }
     .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #0f172a; border: 1px solid #1f2a4a; color: #a5b4fc; font-variant-numeric: tabular-nums; }
   </style>
 </head>
 <body>
-
-  <label id="dropzone" class="dropzone" tabindex="0">
-    <div id="container">
-      <h2>Нажмите для загрузки PNG</h2>
-    </div>
-    <input id="fileInput" type="file"  hidden />
-
-    <div class="hint" id="hint"></div>
-
-    <div id="gridWrap">
-      <div id="grid" aria-label="Пазл"></div>
-    </div>
-  </label>
+    <div class="title_dev" > 📲&nbsp;&nbsp;Собиратор</div>
+    <label id="dropzone" class="dropzone" tabindex="0">
+        <div id="container">
+          <h2>Нажмите для загрузки PNG</h2>
+        </div>
+        <input id="fileInput" type="file" accept="image/png" hidden />
+        <div class="hint" id="hint"></div>
+        <div id="gridWrap">
+          <div id="grid" aria-label="Пазл"></div>
+        </div>
+    </label>
 
 <script>
 (() => {
@@ -122,7 +126,7 @@
   }
 
   async function handleFile(file) {
-    // if (file.type !== 'image/png') { errorMsg('Пожалуйста, выберите PNG-файл.'); return; }
+    if (file.type !== 'image/png') { errorMsg('Пожалуйста, выберите PNG-файл.'); return; }
     const url = URL.createObjectURL(file);
     try {
       const img = await loadImage(url);
