@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Викторина</title>
+  <style>
+    :root {
+      --w: 370px;
+      --h: 600px;
+      --bg: #0f172a;         /* slate-900 */
+      --panel: #111827;      /* gray-900 */
+      --muted: #64748b;      /* slate-500 */
+      --text: #e5e7eb;       /* gray-200 */
+      --accent: #22c55e;     /* green-500 */
+      --accent-2: #ef4444;   /* red-500 */
+      --border: #1f2937;     /* gray-800 */
+      --btn: #334155;        /* slate-700 */
+      --btn-hover: #475569;  /* slate-600 */
+    }
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      width: 370px;
+      height: 600px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 20px;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .image {
+      width: 350px;
+      height: 350px;
+      margin-bottom: 15px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .progress {
+      margin-bottom: 15px;
+      font-size: 24px;
+      letter-spacing: 5px;
+    }
+
+    label {
+      font-size: 18px;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #333;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #d9534f;
+      height: 20px;
+    }
+    .title_dev {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0px 0px 20px 0px;
+        justify-content: center;
+        display: flex;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="title_dev">🗂 &nbsp;&nbsp;Название</div>
+    <img src="start.png" alt="Start image" class="image" id="questionImage" />
+    <div class="progress" id="progressBar"></div>
+    <label for="answerInput" id="questionLabel"></label>
+    <input type="text" id="answerInput" placeholder="Введите ваш ответ" />
+    <button id="submitBtn">Отправить</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <script>
+    // Массив вопросов, ответов и изображений
+    const questions = [
+      { question: 'Какой цвет у неба?', answer: 'голубой', img: 'img1.png' },
+      { question: 'Сколько будет 2+2?', answer: '4', img: 'img2.png' },
+      { question: 'Как зовут президента России?', answer: 'владимир', img: 'img3.png' },
+      { question: 'Какой газ необходим для дыхания?', answer: 'кислород', img: 'img4.png' }
+    ];
+
+    let currentQuestionIndex = 0;
+    let isCooldown = false;
+    const progressBar = document.getElementById('progressBar');
+
+    const imgElement = document.getElementById('questionImage');
+    const labelElement = document.getElementById('questionLabel');
+    const inputElement = document.getElementById('answerInput');
+    const buttonElement = document.getElementById('submitBtn');
+    const statusElement = document.getElementById('status');
+
+    // Создаём шкалу прогресса (все пустые изначально)
+    function updateProgressBar() {
+      const filled = currentQuestionIndex; // сколько уже пройдено
+      const total = questions.length;
+      const progress = Array(total).fill('⬜️');
+      for (let i = 0; i < filled; i++) {
+        progress[i] = '🟩';
+      }
+      progressBar.textContent = progress.join('');
+    }
+
+    // Показываем текущий вопрос
+    function showCurrentQuestion() {
+      labelElement.textContent = questions[currentQuestionIndex].question;
+      inputElement.value = '';
+      statusElement.textContent = '';
+      updateProgressBar();
+    }
+
+    // Инициализация
+    updateProgressBar();
+    showCurrentQuestion();
+
+    // Обработчик кнопки
+    buttonElement.addEventListener('click', function () {
+      if (isCooldown) return;
+
+      const userAnswer = inputElement.value.trim().toLowerCase();
+      const correctAnswer = questions[currentQuestionIndex].answer.toLowerCase();
+
+      // Блокируем всё на 10 секунд
+      inputElement.disabled = true;
+      buttonElement.disabled = true;
+      isCooldown = true;
+
+      let timeLeft = 10;
+      buttonElement.textContent = `Ждите: ${timeLeft}`;
+
+      const timer = setInterval(() => {
+        timeLeft--;
+        buttonElement.textContent = `Ждите: ${timeLeft}`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          buttonElement.textContent = 'Отправить';
+          inputElement.disabled = false;
+          buttonElement.disabled = false;
+          isCooldown = false;
+
+          if (userAnswer === correctAnswer) {
+            statusElement.textContent = '';
+
+            imgElement.src = questions[currentQuestionIndex].img;
+              currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+              showCurrentQuestion();
+            } else {
+              labelElement.textContent = 'Поздравляем! Все вопросы пройдены!';
+              inputElement.style.display = 'none';
+              buttonElement.style.display = 'none';
+              updateProgressBar();
+            }
+          } else {
+            statusElement.textContent = 'Неправильно!';
+            inputElement.value = ''; // очищаем для повторного ввода
+          }
+        }
+      }, 1000);
+    });
+  </script>
+
+</body>
+</html>
