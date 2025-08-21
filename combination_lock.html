@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Крутилки — потенциометры</title>
+  <style>
+    :root{
+      --box-w: 370px;
+      --box-h: 600px;
+      --knob-size: 100px;
+      --gap: 20px;
+      --accent: #4f46e5;
+      --bg: #0f172a;
+      --surface: #0b1224;
+      --muted: #94a3b8;
+    }
+    body{
+      margin:0;display:grid;place-items:center;height:100vh;
+      background:radial-gradient(1200px 600px at 50% -200px,#18213f,#0a0f1f 60%,#060912);
+      font-family: system-ui, sans-serif; color:#e5e7eb;
+    }
+    .frame{
+      width:var(--box-w); height:var(--box-h); background:#0b1428;
+      border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,.45);
+      padding:16px; display:flex; flex-direction:column; gap:12px; position:relative; overflow:hidden;
+    }
+    header{display:flex; justify-content:space-between; align-items:center}
+    .title{font-weight:800; letter-spacing:.3px}
+    .timer{font-variant-numeric: tabular-nums; font-weight:700; padding:6px 10px; border-radius:10px; background:#0a1226; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);}
+
+    .dials{display:grid; grid-template-columns: repeat(3,1fr); gap:var(--gap); place-items:center; margin-top:8px}
+    .dial{display:flex; flex-direction:column; align-items:center; gap:6px;}
+    .display{
+      width:42px; height:28px; border-radius:6px; background:#111827;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800; font-size:16px; color:#e5e7eb;
+      box-shadow: inset 0 0 4px rgba(0,0,0,.6);
+    }
+    .knob{
+      width:var(--knob-size); height:var(--knob-size);
+      border-radius:50%; background:#1e293b;
+      position:relative; cursor:grab; touch-action:none;
+      box-shadow:inset -4px -4px 6px rgba(255,255,255,.05), inset 4px 4px 6px rgba(0,0,0,.6);
+      transition: box-shadow .2s;
+    }
+    .knob:active{cursor:grabbing;}
+    .pointer{
+      position:absolute; top:8px; left:50%; width:4px; height:20px;
+      background:var(--accent); border-radius:2px;
+      transform:translateX(-50%);
+    }
+    .knob.ok{ box-shadow: 0 0 0 2px var(--accent), inset -4px -4px 6px rgba(255,255,255,.05), inset 4px 4px 6px rgba(0,0,0,.6); }
+
+    .win-overlay{ position:absolute; inset:0; display:none; place-items:center; background:rgba(2,6,23,.85);}
+    .win-overlay.show{ display:grid; }
+    .prize{ width:350px; height:350px; border-radius:16px; object-fit:cover; }
+  </style>
+</head>
+<body>
+<div class="frame" id="game">
+  <header>
+    <div class="title">Крутилки</div>
+    <div class="timer" id="timer">05:00</div>
+  </header>
+
+  <div class="dials" id="dials"></div>
+
+  <div class="win-overlay" id="win">
+    <div>
+      <h2>Победа 🎉</h2>
+      <img class="prize" id="prize" alt="Приз" />
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const params = new URLSearchParams(location.search);
+  const clamp = (v,min,max)=> Math.max(min, Math.min(max, v));
+  const DIALS = clamp(parseInt(params.get('n')||'6',10)||6, 6, 9);
+  const IMAGE_URL = params.get('img') || 'data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 350"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><rect width="350" height="350" rx="24" fill="url(#g)"/><g fill="#fff" font-family="Verdana" text-anchor="middle"><text x="175" y="140" font-size="28" opacity=".9">ПРИЗ</text><text x="175" y="190" font-size="18" opacity=".9">?img=ваша_картинка</text></g></svg>`);
+  const TOTAL_SECONDS = 5*60;
+
+  const state = {
+    secret: [],     // целевые цифры
+    values: [],     // текущие цифры (0–9)
+    angles: [],     // текущие углы каждой ручки (в градусах)
+    dragging: null, // { i, startAngle, downAngle }
+    secondsLeft: TOTAL_SECONDS,
+    locked: false
+  };
+
+  const el = {
+    dials: document.getElementById('dials'),
+    timer: document.getElementById('timer'),
+    win: document.getElementById('win'),
+    prize: document.getElementById('prize')
+  };
+
+  // ===== Таймер =====
+  function pad(n){ return (n<10?'0':'')+n }
+  function updateTimer(){
+    const m = Math.floor(state.secondsLeft/60), s = state.secondsLeft%60;
+    el.timer.textContent = pad(m)+":"+pad(s);
+    if (state.secondsLeft === 0) location.reload();
+  }
+
+  function randDigit(){ return Math.floor(Math.random()*10) }
+
+  // Нормализуем угол к [0,360)
+  function norm360(a){ return ((a%360)+360)%360 }
+  // Разница углов в интервале (-180,180]
+  function angDiff(a,b){ let d = a-b; d = ((d+180)%360)-180; return d; }
+  // Преобразуем угол → цифра 0–9
+  function angleToDigit(angle){
+    const n = norm360(angle);
+    return Math.round(n/36) % 10; // 360/10 = 36° на цифру
+  }
+
+  function updateDialUI(i){
+    const wrap = el.dials.children[i];
+    const knob = wrap.querySelector('.knob');
+    const disp = wrap.querySelector('.display');
+    knob.style.transform = `rotate(${state.angles[i]}deg)`;
+    disp.textContent = state.values[i];
+  }
+
+  function updateDialOK(i){
+    const knob = el.dials.children[i].querySelector('.knob');
+    if (state.values[i] === state.secret[i]) knob.classList.add('ok');
+    else knob.classList.remove('ok');
+  }
+
+  function setAngle(i, angle){
+    state.angles[i] = angle;
+    state.values[i] = angleToDigit(angle);
+    updateDialUI(i);
+  }
+
+  function createDial(i){
+    const wrap = document.createElement('div'); wrap.className='dial';
+    const disp = document.createElement('div'); disp.className='display'; disp.textContent='0';
+    const knob = document.createElement('div'); knob.className='knob'; knob.dataset.index=i;
+    const ptr = document.createElement('div'); ptr.className='pointer'; knob.appendChild(ptr);
+    wrap.appendChild(disp); wrap.appendChild(knob);
+
+    knob.addEventListener('pointerdown', (e)=>{
+      if (state.locked) return;
+      e.preventDefault(); knob.setPointerCapture(e.pointerId);
+      const r = knob.getBoundingClientRect();
+      const cx = r.left + r.width/2, cy = r.top + r.height/2;
+      const downAngle = Math.atan2(e.clientY - cy, e.clientX - cx) * 180/Math.PI;
+      state.dragging = { i, startAngle: state.angles[i], downAngle };
+    });
+
+    knob.addEventListener('pointermove', (e)=>{
+      const g = state.dragging; if (!g || g.i!==i || state.locked) return;
+      const r = knob.getBoundingClientRect();
+      const cx = r.left + r.width/2, cy = r.top + r.height/2;
+      const cur = Math.atan2(e.clientY - cy, e.clientX - cx) * 180/Math.PI;
+      const delta = angDiff(cur, g.downAngle);
+      setAngle(i, g.startAngle + delta);
+    });
+
+    knob.addEventListener('pointerup', ()=>{
+      if (state.locked) return;
+      validateDial(i);
+      state.dragging = null;
+    });
+
+    return wrap;
+  }
+
+  function validateDial(i){
+    if (state.values[i] === state.secret[i]){
+      updateDialOK(i);
+      checkWin();
+    } else {
+      resetAll();
+    }
+  }
+
+  function resetAll(){
+    for (let i=0;i<DIALS;i++){
+      state.values[i]=0; state.angles[i]=0;
+      const wrap = el.dials.children[i];
+      wrap.querySelector('.knob').style.transform='rotate(0deg)';
+      wrap.querySelector('.display').textContent='0';
+      wrap.querySelector('.knob').classList.remove('ok');
+    }
+  }
+
+  function checkWin(){
+    if (state.values.every((v,i)=> v===state.secret[i])){
+      state.locked = true; showWin();
+    }
+  }
+
+  function showWin(){
+    el.prize.src = IMAGE_URL; el.win.classList.add('show');
+  }
+
+  function init(){
+    state.secret = Array.from({length:DIALS}, randDigit);
+    state.values = Array.from({length:DIALS}, ()=>0);
+    state.angles = Array.from({length:DIALS}, ()=>0);
+
+    el.dials.innerHTML='';
+    for (let i=0;i<DIALS;i++){
+      el.dials.appendChild(createDial(i));
+      updateDialUI(i); // выставим визуально в 0
+      // умышленно не помечаем ok на старте, даже если секрет=0 — игрок должен «подтвердить» поворотом
+    }
+
+    state.secondsLeft = TOTAL_SECONDS; updateTimer();
+    setInterval(()=>{ if(!state.locked){ state.secondsLeft=Math.max(0,state.secondsLeft-1); updateTimer(); } }, 1000);
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
