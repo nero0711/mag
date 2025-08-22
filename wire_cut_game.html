@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Игра с проводами</title>
+<style>
+  body { display:flex; justify-content:center; align-items:center; height:100vh; background:#111; color:white; font-family:monospace; }
+  #game { width:370px; height:650px; background:#222; border-radius:10px; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; position:relative; }
+  #timers { display:flex; justify-content:space-between; width:100%; margin-bottom:10px; font-size:15px; font-weight:bold; font-family:'Courier New', monospace; }
+  .nixie { color:#f80; text-shadow:0 0 5px #f80, 0 0 15px #f40, 0 0 25px #f00; letter-spacing:2px; }
+  #board { width:350px; height:400px; background:#333; margin-bottom:10px; position:relative; display:flex; justify-content:center; align-items:center; }
+  #buttons { position:absolute; top:0; width:100%; height:100%; pointer-events:none; }
+  .cut-btn { width:10px; height:10px; background:linear-gradient(to bottom,#f44,#800); border:none; border-radius:10%; box-shadow:0 2px #400; cursor:pointer; pointer-events:auto; }
+  .cut-btn:active { transform:translateY(1px); box-shadow:0 1px #200; }
+  svg { width:100%; height:100%; }
+  #qrImage { position:absolute; width:200px; height:200px; display:none; }
+  #message { position:absolute; top:45%; left:50%; transform:translate(-50%,-50%); font-size:22px; font-weight:bold; opacity:0; transition:opacity 0.5s; }
+  #legend { margin-top:10px; font-size:14px; text-align:left; width:100%; }
+</style>
+</head>
+<body>
+<div id="game">
+  <div id="timers">
+    <div class="nixie">Просмотр: [<span id="winTimer">05:00</span>]</div>
+    <div class="nixie">Игра: [<span id="gameTimer">05:00</span>]</div>
+  </div>
+  <div id="board">
+    <svg id="wires"></svg>
+    <div id="buttons"></div>
+    <img id="qrImage" src="source_qr.png" alt="QR">
+  </div>
+  <div id="message"></div>
+  <div id="legend"></div>
+</div>
+<script>
+const winTimerEl = document.getElementById("winTimer");
+const gameTimerEl = document.getElementById("gameTimer");
+const wiresSvg = document.getElementById("wires");
+const buttons = document.getElementById("buttons");
+const qrImage = document.getElementById("qrImage");
+const messageEl = document.getElementById("message");
+const legendEl = document.getElementById("legend");
+const WIRE_COUNT = 15;
+const WIRE_DISTRIBUTION = {
+  nothing: 0.3,
+  plus: 0.3,
+  stop: 0.2,
+  minus: 0.2
+};
+let winTime = 300;
+let gameTime = 300;
+let winInterval, gameInterval;
+let winTimerActive = true;
+
+function formatTime(sec){
+  let m = Math.floor(sec/60);
+  let s = sec%60;
+  return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+function showMessage(text,color){
+  messageEl.textContent = text;
+  messageEl.style.color = color;
+  messageEl.style.opacity = 1;
+  setTimeout(()=>{ messageEl.style.opacity = 0; },1500);
+}
+
+function startTimers(){
+  winInterval = setInterval(()=>{
+    if(winTimerActive){
+      winTime--;
+      if(winTime<=0){
+        clearInterval(winInterval);
+        qrImage.style.display = "block";
+      }
+      winTimerEl.textContent = formatTime(winTime);
+    }
+  },1000);
+
+  gameInterval = setInterval(()=>{
+    gameTime--;
+    if(gameTime<=0){location.reload();}
+    gameTimerEl.textContent = formatTime(gameTime);
+  },1000);
+}
+
+function generateWires(){
+  let actions = [];
+  let counts = {nothing:0, plus:0, stop:0, minus:0};
+  for(let i=0;i<WIRE_COUNT;i++){
+    let r = Math.random();
+    if(r < WIRE_DISTRIBUTION.nothing) { actions.push("nothing"); counts.nothing++; }
+    else if(r < WIRE_DISTRIBUTION.nothing + WIRE_DISTRIBUTION.plus) { actions.push("plus"); counts.plus++; }
+    else if(r < WIRE_DISTRIBUTION.nothing + WIRE_DISTRIBUTION.plus + WIRE_DISTRIBUTION.stop) { actions.push("stop"); counts.stop++; }
+    else { actions.push("minus"); counts.minus++; }
+  }
+
+  let gap = 350/(WIRE_COUNT+1);
+  let positionsTop = [], positionsBot = [];
+  for(let i=0;i<WIRE_COUNT;i++){
+    positionsTop.push((i+1)*gap);
+    positionsBot.push((i+1)*gap);
+  }
+
+  positionsBot.sort(()=>Math.random()-0.5);
+
+  for(let i=0;i<WIRE_COUNT;i++){
+    let x1 = positionsTop[i];
+    let x2 = positionsBot[i];
+    let color = `hsl(${Math.random()*360},100%,50%)`;
+
+    let topRect = document.createElementNS("http://www.w3.org/2000/svg","rect");
+    topRect.setAttribute("x",x1-7);
+    topRect.setAttribute("y",0);
+    topRect.setAttribute("width",14);
+    topRect.setAttribute("height",20);
+    topRect.setAttribute("fill","#999");
+    wiresSvg.appendChild(topRect);
+
+    let botRect = document.createElementNS("http://www.w3.org/2000/svg","rect");
+    botRect.setAttribute("x",x2-7);
+    botRect.setAttribute("y",380);
+    botRect.setAttribute("width",14);
+    botRect.setAttribute("height",20);
+    botRect.setAttribute("fill","#999");
+    wiresSvg.appendChild(botRect);
+
+    let line = document.createElementNS("http://www.w3.org/2000/svg","line");
+    line.setAttribute("x1",x1);
+    line.setAttribute("y1",20);
+    line.setAttribute("x2",x2);
+    line.setAttribute("y2",380);
+    line.setAttribute("stroke",color);
+    line.setAttribute("stroke-width",3);
+    line.dataset.action = actions[i];
+    wiresSvg.appendChild(line);
+
+    let btn = document.createElement("button");
+    btn.className = "cut-btn";
+    btn.style.position = "absolute";
+    btn.style.left = (x2-5)+"px";
+    btn.style.top = "388px";
+    btn.onclick = ()=>cutWire(line, btn, x1, x2, color);
+    buttons.appendChild(btn);
+  }
+
+  // легенда
+  legendEl.innerHTML = `
+    <div  style="color: #777779">Нажимая на красные кнопочки вы разрезаете провода, есть 4 типа проводов:
+        <ul>
+        <li style="color: #D9008DFF"> [${counts.stop}] останавливает таймер</li>
+        <li style="color: #ffa600">[${counts.plus}] +30 секунд</li>
+        <li style="color: #777779">[${counts.nothing}] без эффекта</li>
+        <li style="color: #0a9b0a">[${counts.minus}] -30 секунд</li>
+        </ul>
+        Задача уменьшить таймер "Просмотр", что бы увидеть код.
+    </div>
+  `;
+}
+
+function cutWire(line, btn, x1, x2, color){
+  if(line.classList.contains("wire-cut")) return;
+  line.remove();
+
+  let topSeg = document.createElementNS("http://www.w3.org/2000/svg","line");
+  topSeg.setAttribute("x1",x1);
+  topSeg.setAttribute("y1",20);
+  topSeg.setAttribute("x2",x1);
+  topSeg.setAttribute("y2",50);
+  topSeg.setAttribute("stroke",color);
+  topSeg.setAttribute("stroke-width",3);
+  wiresSvg.appendChild(topSeg);
+
+  let botSeg = document.createElementNS("http://www.w3.org/2000/svg","line");
+  botSeg.setAttribute("x1",x2);
+  botSeg.setAttribute("y1",350);
+  botSeg.setAttribute("x2",x2);
+  botSeg.setAttribute("y2",380);
+  botSeg.setAttribute("stroke",color);
+  botSeg.setAttribute("stroke-width",3);
+  wiresSvg.appendChild(botSeg);
+
+  btn.disabled = true;
+
+  let action = line.dataset.action;
+  if(action==="plus") { winTime+=30; showMessage("+30 секунд","#ffa600"); }
+  else if(action==="minus") { winTime-=30; showMessage("-30 секунд","#0a9b0a"); }
+  else if(action==="stop") { winTimerActive=false; showMessage("Таймер остановлен","#d9008d"); }
+  else { showMessage("Без эффекта","#777779"); }
+  winTimerEl.textContent = formatTime(winTime);
+}
+
+winTimerEl.textContent = formatTime(winTime);
+gameTimerEl.textContent = formatTime(gameTime);
+
+startTimers();
+generateWires();
+</script>
+</body>
+</html>
