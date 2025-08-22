@@ -47,7 +47,7 @@ const WIRE_DISTRIBUTION = {
   stop: 0.2,
   minus: 0.2
 };
-let winTime = 300;
+let winTime = 315;
 let gameTime = 300;
 let winInterval, gameInterval;
 let winTimerActive = true;
@@ -151,7 +151,7 @@ function generateWires(){
         <li style="color: #D9008DFF"> [${counts.stop}] останавливает таймер</li>
         <li style="color: #ffa600">[${counts.plus}] +30 секунд</li>
         <li style="color: #777779">[${counts.nothing}] без эффекта</li>
-        <li style="color: #0a9b0a">[${counts.minus}] -30 секунд</li>
+        <li style="color: #0a9b0a">[${counts.minus}] -15 секунд</li>
         </ul>
         Задача уменьшить таймер "Просмотр", что бы увидеть код.
     </div>
@@ -184,7 +184,7 @@ function cutWire(line, btn, x1, x2, color){
 
   let action = line.dataset.action;
   if(action==="plus") { winTime+=30; showMessage("+30 секунд","#ffa600"); }
-  else if(action==="minus") { winTime-=30; showMessage("-30 секунд","#0a9b0a"); }
+  else if(action==="minus") { winTime-=15; showMessage("-15 секунд","#0a9b0a"); }
   else if(action==="stop") { winTimerActive=false; showMessage("Таймер остановлен","#d9008d"); }
   else { showMessage("Без эффекта","#777779"); }
   winTimerEl.textContent = formatTime(winTime);
