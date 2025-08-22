@@ -80,7 +80,7 @@
   const clamp = (v,min,max)=> Math.max(min, Math.min(max, v));
   const DIALS = clamp(parseInt(params.get('n')||'6',10)||6, 6, 9);
   const IMAGE_URL = params.get('img') || 'data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 350"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><rect width="350" height="350" rx="24" fill="url(#g)"/><g fill="#fff" font-family="Verdana" text-anchor="middle"><text x="175" y="140" font-size="28" opacity=".9">ПРИЗ</text><text x="175" y="190" font-size="18" opacity=".9">?img=ваша_картинка</text></g></svg>`);
-  const TOTAL_SECONDS = 5*60;
+  const TOTAL_SECONDS = 3*60;
 
   const state = {
     secret: [],     // целевые цифры
