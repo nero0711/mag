@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Угадайка</title>
+<style>
+  body {
+    background: #121212;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: sans-serif;
+    color: #fff;
+  }
+  .game {
+    width: 370px;
+    height: 600px;
+    background: #1e1e1e;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    justify-items: center;
+    align-items: center;
+  }
+  .card {
+    width: 70px;
+    height: 90px;
+    background: #2a2a2a;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    perspective: 1000px;
+    box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    transition: transform 0.2s ease;
+    position: relative;
+  }
+  .card:hover {
+    box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    transform: scale(1.05);
+  }
+  .inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 2s;
+  }
+  .card.flipped .inner {
+    transform: rotateY(180deg);
+  }
+  .front, .back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+    overflow: hidden;
+  }
+  .front {
+    background: #e1e1e1;
+  }
+  .back {
+    background: #ffffff;
+    transform: rotateY(180deg);
+  }
+  @keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+  }
+  .shake {
+    animation: shake 1.5s;
+  }
+  /* ✨ Анимация правильного ответа */
+  @keyframes glow-green {
+    0% { box-shadow: 0 0 10px #0f0; }
+    50% { box-shadow: 0 0 25px #0f0; }
+    100% { box-shadow: 0 0 10px #0f0; }
+  }
+  .winner {
+    animation: glow-green 1.5s infinite ease-in-out;
+  }
+  /* 🔴 Анимация ошибок */
+  @keyframes glow-red {
+    0% { box-shadow: 0 0 10px #f00; }
+    50% { box-shadow: 0 0 25px #f00; }
+    100% { box-shadow: 0 0 10px #f00; }
+  }
+  .loser {
+    animation: glow-red 1.5s infinite ease-in-out;
+  }
+
+  /* 📌 Еле заметный "крап" у правильной карты */
+  .card.hint .front::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background-image: radial-gradient(rgba(11, 38, 11, 0.15) 1px, transparent 1px);
+    background-size: 5px 5px;
+    opacity: 100%; /* почти невидимо */
+    pointer-events: none;
+  }
+
+  .fullscreen {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+  }
+  .fullscreen img {
+    width: 350px;
+    height: 350px;
+  }
+
+  .front_card_img {
+    border-radius: inherit;
+  }
+</style>
+</head>
+<body>
+  <div class="game">
+    <div class="title">🎲 Угадайка</div>
+    <div class="cards" id="cards"></div>
+  </div>
+
+<script>
+  const cardsContainer = document.getElementById('cards');
+  const numberOfCards = 20; // параметр
+  let winnerIndex = Math.floor(Math.random() * numberOfCards);
+
+  const cards = [];
+
+  for (let i = 0; i < numberOfCards; i++) {
+    let card = document.createElement('div');
+    card.classList.add('card');
+    if (i === winnerIndex) card.classList.add('hint'); // 👈 добавляем "секретный" намёк
+    card.innerHTML = `
+      <div class="inner">
+        <div class="front"><img class="front_card_img" src="back.avif" width="60px" height="80px"></div>
+        <div class="back">${i === winnerIndex ? '✅' : '🅾️'}</div>
+      </div>`;
+    cardsContainer.appendChild(card);
+    cards.push(card);
+
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.card').forEach(c => c.classList.add('shake'));
+      setTimeout(() => {
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('shake'));
+        card.classList.add('flipped');
+      }, 1500);
+
+      setTimeout(() => {
+        let result = card.querySelector('.back').innerText;
+        if (result === '✅') {
+          card.classList.add('winner'); // зелёное свечение
+
+          cards.forEach(c => {
+            if (c !== card) {
+              c.classList.add('flipped', 'loser');
+            }
+          });
+
+          // Через 2 секунды показываем QR
+          setTimeout(() => {
+            let fs = document.createElement('div');
+            fs.className = 'fullscreen';
+            fs.innerHTML = `<img src="source_qr.png" alt="QR">`;
+            document.body.appendChild(fs);
+          }, 2000);
+
+        } else {
+          card.classList.add('loser');
+
+          cards.forEach((c, idx) => {
+            c.classList.add('flipped');
+            if (idx === winnerIndex) {
+              c.classList.add('winner'); // правильная зелёная
+            } else {
+              c.classList.add('loser'); // остальные красные
+            }
+          });
+
+          // Через 3 секунды перезагружаем
+          setTimeout(() => location.reload(), 3000);
+        }
+      }, 3000 + 1500);
+    }, { once: true });
+  }
+</script>
+</body>
+</html>
