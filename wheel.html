@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<style>
+  body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #111;
+    font-family: sans-serif;
+    color: #fff;
+  }
+  .container {
+    width: 370px;
+    height: 600px;
+    background-color: #1c1c1c;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+  }
+  .title {
+    font-size: 28px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .wheel {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .slot {
+    width: 80%;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+    transition: transform 0.2s;
+  }
+  .slot.blur {
+    filter: blur(3px);
+    opacity: 0.5;
+  }
+  .highlight {
+    width: 60px; /* квадратная рамка */
+    height: 60px;
+    font-size: 36px;
+    border: 2px solid #0f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .highlight-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .highlight-container svg.arrow {
+    width: 20px;
+    height: 20px;
+    fill: #0f0;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  .button {
+    padding: 10px;
+    width: 300px;
+    font-size: 16px;
+    background-color: #1f87ce;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .button:disabled {
+    background-color: #555;
+    cursor: default;
+  }
+  .shake {
+    animation: shake 0.5s infinite;
+  }
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+  }
+  #qr {
+    margin-top: 20px;
+    display: none;
+    width: 150px;
+    height: 150px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">🎁 Крутилка</div>
+  <div class="wheel" id="wheel">
+    <div class="slot blur" id="slot1">🅾️</div>
+    <div class="slot blur" id="slot2">🅾️</div>
+
+    <!-- Центральный слот с квадратной рамкой и стрелкой слева -->
+    <div class="highlight-container">
+      <div class="highlight" id="slot3">🅾️</div>
+      <svg class="arrow" viewBox="0 0 24 24">
+        <path d="M12 4l-6 6 6 6"/>
+      </svg>
+    </div>
+
+    <div class="slot blur" id="slot4">🅾️</div>
+    <div class="slot blur" id="slot5">🅾️</div>
+  </div>
+  <button class="button" id="spinBtn">Крутить</button>
+  <img src="source_qr.png" alt="QR" id="qr">
+</div>
+
+<script>
+  const wheelSlots = [
+    '😀','😃','😄','😁','✅',
+    '😁','😆','🥲','😚','😛',
+    '🥹','🤣','🥰','😝','😋',
+    '😅','😩','😘','😜','😍',
+    '🙂','😊','😗','🤨','😌',
+    '😂','😇','😙','🤪','😉'
+  ];
+
+  const slotElements = [
+    document.getElementById('slot1'),
+    document.getElementById('slot2'),
+    document.getElementById('slot3'),
+    document.getElementById('slot4'),
+    document.getElementById('slot5')
+  ];
+
+  const highlightSlot = document.getElementById('slot3');
+  const spinBtn = document.getElementById('spinBtn');
+  const wheel = document.getElementById('wheel');
+  const qr = document.getElementById('qr');
+
+  let currentIndex = 0;
+  let isSpinning = false;
+  let autoSpinInterval; // чтобы можно было отключить
+
+  // Запускаем автопрокрутку и сохраняем ссылку
+  autoSpinInterval = setInterval(() => {
+    if (!isSpinning) {
+      currentIndex = (currentIndex + 1) % wheelSlots.length;
+      updateSlots();
+    }
+  }, 1000);
+
+  function updateSlots() {
+    for (let i = 0; i < 5; i++) {
+      let idx = (currentIndex + i - 2 + wheelSlots.length) % wheelSlots.length;
+      slotElements[i].textContent = wheelSlots[idx];
+      if (i !== 2) {
+        slotElements[i].classList.add('blur');
+      } else {
+        slotElements[i].classList.remove('blur');
+      }
+    }
+  }
+
+  function spinWheel() {
+    if (isSpinning) return;
+    isSpinning = true;
+    spinBtn.disabled = true;
+
+    const wasSadFace = highlightSlot.textContent === '😍';
+    const targetSymbol = wasSadFace ? '✅' : null;
+    const targetSlotIndex = wheelSlots.indexOf('✅');
+
+    if (targetSymbol && targetSlotIndex === -1) {
+      console.error('✅ not found in wheelSlots');
+      isSpinning = false;
+      spinBtn.disabled = false;
+      return;
+    }
+
+    let totalSteps;
+
+    if (targetSymbol) {
+      const stepsToTarget = (targetSlotIndex - currentIndex + wheelSlots.length) % wheelSlots.length;
+      totalSteps = 2 * wheelSlots.length + stepsToTarget;
+    } else {
+      totalSteps = 2 * wheelSlots.length + Math.floor(Math.random() * wheelSlots.length);
+    }
+
+    const totalDuration = 4000;
+    const startTime = performance.now();
+    let lastStep = 0;
+
+    function animate(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / totalDuration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      const currentStep = Math.floor(easedProgress * totalSteps);
+
+      if (currentStep !== lastStep) {
+        currentIndex = (currentIndex + (currentStep - lastStep)) % wheelSlots.length;
+        updateSlots();
+        lastStep = currentStep;
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        // Финальная коррекция
+        currentIndex = (currentIndex + (totalSteps - lastStep)) % wheelSlots.length;
+        updateSlots();
+
+        isSpinning = false;
+
+        // Проверяем выигрыш
+        if (highlightSlot.textContent === '✅') {
+          onWin();
+        } else {
+          spinBtn.disabled = false;
+        }
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  function onWin() {
+    // Останавливаем автопрокрутку
+    clearInterval(autoSpinInterval);
+
+    // Убираем колесо и кнопку
+    wheel.style.display = 'none';
+    spinBtn.style.display = 'none';
+
+    // Показываем и настраиваем QR
+    qr.style.display = 'block';
+    qr.style.width = '350px';
+    qr.style.height = '350px';
+    qr.style.borderRadius = '16px';
+    qr.style.boxShadow = '0 0 20px rgba(255,255,255,0.2)';
+
+    // Можно добавить эффект появления
+    qr.style.opacity = '0';
+    qr.style.transition = 'opacity 0.8s ease-in-out';
+    setTimeout(() => {
+      qr.style.opacity = '1';
+    }, 100);
+  }
+
+  spinBtn.addEventListener('click', spinWheel);
+
+  // Инициализация
+  updateSlots();
+</script>
+</body>
+</html>
