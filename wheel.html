@@ -184,67 +184,76 @@
     }
   }
 
-  function spinWheel() {
-    if (isSpinning) return;
-    isSpinning = true;
-    spinBtn.disabled = true;
+function spinWheel() {
+  if (isSpinning) return;
+  isSpinning = true;
+  spinBtn.disabled = true;
+  const wasSadFace = highlightSlot.textContent === '😍';
+  let totalSteps;
+  let targetIndex;
 
-    const wasSadFace = highlightSlot.textContent === '😍';
-    const targetSymbol = wasSadFace ? '✅' : null;
+  if (wasSadFace) {
     const targetSlotIndex = wheelSlots.indexOf('✅');
-
-    if (targetSymbol && targetSlotIndex === -1) {
+    if (targetSlotIndex === -1) {
       console.error('✅ not found in wheelSlots');
       isSpinning = false;
       spinBtn.disabled = false;
       return;
     }
 
-    let totalSteps;
+    const stepsToTarget = (targetSlotIndex - currentIndex + wheelSlots.length) % wheelSlots.length;
+    totalSteps = 2 * wheelSlots.length + stepsToTarget;
+    targetIndex = targetSlotIndex;
+  } else {
+    const allowedIndices = wheelSlots
+      .map((symbol, index) => ({ symbol, index }))
+      .filter(item => item.symbol !== '😍')
+      .map(item => item.index);
 
-    if (targetSymbol) {
-      const stepsToTarget = (targetSlotIndex - currentIndex + wheelSlots.length) % wheelSlots.length;
-      totalSteps = 2 * wheelSlots.length + stepsToTarget;
-    } else {
-      totalSteps = 2 * wheelSlots.length + Math.floor(Math.random() * wheelSlots.length);
-    }
-
-    const totalDuration = 4000;
-    const startTime = performance.now();
-    let lastStep = 0;
-
-    function animate(currentTime) {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / totalDuration, 1);
-      const easedProgress = 1 - Math.pow(1 - progress, 3);
-      const currentStep = Math.floor(easedProgress * totalSteps);
-
-      if (currentStep !== lastStep) {
-        currentIndex = (currentIndex + (currentStep - lastStep)) % wheelSlots.length;
-        updateSlots();
-        lastStep = currentStep;
-      }
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        // Финальная коррекция
-        currentIndex = (currentIndex + (totalSteps - lastStep)) % wheelSlots.length;
-        updateSlots();
-
-        isSpinning = false;
-
-        // Проверяем выигрыш
-        if (highlightSlot.textContent === '✅') {
-          onWin();
-        } else {
-          spinBtn.disabled = false;
-        }
-      }
-    }
-
-    requestAnimationFrame(animate);
+    const randomTargetIndex = allowedIndices[Math.floor(Math.random() * allowedIndices.length)];
+    const stepsToTarget = (randomTargetIndex - currentIndex + wheelSlots.length) % wheelSlots.length;
+    const minSpins = 2 * wheelSlots.length;
+    totalSteps = minSpins + stepsToTarget;
+    targetIndex = randomTargetIndex;
   }
+
+  const totalDuration = 4000;
+  const startTime = performance.now();
+  let lastStep = 0;
+
+  function animate(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / totalDuration, 1);
+    const easedProgress = 1 - Math.pow(1 - progress, 3);
+    const currentStep = Math.floor(easedProgress * totalSteps);
+
+    if (currentStep !== lastStep) {
+      const delta = currentStep - lastStep;
+      currentIndex = (currentIndex + delta) % wheelSlots.length;
+      updateSlots();
+      lastStep = currentStep;
+    }
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      // Финальная коррекция
+      currentIndex = targetIndex;
+      updateSlots();
+
+      isSpinning = false;
+
+      // Проверка выигрыша
+      if (highlightSlot.textContent === '✅') {
+        onWin();
+      } else {
+        spinBtn.disabled = false;
+      }
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
 
   function onWin() {
     // Останавливаем автопрокрутку
