@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title></title>
+  <title>Отчет</title>
   <style>
     :root {
-      --bg: #0b1020;
+      --bg: #d0f0e2;
       --card: #121a33;
       --muted: #94a3b8;
       --accent: #22c55e;
@@ -16,300 +16,530 @@
       margin: 0;
       min-height: 100svh;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 600px at 20% -10%, #1b2650, transparent 70%),
-                  radial-gradient(1000px 600px at 120% 10%, #11204d, transparent 70%),
-                  var(--bg);
+      background: var(--bg);
       color: #e5e7eb;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      gap: 20px;
-    }
-    header {
-      padding: 18px 20px 0;
-    }
-    h1 { font-size: 20px; font-weight: 700; margin: 0 0 8px; }
-    p { margin: 0; color: var(--muted); }
-
-    .toolbar {
-      display: flex; gap: 12px; align-items: center;
-      padding: 0 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
     }
 
-    .dropzone {
-      margin: 12px 20px;
-      border: 2px dashed #334155;
-      background: color-mix(in oklab, var(--card) 85%, white 15%);
-      border-radius: 16px;
-      min-height: 140px;
-      display: grid; place-items: center; text-align: center;
-      cursor: pointer;
+    .title_dev {
+        font-size: 15px;
+        font-weight: 700;
+        margin: 20px 0px 10px 0px;
+        justify-content: center;
+        display: flex;
+        color: #d0d0d0;
+        /*text-shadow:*/
+                /*1px 1px 1px #5E7A77,*/
+                /*1px 1px 1px #A8BCBA,*/
+                /*1px 1px 1px #ffffff;*/
+        z-index: 20;
+        width: 100%;
+        top: -3%;
+        position: absolute;
+    }
+
+    /* --- Новый интерфейс гаджета --- */
+    .full {
+      width: 300px;
+      height: 450px;
+      background-color: #48484a;
+      border-radius: 80px;
+      border: 3px solid #1f1c1f;
       position: relative;
-      transition: border-color .2s ease, background .2s ease, transform .1s ease;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
 
-    #gridWrap {
-      margin: 0 20px 20px;
-      padding: 16px 0;   /* убрали паддинг по бокам */
-      border-radius: 16px;
-      overflow: auto;
+    .child {
+      width: 311px;
+      height: 437px;
+      background-color: #999c94;
+      border-radius: 80px;
+      border: 1px solid #1f1c1f;
+      position: absolute;
+      left: -6px;
+      z-index: 0;
+    }
+
+    .hidden1 {
+      width: 292px;
+      height: 413px;
+      background-color: #abaaa8;
+      border-radius: 78px;
+      border: 1px solid #747672;
+      position: absolute;
+      z-index: 1;
+      left: 4px;
+    }
+
+    .hidden2 {
+      width: 273px;
+      height: 399px;
+      background-color: #878d89;
+      position: absolute;
+      top: 0px;
+      left: 13px;
+      border-radius: 80px;
+      border: 1px solid #747672;
+      z-index: 2;
+    }
+
+    .hidden3 {
+        width: 240px;
+        height: 240px;
+        background-color: #3b3b3b;
+        position: absolute;
+        z-index: 3;
+        left: 30px;
+        top: 30px;
+        border-radius: 69px;
+    }
+
+    .screen-frame {
+      width: 200px;
+      height: 200px;
+      position: absolute;
+      top: 50px;
+      left: 50px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #0c0c0c;
+      z-index: 4;
+    }
+
+    .screen {
       width: 100%;
+      height: 100%;
+      background-color: #ffffff;
+      border-radius: 19px;
+      border: 2px solid #0c0c0c;
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
     }
 
+    .screen h3 {
+      margin: 0;
+      color: #333;
+      font-size: 12px;
+      text-align: justify;
+      pointer-events: none;
+    }
 
-    /* Динамическая сетка подстраивается под размеры плиток */
+    .screen canvas {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Скрытый input для загрузки */
+    #fileInput {
+      display: none;
+    }
+
+    .border1 {
+      width: 100px;
+      height: 131px;
+      border: 1px solid #747672;
+      border-radius: 4px;
+      position: absolute;
+      z-index: 1;
+      top: 331px;
+      left: 93px;
+      transform: rotate(95deg);
+    }
+
+    .border2 {
+      width: 131px;
+      height: 131px;
+      border: 1px solid #747672;
+      border-radius: 4px;
+      position: absolute;
+      z-index: 1;
+      top: 331px;
+      left: 86px;
+    }
+
+    /* Стили для сетки пазлов */
     #grid {
       display: grid;
       gap: 0;
-      justify-content: start;
-      align-content: start;
+      width: 100%;
+      height: 100%;
       user-select: none;
     }
 
     .tile {
-      outline: 1px solid rgba(255,255,255,.08);
+      outline: 1px solid rgba(0,0,0,0.1);
       position: relative;
+      background: white;
     }
     .tile:focus { outline: 2px solid var(--accent); }
     .tile[draggable="true"] { cursor: grab; }
     .tile.dragging { opacity: .6; cursor: grabbing; }
     .tile.drop-target { box-shadow: inset 0 0 0 2px var(--accent); }
 
-    .hint {
-      margin: 0 20px 12px;
-      color: var(--muted);
-      font-size: 13px;
+    .controls {
+    position: absolute;
+    top: 280px;
+    left: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(2, 30px);
+    gap: 21px;
+    margin-top: 0px;
+    z-index: 10;
     }
-    .title_dev {
-        font-size: 20px;
-        font-weight: 700;
-        margin: 20px 0px 0px 0px;
-        justify-content: center;
-        display: flex;
+
+    .btn {
+      width: 60px;
+      height: 40px;
+      background-color: var(--control-bg);
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      border: 1px solid #4d4d4d;
+      border-radius: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow:
+        inset 2px 2px 0px 2px #4E917F,
+        0px 7px 0px var(--shadow-dark);
+      transition: transform 0.1s, box-shadow 0.1s;
     }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #0f172a; border: 1px solid #1f2a4a; color: #a5b4fc; font-variant-numeric: tabular-nums; }
+
+    .btn:active {
+      transform: translateY(4px);
+      box-shadow: 0px 3px 0px var(--shadow-dark);
+    }
+
+    .btn-yellow {
+        grid-column: 1; grid-row: 1;
+        width: 120px;
+        height: 40px;
+        background-color: #FBD369;
+        box-shadow: 0px 4px 0px #D1AE53, 3px 4px 0px #D1AE53;
+        border: solid 1px #D1AE53;
+        z-index: 11;
+
+    }
+    .btn-red {
+        width: 60px;
+        height: 40px;
+        grid-column: 3; grid-row: 2;
+        background-color: #F16760;
+        box-shadow: 0px 4px 0px #BB524A, 3px 4px 0px #BB524A;
+        border: solid 1px #BB524A;
+        z-index: 11;
+    }
+    .btn-green {
+        grid-column: 2; grid-row: 1;
+        width: 80px;
+        height: 40px;
+        background-color: #7DD879;
+        box-shadow: 0px 4px 0px #6BBB63, 3px 4px 0px #6BBB63;
+        border: solid 1px #6BBB63;
+        z-index: 11;
+        position: absolute;
+        left: 60px;
+    }
+    .btn-blue {
+        grid-column: 1; grid-row: 2;
+        background-color: #578CF8;
+        box-shadow: 0px 4px 0px #4369B6, 3px 4px 0px #4369B6;
+        border: solid 1px #4369B6;
+        z-index: 11;
+    }
+    .btn-white {
+        grid-column: 2; grid-row: 2;
+        background-color: #FFFFFF;
+        box-shadow: 0px 4px 0px #E2E2E4, 3px 4px 0px #E2E2E4;
+        border: solid 1px #E2E2E4;
+        z-index: 11;
+    }
+    .created {
+      position: absolute;
+      z-index: 20;
+      top: 86%;
+      font-size: 10px;
+      left: 33%;
+      color: darkgray;
+    }
+    .screenText {
+      text-align: justify;
+      padding: 20px;
+    }
   </style>
 </head>
 <body>
-    <div class="title_dev" > 📲&nbsp;&nbsp;Собиратор</div>
-    <label id="dropzone" class="dropzone" tabindex="0">
-        <div id="container">
-          <h2>Нажмите для загрузки PNG</h2>
-        </div>
-        <input id="fileInput" type="file" accept="image/png" hidden />
-        <div class="hint" id="hint"></div>
-        <div id="gridWrap">
-          <div id="grid" aria-label="Пазл"></div>
-        </div>
-    </label>
 
-<script>
-(() => {
-  const GREEN = { r:0, g:255, b:0 };
-  const dropzone = document.getElementById('dropzone');
-  const fileInput = document.getElementById('fileInput');
-  const grid = document.getElementById('grid');
-  const gridWrap = document.getElementById('gridWrap');
-  const hint = document.getElementById('hint');
-  const container = document.getElementById('container');
 
-  fileInput.addEventListener('change', () => {
-    const f = fileInput.files?.[0];
-    if (f) handleFile(f);
-  });
 
-  function errorMsg(msg) {
-    hint.textContent = msg;
-    hint.style.color = '#fca5a5';
-  }
-  function infoMsg(msg) {
-    hint.textContent = msg;
-    hint.style.color = '';
-  }
+  <div class="full">
 
-  async function handleFile(file) {
-    if (file.type !== 'image/png') { errorMsg('Пожалуйста, выберите PNG-файл.'); return; }
-    const url = URL.createObjectURL(file);
-    try {
-      const img = await loadImage(url);
-      URL.revokeObjectURL(url);
-      processImage(img);
-      container.remove();
-      fileInput.remove();
-    } catch (err) {
-      console.error(err);
-      errorMsg('Не удалось загрузить изображение.');
-    }
-  }
+    <div class="child">
+      <div class="border2"></div>
+    </div>
 
-  function loadImage(src) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
-  }
+      <div class="hidden1">
+        <div class="border1"></div>
+    </div>
+    <div class="hidden2"></div>
 
-  function processImage(img) {
-    const c = document.createElement('canvas');
-    c.width = img.naturalWidth; c.height = img.naturalHeight;
-    const ctx = c.getContext('2d', { willReadFrequently: true });
-    ctx.drawImage(img, 0, 0);
-    const { width: W, height: H } = c;
-    const data = ctx.getImageData(0, 0, W, H).data;
+    <div class="title_dev">Collector</div>
+    <div class="hidden3"></div>
 
-    const isRowGreen = (y) => {
-      const yOff = y * W * 4;
-      for (let x = 0; x < W; x++) {
-        const i = yOff + x*4;
-        if (!(data[i] === GREEN.r && data[i+1] === GREEN.g && data[i+2] === GREEN.b && data[i+3] !== 0)) return false;
+    <!-- Экран с пазлами -->
+    <div class="screen-frame">
+      <div class="screen" id="screen">
+        <h3 id="ScreenText" class="screenText">touch screen</h3>
+        <input type="file" id="fileInput" accept="image/png" />
+      </div>
+    </div>
+    <div class="controls">
+      <div class="btn btn-yellow" id="btnFileInput">download</div>
+      <div class="btn btn-red" id="left"></div>
+      <div class="btn btn-green" id="btnHelp">help</div>
+      <div class="btn btn-blue" id="down"></div>
+      <div class="btn btn-white" id="down"></div>
+    </div>
+    <div class="created">Created by: Ilya Oder</div>
+
+  </div>
+
+  <script>
+    (() => {
+      const GREEN = { r:0, g:255, b:0 };
+      const screen = document.getElementById('screen');
+      const fileInput = document.getElementById('fileInput');
+      const btnFileInput = document.getElementById('btnFileInput');
+      const ScreenText = document.getElementById('ScreenText');
+      const btnHelp = document.getElementById('btnHelp');
+      const grid = document.createElement('div');
+      grid.id = 'grid';
+      grid.setAttribute('aria-label', 'Пазл');
+
+      // Вставляем grid внутрь экрана
+      screen.appendChild(grid);
+
+      // Открыть проводник при клике по экрану
+      screen.addEventListener('click', () => {
+        if (!screen.querySelector('canvas')) {
+          fileInput.click();
+        }
+      });
+
+      fileInput.addEventListener('change', () => {
+        const f = fileInput.files?.[0];
+        if (f) handleFile(f);
+      });
+
+      btnFileInput.addEventListener('click', () =>{
+        fileInput.click();
+      })
+
+      btnHelp.addEventListener('click', () =>{
+        ScreenText.innerText = 'A collector for fragments separated by green lines. After loading, you can move the fragments on the screen.'
+      })
+
+      function errorMsg(msg) {
+        screen.innerHTML = `<h3 style="color:#fca5a5">${msg}</h3>`;
+        screen.appendChild(fileInput);
       }
-      return true;
-    };
-    const isColGreen = (x) => {
-      const xOff = x*4;
-      for (let y = 0; y < H; y++) {
-        const i = y*W*4 + xOff;
-        if (!(data[i] === GREEN.r && data[i+1] === GREEN.g && data[i+2] === GREEN.b && data[i+3] !== 0)) return false;
+
+      function infoMsg(msg) {
+        screen.innerHTML = `<h3>${msg}</h3>`;
+        screen.appendChild(fileInput);
       }
-      return true;
-    };
 
-    const bands = (idxs) => {
-      const res = [];
-      let start = null;
-      for (let i = 0; i < idxs.length; i++) {
-        if (start === null) start = idxs[i];
-        const cur = idxs[i];
-        const next = idxs[i+1];
-        if (next !== cur + 1) { res.push([start, cur]); start = null; }
+      async function handleFile(file) {
+        if (file.type !== 'image/png') { errorMsg('Только PNG!'); return; }
+        const url = URL.createObjectURL(file);
+        try {
+          const img = await loadImage(url);
+          URL.revokeObjectURL(url);
+          processImage(img);
+        } catch (err) {
+          console.error(err);
+          errorMsg('Ошибка загрузки.');
+        }
       }
-      if (start !== null) res.push([start, idxs[idxs.length-1]]);
-      return res;
-    };
 
-    const rowBands = bands([...Array(H).keys()].filter(isRowGreen));
-    const colBands = bands([...Array(W).keys()].filter(isColGreen));
-
-    const rows = [];
-    let prev = 0;
-    if (rowBands.length === 0) {
-      rows.push([0, H-1]);
-    } else {
-      for (let i = 0; i <= rowBands.length; i++) {
-        const bandStart = rowBands[i]?.[0] ?? H;
-        const top = prev;
-        const bottom = bandStart - 1;
-        if (bottom >= top) rows.push([top, bottom]);
-        prev = (rowBands[i]?.[1] ?? (H-1)) + 1;
+      function loadImage(src) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = src;
+        });
       }
-    }
 
-    const cols = [];
-    prev = 0;
-    if (colBands.length === 0) {
-      cols.push([0, W-1]);
-    } else {
-      for (let i = 0; i <= colBands.length; i++) {
-        const bandStart = colBands[i]?.[0] ?? W;
-        const left = prev;
-        const right = bandStart - 1;
-        if (right >= left) cols.push([left, right]);
-        prev = (colBands[i]?.[1] ?? (W-1)) + 1;
+      function processImage(img) {
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth;
+        c.height = img.naturalHeight;
+        const ctx = c.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0);
+        const { width: W, height: H } = c;
+        const data = ctx.getImageData(0, 0, W, H).data;
+
+        // Поиск зелёных линий (горизонтальные и вертикальные)
+        const isRowGreen = (y) => {
+          const yOff = y * W * 4;
+          for (let x = 0; x < W; x++) {
+            const i = yOff + x * 4;
+            if (!(data[i] === GREEN.r && data[i+1] === GREEN.g && data[i+2] === GREEN.b && data[i+3] !== 0)) return false;
+          }
+          return true;
+        };
+
+        const isColGreen = (x) => {
+          const xOff = x * 4;
+          for (let y = 0; y < H; y++) {
+            const i = y * W * 4 + xOff;
+            if (!(data[i] === GREEN.r && data[i+1] === GREEN.g && data[i+2] === GREEN.b && data[i+3] !== 0)) return false;
+          }
+          return true;
+        };
+
+        const bands = (idxs) => {
+          const res = [];
+          let start = null;
+          for (let i = 0; i < idxs.length; i++) {
+            if (start === null) start = idxs[i];
+            const cur = idxs[i];
+            const next = idxs[i+1];
+            if (next !== cur + 1) { res.push([start, cur]); start = null; }
+          }
+          if (start !== null) res.push([start, idxs[idxs.length-1]]);
+          return res;
+        };
+
+        const rowBands = bands([...Array(H).keys()].filter(isRowGreen));
+        const colBands = bands([...Array(W).keys()].filter(isColGreen));
+
+        const rows = [];
+        let prev = 0;
+        if (rowBands.length === 0) {
+          rows.push([0, H-1]);
+        } else {
+          for (let i = 0; i <= rowBands.length; i++) {
+            const bandStart = rowBands[i]?.[0] ?? H;
+            const top = prev;
+            const bottom = bandStart - 1;
+            if (bottom >= top) rows.push([top, bottom]);
+            prev = (rowBands[i]?.[1] ?? (H-1)) + 1;
+          }
+        }
+
+        const cols = [];
+        prev = 0;
+        if (colBands.length === 0) {
+          cols.push([0, W-1]);
+        } else {
+          for (let i = 0; i <= colBands.length; i++) {
+            const bandStart = colBands[i]?.[0] ?? W;
+            const left = prev;
+            const right = bandStart - 1;
+            if (right >= left) cols.push([left, right]);
+            prev = (colBands[i]?.[1] ?? (W-1)) + 1;
+          }
+        }
+
+        // Масштабирование под экран 200px
+        const scale = Math.min(1, 200 / W);
+
+        const rowHeights = rows.map(([t,b]) => (b - t + 1) * scale);
+        const colWidths  = cols.map(([l,r]) => (r - l + 1) * scale);
+
+        grid.style.gridTemplateColumns = colWidths.join('px ') + 'px';
+        grid.style.gridTemplateRows    = rowHeights.join('px ') + 'px';
+
+        grid.innerHTML = '';
+
+        for (let ry = 0; ry < rows.length; ry++) {
+          const [top] = rows[ry];
+          const h = rows[ry][1] - top + 1;
+          for (let cx = 0; cx < cols.length; cx++) {
+            const [left] = cols[cx];
+            const w = cols[cx][1] - left + 1;
+
+            const tileData = ctx.getImageData(left, top, w, h);
+            const tileCanvas = document.createElement('canvas');
+            tileCanvas.width = w;
+            tileCanvas.height = h;
+            tileCanvas.getContext('2d').putImageData(tileData, 0, 0);
+
+            tileCanvas.style.width = (w * scale) + "px";
+            tileCanvas.style.height = (h * scale) + "px";
+
+            const tile = document.createElement('div');
+            tile.className = 'tile';
+            tile.setAttribute('draggable', 'true');
+            tile.style.gridColumnStart = (cx + 1);
+            tile.style.gridRowStart = (ry + 1);
+            tile.appendChild(tileCanvas);
+            tile.dataset.col = String(cx);
+            tile.dataset.row = String(ry);
+
+            makeDraggable(tile);
+            grid.appendChild(tile);
+          }
+        }
+
+        // Убираем текст
+        const h3 = screen.querySelector('h3');
+        if (h3) h3.remove();
       }
-    }
 
-    // Вычисляем масштаб
-    const styles = getComputedStyle(gridWrap);
-    const paddingLeft = parseFloat(styles.paddingLeft);
-    const paddingRight = parseFloat(styles.paddingRight);
-    const maxWidth = gridWrap.clientWidth - paddingLeft - paddingRight;
-    const scale = Math.min(1, maxWidth / W);
+      // Drag & Drop
+      let dragSrc = null;
+      function makeDraggable(tile) {
+        tile.addEventListener('dragstart', (e) => {
+          dragSrc = tile;
+          tile.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', `${tile.dataset.row},${tile.dataset.col}`);
+        });
+        tile.addEventListener('dragend', () => {
+          tile.classList.remove('dragging');
+          dragSrc = null;
+          [...grid.children].forEach(el => el.classList.remove('drop-target'));
+        });
 
-    const rowHeights = rows.map(([t,b]) => (b - t + 1) * scale);
-    const colWidths  = cols.map(([l,r]) => (r - l + 1) * scale);
+        tile.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          if (tile !== dragSrc) tile.classList.add('drop-target');
+          e.dataTransfer.dropEffect = 'move';
+        });
+        tile.addEventListener('dragleave', () => tile.classList.remove('drop-target'));
 
-    grid.style.gridTemplateColumns = colWidths.map(px => `${px}px`).join(' ');
-    grid.style.gridTemplateRows    = rowHeights.map(px => `${px}px`).join(' ');
-
-    grid.innerHTML = '';
-
-    for (let ry = 0; ry < rows.length; ry++) {
-      const [top] = rows[ry];
-      const h = rows[ry][1] - top + 1;
-      for (let cx = 0; cx < cols.length; cx++) {
-        const [left] = cols[cx];
-        const w = cols[cx][1] - left + 1;
-
-        const tileData = ctx.getImageData(left, top, w, h);
-        const tileCanvas = document.createElement('canvas');
-        tileCanvas.width = w; tileCanvas.height = h;
-        const tctx = tileCanvas.getContext('2d');
-        tctx.putImageData(tileData, 0, 0);
-
-        // масштабируем через CSS
-        tileCanvas.style.width = (w * scale) + "px";
-        tileCanvas.style.height = (h * scale) + "px";
-
-        const tile = document.createElement('div');
-        tile.className = 'tile';
-        tile.setAttribute('draggable', 'true');
-        tile.style.gridColumnStart = (cx + 1);
-        tile.style.gridRowStart = (ry + 1);
-        tile.appendChild(tileCanvas);
-        tile.dataset.col = String(cx);
-        tile.dataset.row = String(ry);
-
-        makeDraggable(tile);
-
-        grid.appendChild(tile);
+        tile.addEventListener('drop', (e) => {
+          e.preventDefault();
+          tile.classList.remove('drop-target');
+          if (!dragSrc || dragSrc === tile) return;
+          swapTiles(dragSrc, tile);
+        });
       }
-    }
 
-    queueMicrotask(() => gridWrap.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-  }
+      function swapTiles(a, b) {
+        const aRow = a.style.gridRowStart; const aCol = a.style.gridColumnStart;
+        const bRow = b.style.gridRowStart; const bCol = b.style.gridColumnStart;
 
-  // Drag & Drop
-  let dragSrc = null;
-  function makeDraggable(tile) {
-    tile.addEventListener('dragstart', (e) => {
-      dragSrc = tile;
-      tile.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', `${tile.dataset.row},${tile.dataset.col}`);
-    });
-    tile.addEventListener('dragend', () => {
-      tile.classList.remove('dragging');
-      dragSrc = null;
-      [...grid.children].forEach(el => el.classList.remove('drop-target'));
-    });
+        a.style.gridRowStart = bRow; a.style.gridColumnStart = bCol;
+        b.style.gridRowStart = aRow; b.style.gridColumnStart = aCol;
 
-    tile.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      if (tile !== dragSrc) tile.classList.add('drop-target');
-      e.dataTransfer.dropEffect = 'move';
-    });
-    tile.addEventListener('dragleave', () => tile.classList.remove('drop-target'));
-
-    tile.addEventListener('drop', (e) => {
-      e.preventDefault();
-      tile.classList.remove('drop-target');
-      if (!dragSrc || dragSrc === tile) return;
-      swapTiles(dragSrc, tile);
-    });
-  }
-
-  function swapTiles(a, b) {
-    const aRow = a.style.gridRowStart; const aCol = a.style.gridColumnStart;
-    const bRow = b.style.gridRowStart; const bCol = b.style.gridColumnStart;
-
-    a.style.gridRowStart = bRow; a.style.gridColumnStart = bCol;
-    b.style.gridRowStart = aRow; b.style.gridColumnStart = aCol;
-
-    a.dataset.row = String(Number(bRow)-1); a.dataset.col = String(Number(bCol)-1);
-    b.dataset.row = String(Number(aRow)-1); b.dataset.col = String(Number(aCol)-1);
-  }
-})();
-</script>
+        a.dataset.row = String(Number(bRow)-1); a.dataset.col = String(Number(bCol)-1);
+        b.dataset.row = String(Number(aRow)-1); b.dataset.col = String(Number(aCol)-1);
+      }
+    })();
+  </script>
 </body>
 </html>
