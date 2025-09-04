@@ -2,122 +2,200 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Кроссворд</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Отчет summary</title>
   <style>
     :root {
-      --w: 370px;
-      --h: 600px;
-      --bg: #0f172a;         /* slate-900 */
-      --panel: #111827;      /* gray-900 */
-      --muted: #64748b;      /* slate-500 */
-      --text: #e5e7eb;       /* gray-200 */
-      --accent: #22c55e;     /* green-500 */
-      --accent-2: #ef4444;   /* red-500 */
-      --border: #1f2937;     /* gray-800 */
-      --btn: #334155;        /* slate-700 */
-      --btn-hover: #475569;  /* slate-600 */
+      --w: 350px;
+      --h: 550px;
+      --bg: #d0f0e2;         /* Фон страницы */
+      --panel: #255853;      /* Темный фон панели */
+      --muted: #64748b;      /* Серый для текста */
+      --text: #e5e7eb;       /* Основной текст */
+      --accent: #22c55e;     /* Зелёный акцент */
+      --accent-2: #ef4444;   /* Красный */
+      --border: #1f2937;     /* Границы */
+      --btn: #334155;        /* Кнопки */
+      --btn-hover: #475569;
+      --game-bg: #94A7A3;    /* Цвет фона игры */
+      --shadow-light: #A6BCB7;
+      --shadow-dark: #255853;
+      --control-bg: #448778;
+      --input-bg: #ffffff;
+      --input-border: #4d4d4d;
     }
+
     body {
-      font-family: Arial, sans-serif;
+      margin: 0;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      background-color: #f4f4f4;
+      background-color: var(--bg);
+      font-family: 'Arial', sans-serif;
+      user-select: none;
     }
 
     .container {
-      width: 370px;
-      height: 600px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      background-color: white;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 320px;
+      height: var(--h);
+      background-color: var(--game-bg);
+      border: 2px solid #777777;
+      border-radius: 50px;
+      box-shadow:
+        inset 2px 2px 0px 2px var(--shadow-light),
+        3px 20px 0px #5B7A78,
+        9px 10px 0px #5B7A78,
+        0px 40px 0px var(--shadow-dark),
+        9px 40px 0px var(--shadow-dark);
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow: hidden;
+      position: relative;
+      color: white;
     }
 
-    .image {
-      width: 300px;
-      height: 300px;
-      margin-bottom: 15px;
-      object-fit: cover;
-      border-radius: 4px;
+    .title_dev {
+        font-size: 12px;
+        font-weight: 700;
+        margin: 20px 0px 10px 0px;
+        justify-content: center;
+        display: flex;
+        color: #d0d0d0;
+        z-index: 20;
+        width: 100%;
+        top: -15px;
+        left: 75px;
+        position: absolute;
     }
 
     .progress {
-      margin-bottom: 15px;
-      font-size: 24px;
+      font-size: 20px;
       letter-spacing: 5px;
+      color: #1a3a32;
+      text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+      margin-bottom: 10px;
     }
 
+
     label {
-      font-size: 12px;
+        font-size: 12px;
+        text-align: center;
+        color: #1a3a32;
+        font-weight: bold;
+        text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+    }
+    .image {
+      width: 280px;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 15px;
+      border: 2px solid #4d4d4d;
+      box-shadow: inset 2px 2px 0px 2px #5E7A77;
       margin-bottom: 10px;
-      text-align: center;
-      color: #333;
     }
 
     input {
-      width: 278px;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 16px;
+        width: 240px;
+        padding: 13px 15px;
+        font-size: 16px;
+        border: 2px solid var(--input-border);
+        border-radius: 50px;
+        background-color: var(--input-bg);
+        color: #333;
+        box-shadow: inset 2px 2px 0px 2px #5E7A77, 0px 3px 0px var(--shadow-dark);
+        outline: none;
+        text-align: center;
+        font-weight: bold;
+        margin: 15px;
+    }
+
+    input:focus {
+      /*border-color: #22c55e;*/
+      box-shadow:
+        inset 2px 2px 0px 2px #5E7A77,
+        0px 3px 0px var(--shadow-dark),
+        0 0 8px rgba(34, 197, 94, 0.4);
     }
 
     button {
-        padding: 10px;
-        width: 300px;
+        width: 120px;
+        height: 40px;
+        /* padding: 12px; */
         font-size: 16px;
-        background-color: #1f87ce;
+        font-weight: bold;
+        /*background-color: #1f87ce;*/
         color: white;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: background-color 0.3s;
+        /*border: 2px solid #4d4d4d;*/
+        border-radius: 50px;
+        /* cursor: pointer; */
+        /*box-shadow: inset 2px 2px 0px 2px #4E917F, 0px 7px 0px var(--shadow-dark);*/
+        position: absolute;
+        left: 170px;
+        top: 480px;
+
+        background-color: #F16760;
+        box-shadow: 0px 4px 0px #BB524A, 3px 4px 0px #BB524A;
+        border: solid 1px #BB524A;
+        z-index: 11;
+    }
+
+    button:active {
+      transform: translateY(4px);
+      box-shadow: 0px 3px 0px #BB524A;
     }
 
     button:disabled {
-      background-color: #6c757d;
+      background-color: #BB524A;
+      color: white;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: 0px 3px 0px #BB524A;
     }
 
     .status {
-      margin-top: 15px;
-      font-size: 14px;
-      color: #d9534f;
-      height: 20px;
+        height: 20px;
+        font-size: 12px;
+        color: var(--accent-2);
+        font-weight: bold;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+        /*position: absolute;*/
+        /*top: 466px;*/
+        /*left: 40px;*/
     }
-    .title_dev {
-        font-size: 20px;
-        font-weight: 700;
-        margin: 20px 0px 20px 0px;
-        justify-content: center;
-        display: flex;
+    .QuestText {
+      text-align: justify;
+      padding: 20px;
+      margin: 0px 10px 10px 0px;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="title_dev">🗂 &nbsp;&nbsp;Кроссворд</div>
-    <img src="start.png" alt="Start image" class="image" id="questionImage" />
-        <div class="progress" id="progressBar"></div>
-        <label for="answerInput" id="questionLabel"></label>
-        <input type="text" id="answerInput" placeholder=" Введите ваш ответ" />
-        <button id="submitBtn">Отправить</button>
-        <div class="status" id="status"></div>
+    <div class="title_dev"> Module04091</div>
+
+    <img src="img0.png" alt="Start image" class="image" id="questionImage" />
+
+    <div class="progress" id="progressBar"></div>
+      <div class="QuestsText">
+        <label class="QuestsText" id="questionLabel"></label>
+      </div>
+
+    <input type="text" id="answerInput" placeholder="Введите ваш ответ" />
+
+    <button id="submitBtn">Отправить</button>
+
+    <div class="status" id="status"></div>
   </div>
 
   <script>
     // Массив вопросов, ответов и изображений
     const questions = [
-      { question: 'Какой цвет у неба?', answer: 'голубой', img: 'img1.png' },
+      { question: 'Какой цвет у неба? Какой цвет у неба? Какой цвет у неба? Какой цвет у неба? Какой цвет у неба? ', answer: 'голубой', img: 'img1.png' },
       { question: 'Сколько будет 2+2?', answer: '4', img: 'img2.png' },
       { question: 'Как зовут президента России?', answer: 'владимир', img: 'img3.png' },
       { question: 'Какой газ необходим для дыхания?', answer: 'кислород', img: 'img4.png' }
@@ -185,7 +263,7 @@
             statusElement.textContent = '';
 
             imgElement.src = questions[currentQuestionIndex].img;
-              currentQuestionIndex++;
+            currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
               showCurrentQuestion();
             } else {
