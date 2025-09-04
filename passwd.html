@@ -37,7 +37,7 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: start;
         align-items: center;
         padding: 20px;
         box-sizing: border-box;
@@ -57,7 +57,7 @@
         font-size: 25px;
         border: 1px solid #4d4d4d;
         border-radius: 50px;
-        margin-bottom: 100px;
+        margin-bottom: 80px;
         text-align: center;
         box-shadow: inset 3px 3px 0px 2px #5E7A77, inset 10px 12px 0px 2px #d0cfcf, 5px 5px 0px #A8BCBA;
     }
@@ -107,9 +107,14 @@
     .title_dev {
         font-size: 20px;
         font-weight: 700;
-        margin: 0px 0px 20px 0px;
+        margin: 20px 0px 10px 0px;
         justify-content: center;
         display: flex;
+        color: #255853;
+        text-shadow:
+                1px 1px 1px #5E7A77,
+                1px 1px 1px #A8BCBA,
+                2px 2px 1px #000000;
     }
     .status.ok { color: var(--accent); }
     .status.err { color: var(--accent-2); }
@@ -118,23 +123,20 @@
 <body>
 
   <div class="container">
+      <div class="title_dev shadowtitle" >Checker</div>
     <img id="winImage" src="" width="300px" height="300px" alt="Win" />
     <div class="input-group" id="inputSection">
-      <div class="title_dev" >name</div>
-      <input type="password" id="passwordInput" placeholder="введите данные" />
+
+      <input type="password" id="passwordInput" placeholder="Enter the data" />
       <div class="actions">
           <div class="status" id="status" role="status" aria-live="polite"></div>
-          <button class="inner-glow" id="checkButton">Проверить</button>
+          <button class="inner-glow" id="checkButton">Check</button>
         </div>
     </div>
 
   </div>
-
-
-
+  
   <script>
-    // const correctPassword = "12345";
-
     const passwordInput = document.getElementById("passwordInput");
     const checkButton = document.getElementById("checkButton");
     const inputSection = document.getElementById("inputSection");
@@ -164,12 +166,12 @@
       checkButton.disabled = true;
       const originalText = checkButton.textContent;
       let t = 5;
-      checkButton.textContent = `Проверяем… ${t}`;
-      setStatus('Проверяем данные…', '');
+      checkButton.textContent = `Check… ${t}`;
+      setStatus('Checking the data…', '');
 
       const countdown = setInterval(() => {
         t -= 1;
-        if (t > 0) checkButton.textContent = `Проверяем… ${t}`;
+        if (t > 0) checkButton.textContent = `Check… ${t}`;
       }, 1000);
 
       setTimeout(() => {
@@ -177,26 +179,26 @@
         checkButton.textContent = originalText;
         if (passwordInput.value === '123') {
           toggleBtn(true);
-          setStatus('Верные данные!', 'ok');
+          setStatus('Correct data!', 'ok');
           inputSection.style.display = "none";
           winImage.src = 'pazzle_qr3.png'
           winImage.style.display = "block";
         } else if (passwordInput.value === '1234') {
           toggleBtn(true);
-          setStatus('Верные данные!', 'ok');
+          setStatus('Correct data!', 'ok');
           inputSection.style.display = "none";
           winImage.src = 'source_qr.png'
           winImage.style.display = "block";
         } else if (passwordInput.value === '12345') {
           toggleBtn(true);
-          setStatus('Верные данные!', 'ok');
+          setStatus('Correct data!', 'ok');
           inputSection.style.display = "none";
           winImage.src = 'source_qr__.png'
           winImage.style.display = "block";
         }
         else {
           toggleBtn(false);
-          setStatus('Неверные данные.', 'err');
+          setStatus('Incorrect data!', 'err');
           checkButton.disabled = false;
         }
       }, 5000);
