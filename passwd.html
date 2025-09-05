@@ -76,10 +76,52 @@
         margin: 25px 0px 25px 0px;
     }
 
-    button:disabled {
+    .btn {
+      width: 100%;
+      background-color: var(--control-bg);
+      color: white;
+      font-size: 28px;
+      font-weight: bold;
+      border: 1px solid #4d4d4d;
+      border-radius: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow:
+        inset 2px 2px 0px 2px #4E917F,
+        0px 7px 0px var(--shadow-dark);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .btn:active {
+      transform: translateY(4px);
+      box-shadow: 0px 3px 0px var(--shadow-dark);
+    }
+
+    .btn-color {
+        grid-column: 2; grid-row: 1;
         background-color: #255853;
+        box-shadow: 0px 4px 0px #4E917F, 3px 4px 0px #4E917F;
+        border: solid 1px #4E917F;
+
+    }
+    .btn:disabled {
+
+        background-color: #4E917F;
         cursor: not-allowed;
-        box-shadow: 0px 8px 0px #448778;
+        box-shadow: inset 3px 3px 0px #34413f;
+    }
+
+    .btn-disable {
+        background-color: #4E917F;
+        cursor: not-allowed;
+        box-shadow: inset 3px 3px 0px #34413f;
+    }
+
+    .button:active {
+      transform: translateY(4px);
+      box-shadow: 0px 3px 0px #255853;
     }
 
     .success {
@@ -130,12 +172,12 @@
       <input type="password" id="passwordInput" placeholder="Enter the data" />
       <div class="actions">
           <div class="status" id="status" role="status" aria-live="polite"></div>
-          <button class="inner-glow" id="checkButton">Check</button>
+          <button class="btn btn-color" id="checkButton">Check</button>
         </div>
     </div>
 
   </div>
-  
+
   <script>
     const passwordInput = document.getElementById("passwordInput");
     const checkButton = document.getElementById("checkButton");
@@ -151,11 +193,11 @@
 
     function toggleBtn(open) {
       if (open) {
-        checkButton.classList.add('hidden');
+        // checkButton.classList.add('hidden');
         checkButton.classList.remove('hidden');
       } else {
         checkButton.classList.add('hidden');
-        checkButton.classList.remove('hidden');
+        // checkButton.classList.remove('hidden');
       }
     }
     function arraysEqual(a, b) {
@@ -164,6 +206,9 @@
 
     checkButton.addEventListener('click', () => {
       checkButton.disabled = true;
+      checkButton.classList.remove('btn')
+      checkButton.classList.remove('btn-color')
+      checkButton.classList.add('btn-disable')
       const originalText = checkButton.textContent;
       let t = 5;
       checkButton.textContent = `Check… ${t}`;
@@ -200,6 +245,10 @@
           toggleBtn(false);
           setStatus('Incorrect data!', 'err');
           checkButton.disabled = false;
+          checkButton.classList.add('btn')
+          checkButton.classList.add('btn-color')
+          checkButton.classList.remove('btn-disable')
+
         }
       }, 5000);
     });
