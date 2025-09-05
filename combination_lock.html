@@ -6,60 +6,117 @@
   <title>Крутилки — по очереди</title>
   <style>
     :root{
-      --box-w: 370px;v
+      --box-w: 350px;
       --box-h: 400px;
-      --knob-size: 100px;
+      --knob-size: 70px;
       --gap: 20px;
       --accent: #4f46e5;
     }
     body{
       margin:0;display:grid;place-items:center;height:100vh;
-      background:#0a0f1f;font-family: system-ui, sans-serif; color:#e5e7eb;
+      /*background:#0a0f1f;font-family: system-ui, sans-serif; color:#e5e7eb;*/
+      margin: 0;
+      /*height: 100vh;*/
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #d0f0e2;
+      font-family: 'Arial', sans-serif;
+      user-select: none;
     }
-    .frame{
-      width:var(--box-w); height:var(--box-h); background:#0b1428;
-      border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,.45);
-      padding:16px; display:flex; flex-direction:column; gap:12px; position:relative;
+    .container {
+      width: 320px;
+      height: 330px;
+      background-color:  #94A7A3;
+      border: 2px solid #777777;
+      border-radius: 50px;
+      box-shadow:
+        inset 2px 2px 0px 2px #A6BCB7,
+        3px 20px 0px #5B7A78,
+        9px 10px 0px #5B7A78,
+        0px 40px 0px #255853,
+        9px 40px 0px #255853;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow: hidden;
+      position: relative;
+      color: white;
     }
     header{display:flex; justify-content:space-between; align-items:center}
-    .title{font-weight:800}
-    .timer{font-variant-numeric: tabular-nums; font-weight:700;}
+    .title{
+        font-size: 12px;
+        font-weight: 700;
+        margin: 20px 0px 10px 0px;
+        justify-content: center;
+        display: flex;
+        color: #d0d0d0;
+        z-index: 20;
+        width: 100%;
+        top: -15px;
+        left: 75px;
+        position: absolute;}
+    .timer{
+        font-variant-numeric: tabular-nums;
+        font-weight:700;
+        width:60px; height:30px; border-radius:6px; background: #3a404d;
+        display:flex; align-items:center; justify-content:center;
+        font-weight:800;
+        box-shadow: inset 2px 2px 0px 1px #5E7A77,
+                  /*inset 4px 4px 0px 2px #d0cfcf,*/
+                  2px 2px 0px #A8BCBA;
+    }
 
-    .dials{display:grid; grid-template-columns: repeat(3,1fr); gap:var(--gap); place-items:center; margin-top:8px}
+    .dials{display:grid; grid-template-columns: repeat(3,1fr); gap:var(--gap); color: #d0f0e2;place-items:center; margin-top:8px}
     .dial{display:flex; flex-direction:column; align-items:center; gap:6px;}
     .display{
-      width:42px; height:28px; border-radius:6px; background:#111827;
+      width:42px; height:28px; border-radius:6px; background: #3a404d;
       display:flex; align-items:center; justify-content:center;
       font-weight:800; font-size:16px;
+      box-shadow: inset 2px 2px 0px 1px #5E7A77,
+                  /*inset 3px 3px 0px 2px #d0cfcf,*/
+                  1px 1px 0px #A8BCBA;
     }
     .knob{
       width:var(--knob-size); height:var(--knob-size);
-      border-radius:50%; background:#1e293b;
+      border-radius:50%;
+      background-color:#94A7A3;
       position:relative; cursor:grab; touch-action:none;
-      box-shadow:inset -4px -4px 6px rgba(255,255,255,.05),
-                 inset 4px 4px 6px rgba(0,0,0,.6);
-      transition: opacity .2s;
+      box-shadow: inset 2px 2px 0px 2px #A6BCB7,
+                  5px 0px 0px #5B7A78,
+                  0px 5px 0px #5B7A78,
+                  5px 5px 0px #5B7A78;
+                  /*0px 5px 0px #255853,*/
+                  /*9px 5px 0px #255853;*/
+      transition: opacity .3s;
+      border-style: dashed;
+      border-color: #A6BCB7;
     }
     .knob:active{cursor:grabbing;}
     .pointer{
       position:absolute; top:8px; left:50%; width:4px; height:20px;
-      background:var(--accent); border-radius:2px;
+      background:#259C69;
+      border-radius:2px;
       transform:translateX(-50%);
     }
-    .knob.ok{ box-shadow: 0 0 0 2px var(--accent),
-              inset -4px -4px 6px rgba(255,255,255,.05),
-              inset 4px 4px 6px rgba(0,0,0,.6); }
+    .knob.ok{
+        box-shadow: 0 0 0 2px #255853,
+                    inset -4px -4px 0px rgba(255,255,255,.05),
+                    inset 4px 4px 0px #5B7A78;
+    }
     .knob.locked{ opacity:0.4; pointer-events:none; cursor:not-allowed; }
 
-    .win-overlay{ position:absolute; inset:0; display:none; place-items:center; background:rgba(2,6,23,.85);}
+    .win-overlay{ position:absolute; inset:0; display:none; place-items:center; background-color:  #94A7A3;}
     .win-overlay.show{ display:grid; }
-    .prize{ width:200px; height:200px; border-radius:16px; object-fit:cover; }
+    .prize{ width:270px; height:270px; border-radius:16px; object-fit:cover; }
   </style>
 </head>
 <body>
-    <div class="frame" id="game">
+    <div class="container" id="game">
       <header>
-        <div class="title">Крутилки</div>
+        <div class="title" id="module">Module05092</div>
         <div class="timer" id="timer">05:00</div>
       </header>
 
@@ -67,16 +124,15 @@
 
       <div class="win-overlay" id="win">
         <div>
-          <h2>Победа 🎉</h2>
-          <img class="prize" id="prize" alt="Приз" />
+          <img class="prize" id="prize" alt="Приз" src="img0.png" />
         </div>
       </div>
     </div>
-
+</body>
 <script>
 (function(){
   const DIALS = 6;
-  const TOTAL_SECONDS = 3*60;
+  const TOTAL_SECONDS = 5*60;
 
   const state = {
     secret: [],
@@ -213,15 +269,10 @@
     let clickCount = 0;
     el.timer.addEventListener("click", ()=>{
       clickCount++;
-      if (clickCount >= 7){
+      if (clickCount >= 3){
         if (!document.getElementById("secret-code")){
-          const span = document.createElement("span");
-          span.id = "secret-code";
-          span.style.marginLeft = "8px";
-          span.style.fontSize = "12px";
-          span.style.color = "#0b1428";
-          span.textContent = state.secret.join("");
-          el.timer.parentNode.appendChild(span);
+            let module = document.getElementById('module')
+            module.innerText = 'Module' + state.secret.join("")
         }
       }
       setTimeout(()=>{ clickCount = 0 }, 1500);
@@ -230,5 +281,5 @@
   init();
 })();
 </script>
-</body>
+
 </html>
