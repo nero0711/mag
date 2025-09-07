@@ -2,206 +2,344 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Сетка</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root {
-      --w: 370px;
-      --h: 600px;
-      --bg: #0f172a;         /* slate-900 */
-      --panel: #111827;      /* gray-900 */
-      --muted: #64748b;      /* slate-500 */
-      --text: #e5e7eb;       /* gray-200 */
-      --accent: #22c55e;     /* green-500 */
-      --accent-2: #ef4444;   /* red-500 */
-      --border: #1f2937;     /* gray-800 */
-      --btn: #334155;        /* slate-700 */
-      --btn-hover: #475569;  /* slate-600 */
-    }
+
     body {
+      font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
-      background-color: #f0f0f0;
-      font-family: Arial, sans-serif;
+      background-color: #b3f3f3;
     }
 
-    .container {
-      width: 370px;
-      height: 600px;
-      border: 1px solid #ccc;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 15px 0;
-      box-sizing: border-box;
-      background-color: white;
+    :root{
+      --ink: #22252b;               /* основной контур */
+      --chassis-top: #f3f3f4;       /* светлый корпус */
+      --chassis-side: #e6e6e8;      /* бока корпуса */
+      --accent-blue: #2b5d89;       /* тёмно-синий окантовки */
+      --accent-blue-2: #2d6aa0;     /* второй синий */
+      --slot: #ffffff;              /* слот/окно */
+      --screen: #3b4a57;            /* тёмный экран */
+      --screen-gloss: #708090;      /* блик на экране */
+      --shadow: rgba(0,0,0,.18);    /* основная тень */
+      --shadow-strong: rgba(0,0,0,.25);
+      --btn-red: #e0574c;
+      --btn-yellow: #f2cf3e;
+      --btn-green: #7fca75;
+      --btn-blue: #4aa0d5;
+      --btn-grey: #e9eaef;
+      --ring: #f9d94d;              /* жёлтый диск джойстика */
     }
 
-    .controls {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-      font-size: 14px;
-    }
-
-    .controls input {
-      width: 60px;
-      padding: 5px;
-      text-align: center;
-    }
-
-    .controls button {
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-
-    .grid {
+    /* ===== Artboard keeps perfect square and scales responsively ===== */
+    .artboard{
+      width: min(92vmin, 820px);
+      aspect-ratio: 1 / 1;
+      position: relative;
       display: grid;
-      width: 350px;
-      height: 350px;
-      border: 1px solid #aaa;
-      gap: 1px;
-      background-color: #ddd;
-      grid-template-columns: repeat(var(--cols), 1fr);
-      grid-template-rows: repeat(var(--rows), 1fr);
+      place-items: center;
     }
 
-    .cell {
-      background-color: white;
+    .device{
+position: relative;
+    display: flex
+;
+    align-items: center;
+    width: 370px;
+    height: 450px;
+    background-color: #c4bfb9;
+    aspect-ratio: 0.9 / 1;
+    border-radius: 40px;
+    /* border: 5px solid black; */
+    box-shadow: inset 0px 0px 0px 0px #365a7a, 0px -5px 0px black, -5px -5px 0px black, 0px 20px 0px #365a7a, 9px 20px 0px #365a7a, 0px 40px 0px #2b4b68, 9px 40px 0px #2b4b68, 9px 45px 0px black, -5px 45px 0px black, 14px 43px 0px black, 14px 21px 0px black;
+    }
+
+    .panel {
+    position: relative;
+    /* inset: 10px 10px 64px 10px; */
+    border-radius: 10px 10px 32px 32px;
+    background-color: #f1f1e9;
+    border: 0px;
+    padding: 17px;
+    display: flex
+;
+    margin: 0px 23px 35px 23px;
+    width: 290px;
+    height: 380px;
+    }
+
+    .position-items {
+      display: flow;
+      align-items: center;
+      justify-content: space-between;
+    }
+    /* Экран */
+    .screen{
+      display: flex;
+      position: relative;
+      border-radius: 14px;
+      width: 280px;
+      height: 220px;
+      background: var(--screen);
+      border: 3px solid var(--ink);
+      overflow: hidden;
+      margin: 10px 2px 30px 2px;
+      box-shadow: 0px -5px 0px 7px #b1aea7
+    }
+    .screen::after{
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 52%, rgba(255, 255, 255, .06) 52.2%, rgba(255, 255, 255, .12) 100%, transparent 71%);
+      mix-blend-mode: screen;
+    }
+
+    /* Правый блок: кнопки + джойстик */
+    .controls {
+      position: relative;
+      display: flex;
+      flex-direction: row; /* вертикальное расположение */
+      gap: 12px;              /* отступ между дочерними элементами */
+    }
+
+    /* Плитка с круглыми кнопками */
+    .pad {
+      position: relative;
+      width: 180px;
+      height: 120px;
+      border-radius: 12px;
+      background: #f8f8fa;
+      border: 2.5px solid var(--ink);
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      grid-template-rows: repeat(2, 60px);
+
+      /*flex-wrap: wrap;*/
+
+      padding: 5px;
       box-sizing: border-box;
     }
 
-    .cell.black {
-      background-color: black;
+    .btn {
+      width: 40px;
+      height: 40px;
+      background-color: var(--control-bg);
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      border: 1px solid #4d4d4d;
+      border-radius: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
     }
 
-    .grid.no-grid-lines {
-      gap: 0;
-      background-color: transparent;
-    }
-    .span {
-        padding: 12px 0px;
-    }
-    .info {
-      font-size: 12px;
-      color: #666;
-      margin-top: 10px;
-    }
-    button {
-        padding: 12px;
-        width: 100%;
-        font-size: 18px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: background-color 0.3s;
+    .btn:active {
+      transform: translateY(4px);
+      box-shadow: 0px 3px 0px var(--shadow-dark);
     }
 
-    .btn-grid {
-        padding: 12px;
-        width: 100%;
-        font-size: 18px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        margin: 10px 0px;
-        transition: background-color 0.3s;
+    .btn-yellow {
+      grid-column: 3;
+      grid-row: 1;
+      width: 40px;
+      height: 15px;
+      background-color: #FBD369;
+      box-shadow: 0px 4px 0px #D1AE53, 3px 4px 0px #D1AE53;
+      border: solid 1px #D1AE53;
+      border-radius: 50px;
+      z-index: 11;
+    }
+    .btn-joystick {
+      width: 80px;
+      height: 70px;
+      background-color: #FBD369;
+      box-shadow: 0px 4px 0px #D1AE53, 3px 4px 0px #D1AE53;
+      border: solid 1px #D1AE53;
+      border-radius: 50%;
+      margin: 0px 3px 3px 3px;
+    }
+    .btn-red {
+        grid-column: 1; grid-row: 2;
+        background-color: #F16760;
+        box-shadow: 0px 4px 0px #BB524A, 3px 4px 0px #BB524A;
+        border: solid 1px #BB524A;
+    }
+    .btn-red1 {
+      background-color: #F16760;
+      box-shadow: 1px -4px 0px #BB524A, -1px -4px 0px #BB524A;
+      border: solid 1px #BB524A;
+      width: 20px;
+      margin: 10px 0px 0px 0px;
+      height: 20px;
+    }
+    .btn-red1:active {
+      transform: translateY(-4px);
+    }
+    .btn-green1 {
+        grid-column: 1; grid-row: 2;
+        background-color: #7DD879;
+        box-shadow: 0px 4px 0px #6BBB63, 3px 4px 0px #6BBB63;
+        border: solid 1px #6BBB63;
+        position: absolute;
+        left: 60px;
+    }
+    .btn-green2 {
+        grid-column: 2; grid-row: 2;
+        background-color: #7DD879;
+        box-shadow: 0px 4px 0px #6BBB63, 3px 4px 0px #6BBB63;
+        border: solid 1px #6BBB63;
+        position: absolute;
+        left: 60px;
+    }
+    .btn-blue1 {
+      width: 100px;
+      grid-column: 1; grid-row: 1;
+      background-color: #578CF8;
+      box-shadow: 0px 4px 0px #4369B6, 3px 4px 0px #4369B6;
+      border: solid 1px #4369B6;
     }
 
-    input {
-        padding: 15px 0px 15px 0px;
-        width: 100%;
-        font-size: 20px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        text-align: center;
+    .crosshair{
+      width: 38px; height: 38px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%);
+      position: relative;
+    }
+    .crosshair::before,
+    .crosshair::after{
+      content: "";
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--ink);
+    }
+    .crosshair::before{ width: 3px; height: 42px; }
+    .crosshair::after{ height: 3px; width: 42px; }
+
+    .crosshair-mini {
+      width: 10px;
+      height: 12px;
+      /*border: 3px solid;*/
+      border-color:  var(--ink);
+      /*border-top-style: solid;*/
+      border-right-style: solid;
+      border-right-width: 3px;
+      border-left-style: solid;
+      border-left-width: 3px;
+      border-bottom-style: solid;
+      border-bottom-width: 3px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%);
+      position: relative;
+
+    }
+    .crosshair-mini::before, .crosshair-mini::after{
+      content: "";
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--ink);
+    }
+    .crosshair-mini::before{ width: 3px; height: 8px; top: 4px}
+
+    .vents{
+      justify-self: end;
+      display: grid; grid-auto-flow: column; gap: 8px;
+      padding-right: 6px;
+    }
+    .vents span{
+      width: 6px; height: 28px;
+      background: var(--ink);
+      border-radius: 3px;
+      opacity: .28;
+    }
+
+    @media (max-width: 360px){
+      .panel{ grid-template-columns: 1fr 180px; }
+      .joystick{ width: 120px; }
+      .btn{ width: 50px; height: 50px; font-size: 9px; }
+    }
+    .down-blue{
+      display: flex;
+      width: 200px;
+      height: 25px;
+      margin: 4px 29px -10px 29px;
+      border-bottom: 25px solid #365a7a;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+    }
+    .joystick {
+      background-color: #365a7a;
+      display: flex;
+      width: 90px;
+      height: 80px;
+      margin: 5px 5px 5px 5px;
+      padding: 5px;
+      border-radius: 50%;
     }
     .title_dev {
-        font-size: 20px;
-        font-weight: 700;
-        margin: 0px 0px 20px 0px;
-        justify-content: center;
-        display: flex;
+      font-size: 12px;
+      font-weight: 700;
+      margin: 17px 0px 10px 40px;
+      justify-content: center;
+      display: flex;
+      color: #365a7a;
+      z-index: 20;
+      width: 100%;
+      top: -15px;
+      left: 75px;
+      position: absolute;
+    }
+    .buttom-panel {
+      display: flex;
+      justify-content: space-around;
     }
   </style>
+  <title>UI Device Mock — HTML + CSS</title>
 </head>
 <body>
-  <div class="container">
-      <div class="title_dev">🏁&nbsp;&nbsp;КвадКреатор</div>
-    <div class="controls">
-      <input type="number" id="cols" value="25" min="1" max="50" />
-      <span class="span">×</span>
-      <input type="number" id="rows" value="25" min="1" max="50" />
-      <button id="apply">Применить</button>
-
-    </div>
-
-    <div class="grid" id="grid"></div>
-        <div>
-            <button id="toggleGrid" class="btn-grid">Скрыть сетку</button>
+    <section class="device" role="img" aria-label="Панель устройства с экраном и кнопками">
+      <div class="title_dev"> Module06091</div>
+      <div class="panel">
+        <div class="position-items">
+          <div class="screen" aria-hidden="true"></div>
+          <div class="controls">
+            <div class="pad" aria-hidden="true">
+              <div class="btn btn-blue1" data-label=""></div>
+              <div class="btn btn-yellow" data-label=""></div>
+              <div class="btn btn-red" data-label=""></div>
+              <div class="btn btn-green1" data-label=""></div>
+              <div class="btn btn-green2" data-label="–"></div>
+            </div>
+            <div class="joystick">
+              <div class="btn btn-joystick">
+                <div class="crosshair" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+          <div class="down-blue">
+          </div>
+          <div class="buttom-panel">
+            <div class="btn btn-red1" data-label="">
+              <div class="crosshair-mini"></div>
+            </div>
+            <div class="vents">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
         </div>
-
-  </div>
-
-  <script>
-    const grid = document.getElementById('grid');
-    const toggleButton = document.getElementById('toggleGrid');
-    const applyButton = document.getElementById('apply');
-    const colsInput = document.getElementById('cols');
-    const rowsInput = document.getElementById('rows');
-    let gridVisible = true;
-
-    // Создание сетки
-    function createGrid(cols, rows) {
-      // Удаляем старые клетки
-      grid.innerHTML = '';
-      // Устанавливаем CSS-переменные для grid
-      grid.style.setProperty('--cols', cols);
-      grid.style.setProperty('--rows', rows);
-
-      for (let i = 0; i < rows * cols; i++) {
-        const cell = document.createElement('div');
-        cell.classList.add('cell');
-        cell.addEventListener('click', () => {
-          cell.classList.toggle('black');
-        });
-        grid.appendChild(cell);
-      }
-    }
-
-    // Применить новые размеры
-    applyButton.addEventListener('click', () => {
-      const cols = parseInt(colsInput.value) || 21;
-      const rows = parseInt(rowsInput.value) || 21;
-
-      const max = 50;
-      if (cols < 1 || rows < 1 || cols > max || rows > max) {
-        return;
-      }
-
-      createGrid(cols, rows);
-    });
-
-    // Переключение сетки
-    toggleButton.addEventListener('click', () => {
-      gridVisible = !gridVisible;
-      if (gridVisible) {
-        grid.classList.remove('no-grid-lines');
-        toggleButton.textContent = 'Скрыть сетку';
-      } else {
-        grid.classList.add('no-grid-lines');
-        toggleButton.textContent = 'Показать сетку';
-      }
-    });
-
-    createGrid(25, 25);
-  </script>
+      </div>
+    </section>
 </body>
 </html>
