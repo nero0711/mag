@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-
     body {
       font-family: Arial, sans-serif;
       display: flex;
@@ -13,28 +12,29 @@
       min-height: 100vh;
       margin: 0;
       background-color: #b3f3f3;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     :root{
-      --ink: #22252b;               /* основной контур */
-      --chassis-top: #f3f3f4;       /* светлый корпус */
-      --chassis-side: #e6e6e8;      /* бока корпуса */
-      --accent-blue: #2b5d89;       /* тёмно-синий окантовки */
-      --accent-blue-2: #2d6aa0;     /* второй синий */
-      --slot: #ffffff;              /* слот/окно */
-      --screen: #3b4a57;            /* тёмный экран */
-      --screen-gloss: #708090;      /* блик на экране */
-      --shadow: rgba(0,0,0,.18);    /* основная тень */
+      --ink: #22252b;
+      --chassis-top: #f3f3f4;
+      --chassis-side: #e6e6e8;
+      --accent-blue: #2b5d89;
+      --accent-blue-2: #2d6aa0;
+      --slot: #ffffff;
+      --screen: #3b4a57;
+      --screen-gloss: #708090;
+      --shadow: rgba(0,0,0,.18);
       --shadow-strong: rgba(0,0,0,.25);
       --btn-red: #e0574c;
       --btn-yellow: #f2cf3e;
       --btn-green: #7fca75;
       --btn-blue: #4aa0d5;
       --btn-grey: #e9eaef;
-      --ring: #f9d94d;              /* жёлтый диск джойстика */
+      --ring: #f9d94d;
     }
 
-    /* ===== Artboard keeps perfect square and scales responsively ===== */
     .artboard{
       width: min(92vmin, 820px);
       aspect-ratio: 1 / 1;
@@ -44,279 +44,126 @@
     }
 
     .device{
-position: relative;
-    display: flex
-;
-    align-items: center;
-    width: 370px;
-    height: 450px;
-    background-color: #c4bfb9;
-    aspect-ratio: 0.9 / 1;
-    border-radius: 40px;
-    /* border: 5px solid black; */
-    box-shadow: inset 0px 0px 0px 0px #365a7a, 0px -5px 0px black, -5px -5px 0px black, 0px 20px 0px #365a7a, 9px 20px 0px #365a7a, 0px 40px 0px #2b4b68, 9px 40px 0px #2b4b68, 9px 45px 0px black, -5px 45px 0px black, 14px 43px 0px black, 14px 21px 0px black;
-    }
-
-    .panel {
-    position: relative;
-    /* inset: 10px 10px 64px 10px; */
-    border-radius: 10px 10px 32px 32px;
-    background-color: #f1f1e9;
-    border: 0px;
-    padding: 17px;
-    display: flex
-;
-    margin: 0px 23px 35px 23px;
-    width: 290px;
-    height: 380px;
-    }
-
-    .position-items {
-      display: flow;
+      position: relative;
+      display: flex;
       align-items: center;
-      justify-content: space-between;
-    }
-    /* Экран */
-    .screen{
-      display: flex;
-      position: relative;
-      border-radius: 14px;
-      width: 280px;
-      height: 220px;
-      background: var(--screen);
-      border: 3px solid var(--ink);
-      overflow: hidden;
-      margin: 10px 2px 30px 2px;
-      box-shadow: 0px -5px 0px 7px #b1aea7
-    }
-    .screen::after{
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, transparent 52%, rgba(255, 255, 255, .06) 52.2%, rgba(255, 255, 255, .12) 100%, transparent 71%);
-      mix-blend-mode: screen;
+      width: 370px;
+      height: 510px;
+      background-color: #c4bfb9;
+      aspect-ratio: 0.9 / 1;
+      border-radius: 40px;
+      box-shadow: inset 0px 0px 0px 0px #365a7a, 0px -5px 0px black, -5px -5px 0px black, 0px 20px 0px #365a7a, 9px 20px 0px #365a7a, 0px 40px 0px #2b4b68, 9px 40px 0px #2b4b68, 9px 45px 0px black, -5px 45px 0px black, 14px 43px 0px black, 14px 21px 0px black;
     }
 
-    /* Правый блок: кнопки + джойстик */
-    .controls {
-      position: relative;
-      display: flex;
-      flex-direction: row; /* вертикальное расположение */
-      gap: 12px;              /* отступ между дочерними элементами */
+    .panel { position: relative; border-radius: 10px 10px 32px 32px; background-color: #f1f1e9; border: 0px; padding: 17px; display: flex; margin: 0px 23px 35px 23px; width: 290px; height: 440px; }
+
+    .position-items { display: flow; align-items: center; justify-content: space-between; }
+
+    .screen{ display: flex; position: relative; border-radius: 14px; width: 280px; height: 280px; background: var(--screen); border: 3px solid var(--ink); overflow: hidden; margin: 10px 2px 30px 2px; box-shadow: 0px -5px 0px 7px #b1aea7 }
+    .screen::after{ content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 52%, rgba(255, 255, 255, .06) 52.2%, rgba(255, 255, 255, .12) 100%, transparent 71%); mix-blend-mode: screen; pointer-events: none; }
+
+    .controls { position: relative; display: flex; flex-direction: row; gap: 12px; }
+
+    .pad { position: relative; width: 180px; height: 120px; border-radius: 12px; background: #f8f8fa; border: 2.5px solid var(--ink); display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(2, 60px); padding: 5px; box-sizing: border-box; }
+
+    .btn { width: 40px; height: 40px; background-color: var(--control-bg); color: white; font-size: 15px; font-weight: bold; border: 1px solid #4d4d4d; border-radius: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
+
+    .btn:active { transform: translateY(4px); box-shadow: 0px 3px 0px var(--shadow-dark); }
+
+    .btn-yellow { grid-column: 3; grid-row: 1; width: 40px; height: 15px; background-color: #FBD369; box-shadow: 0px 4px 0px #D1AE53, 3px 4px 0px #D1AE53; border: solid 1px #D1AE53; border-radius: 50px; z-index: 11; }
+    .btn-joystick { width: 80px; height: 70px; background-color: #FBD369; box-shadow: 0px 4px 0px #D1AE53, 3px 4px 0px #D1AE53; border: solid 1px #D1AE53; border-radius: 50%; margin: 0px 3px 3px 3px; }
+    .btn-red { grid-column: 1; grid-row: 2; background-color: #F16760; box-shadow: 0px 4px 0px #BB524A, 3px 4px 0px #BB524A; border: solid 1px #BB524A; }
+    .btn-red1 { background-color: #F16760; box-shadow: 1px -4px 0px #BB524A, -1px -4px 0px #BB524A; border: solid 1px #BB524A; width: 20px; margin: 10px 0px 0px 0px; height: 20px; }
+    .btn-red1:active { transform: translateY(-4px); }
+    .btn-green1 { width: 100px; grid-column: 1; grid-row: 2; background-color: #7DD879; box-shadow: 0px 4px 0px #6BBB63, 3px 4px 0px #6BBB63; border: solid 1px #6BBB63; position: absolute; left: 60px; }
+    .btn-blue1 { width: 100px; grid-column: 1; grid-row: 1; background-color: #578CF8; box-shadow: 0px 4px 0px #4369B6, 3px 4px 0px #4369B6; border: solid 1px #4369B6; }
+
+    .crosshair{ width: 38px; height: 38px; border: 3px solid var(--ink); border-radius: 50%; background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%); position: relative; }
+    .crosshair::before, .crosshair::after{ content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--ink); }
+    .crosshair::before{ width: 3px; height: 42px; } .crosshair::after{ height: 3px; width: 42px; }
+
+    .crosshair-mini { width: 10px; height: 12px; border-color: var(--ink); border-right-style: solid; border-right-width: 3px; border-left-style: solid; border-left-width: 3px; border-bottom-style: solid; border-bottom-width: 3px; border-radius: 50%; background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%); position: relative; }
+    .crosshair-mini::before, .crosshair-mini::after{ content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--ink); } .crosshair-mini::before{ width: 3px; height: 8px; top: 4px }
+
+    .vents{ justify-self: end; display: grid; grid-auto-flow: column; gap: 8px; padding-right: 6px; } .vents span{ width: 6px; height: 28px; background: var(--ink); border-radius: 3px; opacity: .28; }
+
+    @media (max-width: 360px){ .panel{ grid-template-columns: 1fr 180px; } .joystick{ width: 120px; } .btn{ width: 50px; height: 50px; font-size: 9px; } }
+
+    .down-blue{ display: flex; width: 200px; height: 25px; margin: 4px 29px -10px 29px; border-bottom: 25px solid #365a7a; border-left: 20px solid transparent; border-right: 20px solid transparent; }
+    .joystick { background-color: #365a7a; display: flex; width: 90px; height: 80px; margin: 5px 5px 5px 5px; padding: 5px; border-radius: 50%; }
+    .title_dev { font-size: 12px; font-weight: 700; margin: 17px 0px 10px 40px; justify-content: center; display: flex; color: #365a7a; z-index: 20; width: 100%; top: -15px; left: 75px; position: absolute; }
+    .buttom-panel { display: flex; justify-content: space-around; }
+
+    /* === grid styles (изменено: добавлены temp-black & touch-action) === */
+    .grid {
+      width: 100%;
+      height: 100%;
+      display: none;
+      gap: 1px;
+      background-color: #555;
+      box-sizing: border-box;
+      touch-action: none; /* важно для тача */
+      cursor: crosshair;
     }
 
-    /* Плитка с круглыми кнопками */
-    .pad {
-      position: relative;
-      width: 180px;
-      height: 120px;
-      border-radius: 12px;
-      background: #f8f8fa;
-      border: 2.5px solid var(--ink);
-      display: grid;
-      grid-template-columns: repeat(3, 60px);
-      grid-template-rows: repeat(2, 60px);
-
-      /*flex-wrap: wrap;*/
-
-      padding: 5px;
+    .cell {
+      background-color: #ccc;
+      transition: background-color 0.12s;
+      width: 100%;
+      height: 100%;
       box-sizing: border-box;
     }
 
-    .btn {
-      width: 40px;
-      height: 40px;
-      background-color: var(--control-bg);
-      color: white;
-      font-size: 15px;
-      font-weight: bold;
-      border: 1px solid #4d4d4d;
-      border-radius: 50px;
-      display: flex;
+    .cell.black { background-color: #000; }
+
+    /* временная заливка при drag (пока не отпущена кнопка) */
+    .cell.temp-black { background-color: rgba(0,0,0,0.6); }
+
+    .grid.no-grid-lines { gap: 0; background-color: transparent; }
+
+    #legend { font-size: 12px; margin: 15px; color: #1a3a32; text-align: left; width: 90%; line-height: 1.4; }
+    .help-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
       justify-content: center;
       align-items: center;
-      cursor: pointer;
-      transition: transform 0.1s, box-shadow 0.1s;
+      z-index: 10;
     }
-
-    .btn:active {
-      transform: translateY(4px);
-      box-shadow: 0px 3px 0px var(--shadow-dark);
-    }
-
-    .btn-yellow {
-      grid-column: 3;
-      grid-row: 1;
-      width: 40px;
-      height: 15px;
-      background-color: #FBD369;
-      box-shadow: 0px 4px 0px #D1AE53, 3px 4px 0px #D1AE53;
-      border: solid 1px #D1AE53;
-      border-radius: 50px;
-      z-index: 11;
-    }
-    .btn-joystick {
-      width: 80px;
-      height: 70px;
-      background-color: #FBD369;
-      box-shadow: 0px 4px 0px #D1AE53, 3px 4px 0px #D1AE53;
-      border: solid 1px #D1AE53;
-      border-radius: 50%;
-      margin: 0px 3px 3px 3px;
-    }
-    .btn-red {
-        grid-column: 1; grid-row: 2;
-        background-color: #F16760;
-        box-shadow: 0px 4px 0px #BB524A, 3px 4px 0px #BB524A;
-        border: solid 1px #BB524A;
-    }
-    .btn-red1 {
-      background-color: #F16760;
-      box-shadow: 1px -4px 0px #BB524A, -1px -4px 0px #BB524A;
-      border: solid 1px #BB524A;
-      width: 20px;
-      margin: 10px 0px 0px 0px;
-      height: 20px;
-    }
-    .btn-red1:active {
-      transform: translateY(-4px);
-    }
-    .btn-green1 {
-        grid-column: 1; grid-row: 2;
-        background-color: #7DD879;
-        box-shadow: 0px 4px 0px #6BBB63, 3px 4px 0px #6BBB63;
-        border: solid 1px #6BBB63;
-        position: absolute;
-        left: 60px;
-    }
-    .btn-green2 {
-        grid-column: 2; grid-row: 2;
-        background-color: #7DD879;
-        box-shadow: 0px 4px 0px #6BBB63, 3px 4px 0px #6BBB63;
-        border: solid 1px #6BBB63;
-        position: absolute;
-        left: 60px;
-    }
-    .btn-blue1 {
-      width: 100px;
-      grid-column: 1; grid-row: 1;
-      background-color: #578CF8;
-      box-shadow: 0px 4px 0px #4369B6, 3px 4px 0px #4369B6;
-      border: solid 1px #4369B6;
-    }
-
-    .crosshair{
-      width: 38px; height: 38px;
-      border: 3px solid var(--ink);
-      border-radius: 50%;
-      background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%);
-      position: relative;
-    }
-    .crosshair::before,
-    .crosshair::after{
-      content: "";
-      position: absolute;
-      left: 50%; top: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--ink);
-    }
-    .crosshair::before{ width: 3px; height: 42px; }
-    .crosshair::after{ height: 3px; width: 42px; }
-
-    .crosshair-mini {
-      width: 10px;
-      height: 12px;
-      /*border: 3px solid;*/
-      border-color:  var(--ink);
-      /*border-top-style: solid;*/
-      border-right-style: solid;
-      border-right-width: 3px;
-      border-left-style: solid;
-      border-left-width: 3px;
-      border-bottom-style: solid;
-      border-bottom-width: 3px;
-      border-radius: 50%;
-      background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%);
-      position: relative;
-
-    }
-    .crosshair-mini::before, .crosshair-mini::after{
-      content: "";
-      position: absolute;
-      left: 50%; top: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--ink);
-    }
-    .crosshair-mini::before{ width: 3px; height: 8px; top: 4px}
-
-    .vents{
-      justify-self: end;
-      display: grid; grid-auto-flow: column; gap: 8px;
-      padding-right: 6px;
-    }
-    .vents span{
-      width: 6px; height: 28px;
-      background: var(--ink);
-      border-radius: 3px;
-      opacity: .28;
-    }
-
-    @media (max-width: 360px){
-      .panel{ grid-template-columns: 1fr 180px; }
-      .joystick{ width: 120px; }
-      .btn{ width: 50px; height: 50px; font-size: 9px; }
-    }
-    .down-blue{
-      display: flex;
-      width: 200px;
-      height: 25px;
-      margin: 4px 29px -10px 29px;
-      border-bottom: 25px solid #365a7a;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-    }
-    .joystick {
-      background-color: #365a7a;
-      display: flex;
-      width: 90px;
-      height: 80px;
-      margin: 5px 5px 5px 5px;
-      padding: 5px;
-      border-radius: 50%;
-    }
-    .title_dev {
+    .help-content {
       font-size: 12px;
-      font-weight: 700;
-      margin: 17px 0px 10px 40px;
-      justify-content: center;
-      display: flex;
-      color: #365a7a;
-      z-index: 20;
-      width: 100%;
-      top: -15px;
-      left: 75px;
-      position: absolute;
-    }
-    .buttom-panel {
-      display: flex;
-      justify-content: space-around;
+      margin: 15px;
+      color: #5dc9ae;
+      text-align: left;
+      width: 90%;
+      line-height: 1.4;
     }
   </style>
-  <title>UI Device Mock — HTML + CSS</title>
 </head>
 <body>
     <section class="device" role="img" aria-label="Панель устройства с экраном и кнопками">
       <div class="title_dev"> Module06091</div>
       <div class="panel">
         <div class="position-items">
-          <div class="screen" aria-hidden="true"></div>
+          <div class="screen" aria-hidden="true">
+            <div class="grid" id="grid"></div>
+            <!-- Help overlay теперь внутри экрана -->
+            <div class="help-overlay" id="helpOverlay">
+            <div class="help-content">
+              О модуле: <br>
+              Управление "сенсорный экран" используется для переноса qrкодматерии
+            </div>
+          </div>
+          </div>
           <div class="controls">
             <div class="pad" aria-hidden="true">
-              <div class="btn btn-blue1" data-label=""></div>
-              <div class="btn btn-yellow" data-label=""></div>
-              <div class="btn btn-red" data-label=""></div>
-              <div class="btn btn-green1" data-label=""></div>
-              <div class="btn btn-green2" data-label="–"></div>
+              <div class="btn btn-blue1" id="toggleGrid" >Hide</div>
+              <div class="btn btn-yellow"> </div>
+              <div class="btn btn-red" id="resetGrid">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAYAAABzJ5OsAAAACXBIWXMAAAsTAAALEwEAmpwYAAABtElEQVR4nO2Yv04CQRCHPxIKaOzAwkRbE1u15nwAqSxEwwMYeQstqQUKK+MrGNRCC0ArewV5A2OljZczlwwJuewBYWfxT/ZLpryZ387OzO4eeDwej8fzz9gBWkAX6AODOawv3zeBYBGil4EbIHJgbaDoUvirI+GR2MDVAq4dC4/GdkC9xqMFWqApvmkIEAJnQAXYm8Mq4jc0+G5oiu8ZAsTCXSWmiyLPhgBVJd9Vg+84nhr3hgAlS5+XM9T+O7BpK74MfCW2NWvpsz9j8x6gwDZwAhwBeQV/5RmEPyokyRnnE4R/AhuawdaUsj5iCRimiK+hyL7M5Ccgp+i3ZJj1t0BGK8AK8DbmvI4u9cSEWdVynJFMJE9X21E5Tk52NJQdVqOWUpNDqVkt8tJTaqwDHxMmQjwtfiVZmbPTZnE8rzWyfgycynlizeGMJ+CLQpIeEv20ayt+Szp/mvgLyziBwecdivzpW2XPECC+h2vQcn2fbxgChLIAm5dUK+UlpfXQSa1Ll1ZCmfaChF/hgKL8V3EpfAAUXIgfLaDtMOMFFkAgTdyx/FfZkeZUr3GPx+PxePhJvgG7nrfxbYJDJQAAAABJRU5ErkJggg==" style="width: 36px; height: 36px;" alt="refresh">
+              </div>
+              <div class="btn btn-green1" id="helpBtn">help</div>
             </div>
             <div class="joystick">
               <div class="btn btn-joystick">
@@ -324,22 +171,299 @@ position: relative;
               </div>
             </div>
           </div>
-          <div class="down-blue">
-          </div>
+          <div class="down-blue"></div>
           <div class="buttom-panel">
-            <div class="btn btn-red1" data-label="">
+            <div class="btn btn-red1" id="toggle-bth">
               <div class="crosshair-mini"></div>
             </div>
             <div class="vents">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
+              <span></span><span></span><span></span><span></span><span></span>
             </div>
           </div>
         </div>
       </div>
     </section>
+    <div id="helpOverlay" class="help-overlay hidden">
+      Это подсказка
+    </div>
 </body>
+
+<script>
+  const grid = document.getElementById('grid');
+  const toggleButton = document.getElementById('toggleGrid');
+  const resetButton = document.getElementById('resetGrid');
+  const toggleButtonScreen = document.getElementById('toggle-bth');
+  const helpBtn = document.getElementById('helpBtn');
+  let gridVisible = true;
+  const COLS = 21;
+  const ROWS = 21;
+  const helpButton = document.querySelector('.btn-green1');
+  const helpOverlay = document.getElementById('helpOverlay');
+
+  helpButton.addEventListener('click', () => {
+    helpOverlay.classList.toggle('hidden');
+  });
+  // массив ячеек для быстрого доступа
+  let cells = [];
+
+  // состояния рисования
+  let isDrawing = false;
+  let startCell = null; // {row, col}
+  let lastLine = []; // массив {x,y}
+  let hadMoveDuringPointer = false;
+  let tooltip = null;
+  let lastPointerClient = { clientX: 0, clientY: 0 };
+
+  function createGrid(cols, rows) {
+    grid.innerHTML = '';
+    cells = [];
+    grid.style.setProperty('grid-template-columns', `repeat(${cols}, 1fr)`);
+    grid.style.setProperty('grid-template-rows', `repeat(${rows}, 1fr)`);
+
+    for (let i = 0; i < rows * cols; i++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      cells.push(cell);
+      grid.appendChild(cell);
+      // НЕ вешаем click — реализуем click через pointerup (чтобы избежать конфликтов drag vs click)
+    }
+  }
+
+  // === утилита: найти клетку под clientX/clientY ===
+  function getCellUnderClientXY(clientX, clientY) {
+    const rect = grid.getBoundingClientRect();
+    const style = getComputedStyle(grid);
+    const padLeft = parseFloat(style.paddingLeft) || 0;
+    const padTop = parseFloat(style.paddingTop) || 0;
+    const padRight = parseFloat(style.paddingRight) || 0;
+    const padBottom = parseFloat(style.paddingBottom) || 0;
+    const gap = parseFloat(style.gap) || 0;
+
+    const innerWidth = rect.width - padLeft - padRight;
+    const innerHeight = rect.height - padTop - padBottom;
+
+    if (innerWidth <= 0 || innerHeight <= 0) return null;
+
+    const cellW = (innerWidth - (COLS - 1) * gap) / COLS;
+    const cellH = (innerHeight - (ROWS - 1) * gap) / ROWS;
+
+    const x = clientX - rect.left - padLeft;
+    const y = clientY - rect.top - padTop;
+
+    if (x < -1 || y < -1 || x > innerWidth + 1 || y > innerHeight + 1) return null;
+
+    let col = Math.floor(x / (cellW + gap));
+    let row = Math.floor(y / (cellH + gap));
+    col = Math.max(0, Math.min(COLS - 1, col));
+    row = Math.max(0, Math.min(ROWS - 1, row));
+    return { row, col };
+  }
+
+  function coordToIndex(row, col) {
+    return row * COLS + col;
+  }
+
+  // Брезенхем (x — колонка, y — строка)
+  function getLine(x0, y0, x1, y1) {
+    const points = [];
+    let dx = Math.abs(x1 - x0);
+    let dy = Math.abs(y1 - y0);
+    let sx = (x0 < x1) ? 1 : -1;
+    let sy = (y0 < y1) ? 1 : -1;
+    let err = dx - dy;
+
+    while (true) {
+      points.push({ x: x0, y: y0 });
+      if (x0 === x1 && y0 === y1) break;
+      let e2 = 2 * err;
+      if (e2 > -dy) { err -= dy; x0 += sx; }
+      if (e2 < dx)  { err += dx; y0 += sy; }
+    }
+    return points;
+  }
+
+  // --- pointer handlers ---
+  function onPointerDown(e) {
+    // Если сетка скрыта — не рисуем
+    const styleDisplay = window.getComputedStyle(grid).display;
+    if (styleDisplay === 'none') return;
+
+    // мышь — только левая кнопка
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+    const pos = getCellUnderClientXY(e.clientX, e.clientY);
+    if (!pos) return;
+
+    e.preventDefault();
+
+    isDrawing = true;
+    hadMoveDuringPointer = false;
+    startCell = pos;
+    lastLine = [];
+    lastPointerClient = { clientX: e.clientX, clientY: e.clientY };
+
+    // временно подсветим стартовую клетку
+    updateDrawing(e.clientX, e.clientY);
+
+    // tooltip
+    if (!tooltip) {
+      tooltip = document.createElement('div');
+      tooltip.style.position = 'absolute';
+      tooltip.style.padding = '4px 7px';
+      tooltip.style.background = 'rgba(0,0,0,0.75)';
+      tooltip.style.color = '#fff';
+      tooltip.style.borderRadius = '6px';
+      tooltip.style.fontSize = '12px';
+      tooltip.style.pointerEvents = 'none';
+      tooltip.style.zIndex = 9999;
+      document.body.appendChild(tooltip);
+    }
+
+    // попытка захвата указателя (не критично)
+    try { grid.setPointerCapture && grid.setPointerCapture(e.pointerId); } catch (err) {}
+  }
+
+  function onPointerMove(e) {
+    if (!isDrawing) return;
+    hadMoveDuringPointer = true;
+    lastPointerClient = { clientX: e.clientX, clientY: e.clientY };
+    updateDrawing(e.clientX, e.clientY);
+  }
+
+  function onPointerUp(e) {
+    if (!isDrawing) return;
+    // если было движение — фиксируем линию; иначе — это клик (toggle)
+    if (hadMoveDuringPointer) {
+      // commit lastLine -> черные
+      lastLine.forEach(p => {
+        const idx = coordToIndex(p.y, p.x);
+        if (cells[idx]) {
+          cells[idx].classList.remove('temp-black');
+          cells[idx].classList.add('black');
+        }
+      });
+    } else {
+      // клик: определим клетку (по клиентским координатам указателя или по стартовой)
+      const upPos = getCellUnderClientXY(e.clientX, e.clientY) || startCell;
+      if (upPos) {
+        const idx = coordToIndex(upPos.row, upPos.col);
+        const cell = cells[idx];
+        if (cell) {
+          // уберем возможную temp подсветку и переключим состояние
+          cell.classList.remove('temp-black');
+          cell.classList.toggle('black');
+        }
+      }
+    }
+
+    // очистка временной подсветки
+    lastLine.forEach(p => {
+      const idx = coordToIndex(p.y, p.x);
+      if (cells[idx]) cells[idx].classList.remove('temp-black');
+    });
+
+    // сброс состояний
+    lastLine = [];
+    startCell = null;
+    isDrawing = false;
+
+    // удаляем tooltip
+    if (tooltip) { tooltip.remove(); tooltip = null; }
+
+    // release pointer capture
+    try { grid.releasePointerCapture && grid.releasePointerCapture(e.pointerId); } catch (err) {}
+
+    // сброс флага движения после обработки (чтобы не мешало в будущих операциях)
+    setTimeout(() => { hadMoveDuringPointer = false; }, 0);
+  }
+
+  function onPointerCancel(e) {
+    // аккуратно отменяем текущее рисование (аналогично up но без фиксации)
+    lastLine.forEach(p => {
+      const idx = coordToIndex(p.y, p.x);
+      if (cells[idx]) cells[idx].classList.remove('temp-black');
+    });
+    lastLine = [];
+    startCell = null;
+    isDrawing = false;
+    if (tooltip) { tooltip.remove(); tooltip = null; }
+    try { grid.releasePointerCapture && grid.releasePointerCapture(e.pointerId); } catch (err) {}
+  }
+
+  // рисование (обновление временной разметки)
+  function updateDrawing(clientX, clientY) {
+    const pos = getCellUnderClientXY(clientX, clientY);
+    if (!pos || !startCell) return;
+
+    const line = getLine(startCell.col, startCell.row, pos.col, pos.row);
+
+    // убрать прошлую temp-разметку
+    lastLine.forEach(p => {
+      const idx = coordToIndex(p.y, p.x);
+      if (cells[idx]) cells[idx].classList.remove('temp-black');
+    });
+
+    // нанести новую temp-разметку
+    line.forEach(p => {
+      const idx = coordToIndex(p.y, p.x);
+      if (cells[idx]) cells[idx].classList.add('temp-black');
+    });
+
+    lastLine = line;
+
+    // тултип с длиной
+    if (tooltip) {
+      tooltip.textContent = line.length;
+      tooltip.style.left = (clientX + 12) + 'px';
+      tooltip.style.top = (clientY - 18) + 'px';
+    }
+  }
+
+  // === кнопки управления (сохранены твои обработчики) ===
+  toggleButton.addEventListener('click', () => {
+    const currentlyNoLines = grid.classList.toggle('no-grid-lines');
+    // сохраняем визуальную логику текста кнопки
+    toggleButton.textContent = currentlyNoLines ? 'Hide' : 'Show';
+  });
+
+  toggleButtonScreen.addEventListener('click', () => {
+    const currentDisplay = window.getComputedStyle(grid).display;
+    if (currentDisplay === "none") {
+      grid.style.display = "grid";
+    } else {
+      grid.style.display = "none";
+    }
+  });
+
+  resetButton.addEventListener('click', () => {
+    document.querySelectorAll('.cell').forEach(cell => {
+      cell.classList.remove('black', 'temp-black');
+    });
+  });
+  // Help
+  helpBtn.addEventListener('click', () => {
+    if (helpOverlay.style.display === "flex") {
+      helpOverlay.style.display = "none";
+    } else {
+      helpOverlay.style.display = "flex";
+    }
+  });
+
+  // Закрыть по клику на фон
+  helpOverlay.addEventListener('click', (e) => {
+    if (e.target === helpOverlay) {
+      helpOverlay.style.display = "none";
+    }
+  });
+
+  // === инициализация ===
+  createGrid(COLS, ROWS);
+
+  // pointer listeners: поддерживает мышь и тач через Pointer Events
+  grid.addEventListener('pointerdown', onPointerDown);
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerCancel);
+
+</script>
 </html>
