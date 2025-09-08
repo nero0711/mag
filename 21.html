@@ -11,12 +11,10 @@
       align-items: center;
       margin: 0;
       background-color: #b3f3f3;
-      /*overflow: hidden;*/
       user-select: none;
-      /*width: 378px;*/
       overflow-x: hidden;
       overflow-y: hidden;
-       min-height: 100vh;
+      min-height: 100vh;
     }
 
     :root{
@@ -76,7 +74,23 @@
 
     .btn:active { transform: translateY(4px); box-shadow: 0px 3px 0px var(--shadow-dark); }
 
-    .btn-yellow { grid-column: 3; grid-row: 1; width: 40px; height: 15px; background-color: #FBD369; box-shadow: 0px 4px 0px #D1AE53, 3px 4px 0px #D1AE53; border: solid 1px #D1AE53; border-radius: 50px; z-index: 11; }
+    /* Заменили кнопку на input */
+    .input-yellow {
+      padding: 5px 15px;
+      font-size: 18px;
+      border: 2px solid #717171;
+      border-radius: 10px;
+      background-color: #f1f1e9;
+      color: #696969;
+      box-shadow: inset 2px 2px 0px 2px #b2aea7, 0px 3px 0px #c4bfb9;
+      outline: none;
+      text-align: center;
+      font-weight: bold;
+      height: 15px;
+      margin: 5px 5px 5px 40px;
+      width: 20px;
+    }
+
     .btn-joystick { width: 80px; height: 70px; background-color: #FBD369; box-shadow: 0px 4px 0px #D1AE53, 3px 4px 0px #D1AE53; border: solid 1px #D1AE53; border-radius: 50%; margin: 0px 3px 3px 3px; }
     .btn-red { grid-column: 1; grid-row: 2; background-color: #F16760; box-shadow: 0px 4px 0px #BB524A, 3px 4px 0px #BB524A; border: solid 1px #BB524A; }
     .btn-red1 { background-color: #F16760; box-shadow: 1px -4px 0px #BB524A, -1px -4px 0px #BB524A; border: solid 1px #BB524A; width: 20px; margin: 10px 0px 0px 0px; height: 20px; }
@@ -92,8 +106,6 @@
     .crosshair-mini::before, .crosshair-mini::after{ content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--ink); } .crosshair-mini::before{ width: 3px; height: 8px; top: 4px }
 
     .vents{ justify-self: end; display: grid; grid-auto-flow: column; gap: 8px; padding-right: 6px; } .vents span{ width: 6px; height: 28px; background: var(--ink); border-radius: 3px; opacity: .28; }
-
-    /*@media (max-width: 378px){ .panel{ grid-template-columns: 1fr 180px; } .joystick{ width: 120px; } .btn{ width: 50px; height: 50px; font-size: 9px; } }*/
 
     .down-blue{ display: flex; width: 200px; height: 25px; margin: 4px 29px -10px 29px; border-bottom: 25px solid #365a7a; border-left: 20px solid transparent; border-right: 20px solid transparent; }
     .joystick { background-color: #365a7a; display: flex; width: 90px; height: 80px; margin: 5px 5px 5px 5px; padding: 5px; border-radius: 50%; }
@@ -145,327 +157,244 @@
   </style>
 </head>
 <body>
-    <section class="device" role="img" aria-label="Панель устройства с экраном и кнопками">
-      <div class="title_dev"> Module06091</div>
-      <div class="panel">
-        <div class="position-items">
-          <div class="screen" aria-hidden="true">
-            <div class="grid" id="grid"></div>
-            <!-- Help overlay теперь внутри экрана -->
-            <div class="help-overlay" id="helpOverlay">
-            <div class="help-content">
-              О модуле: <br>
-              Управление "сенсорный экран" используется для переноса qrкодматерии
-            </div>
-          </div>
-          </div>
-          <div class="controls">
-            <div class="pad" aria-hidden="true">
-              <div class="btn btn-blue1" id="toggleGrid" >Hide</div>
-              <div class="btn btn-yellow"> </div>
-              <div class="btn btn-red" id="resetGrid">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAYAAABzJ5OsAAAACXBIWXMAAAsTAAALEwEAmpwYAAABtElEQVR4nO2Yv04CQRCHPxIKaOzAwkRbE1u15nwAqSxEwwMYeQstqQUKK+MrGNRCC0ArewV5A2OljZczlwwJuewBYWfxT/ZLpryZ387OzO4eeDwej8fzz9gBWkAX6AODOawv3zeBYBGil4EbIHJgbaDoUvirI+GR2MDVAq4dC4/GdkC9xqMFWqApvmkIEAJnQAXYm8Mq4jc0+G5oiu8ZAsTCXSWmiyLPhgBVJd9Vg+84nhr3hgAlS5+XM9T+O7BpK74MfCW2NWvpsz9j8x6gwDZwAhwBeQV/5RmEPyokyRnnE4R/AhuawdaUsj5iCRimiK+hyL7M5Ccgp+i3ZJj1t0BGK8AK8DbmvI4u9cSEWdVynJFMJE9X21E5Tk52NJQdVqOWUpNDqVkt8tJTaqwDHxMmQjwtfiVZmbPTZnE8rzWyfgycynlizeGMJ+CLQpIeEv20ayt+Szp/mvgLyziBwecdivzpW2XPECC+h2vQcn2fbxgChLIAm5dUK+UlpfXQSa1Ll1ZCmfaChF/hgKL8V3EpfAAUXIgfLaDtMOMFFkAgTdyx/FfZkeZUr3GPx+PxePhJvgG7nrfxbYJDJQAAAABJRU5ErkJggg==" style="width: 36px; height: 36px;" alt="refresh">
-              </div>
-              <div class="btn btn-green1" id="helpBtn">help</div>
-            </div>
-            <div class="joystick">
-              <div class="btn btn-joystick">
-                <div class="crosshair" aria-hidden="true"></div>
-              </div>
-            </div>
-          </div>
-          <div class="down-blue"></div>
-          <div class="buttom-panel">
-            <div class="btn btn-red1" id="toggle-bth">
-              <div class="crosshair-mini"></div>
-            </div>
-            <div class="vents">
-              <span></span><span></span><span></span><span></span><span></span>
-            </div>
+<section class="device" role="img" aria-label="Панель устройства с экраном и кнопками">
+  <div class="title_dev"> Module06091</div>
+  <div class="panel">
+    <div class="position-items">
+      <div class="screen" aria-hidden="true">
+        <div class="grid" id="grid"></div>
+        <div class="help-overlay" id="helpOverlay">
+          <div class="help-content">
+            О модуле: <br>
+            Управление "сенсорный экран" используется для переноса qrкодматерии
           </div>
         </div>
       </div>
-    </section>
-    <div id="helpOverlay" class="help-overlay hidden">
-      Это подсказка
+      <div class="controls">
+        <div class="pad" aria-hidden="true">
+          <div class="btn btn-blue1" id="toggleGrid" >Hide</div>
+          <input type="text" id="lineLength" class="input-yellow" value="0" readonly />
+          <div class="btn btn-red" id="resetGrid">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAYAAABzJ5OsAAAACXBIWXMAAAsTAAALEwEAmpwYAAABtElEQVR4nO2Yv04CQRCHPxIKaOzAwkRbE1u15nwAqSxEwwMYeQstqQUKK+MrGNRCC0ArewV5A2OljZczlwwJuewBYWfxT/ZLpryZ387OzO4eeDwej8fzz9gBWkAX6AODOawv3zeBYBGil4EbIHJgbaDoUvirI+GR2MDVAq4dC4/GdkC9xqMFWqApvmkIEAJnQAXYm8Mq4jc0+G5oiu8ZAsTCXSWmiyLPhgBVJd9Vg+84nhr3hgAlS5+XM9T+O7BpK74MfCW2NWvpsz9j8x6gwDZwAhwBeQV/5RmEPyokyRnnE4R/AhuawdaUsj5iCRimiK+hyL7M5Ccgp+i3ZJj1t0BGK8AK8DbmvI4u9cSEWdVynJFMJE9X21E5Tk52NJQdVqOWUpNDqVkt8tJTaqwDHxMmQjwtfiVZmbPTZnE8rzWyfgycynlizeGMJ+CLQpIeEv20ayt+Szp/mvgLyziBwecdivzpW2XPECC+h2vQcn2fbxgChLIAm5dUK+UlpfXQSa1Ll1ZCmfaChF/hgKL8V3EpfAAUXIgfLaDtMOMFFkAgTdyx/FfZkeZUr3GPx+PxePhJvgG7nrfxbYJDJQAAAABJRU5ErkJggg==" style="width: 36px; height: 36px;" alt="refresh">
+          </div>
+          <div class="btn btn-green1" id="helpBtn">help</div>
+        </div>
+        <div class="joystick">
+          <div class="btn btn-joystick">
+            <div class="crosshair" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+      <div class="down-blue"></div>
+      <div class="buttom-panel">
+        <div class="btn btn-red1" id="toggle-bth">
+          <div class="crosshair-mini"></div>
+        </div>
+        <div class="vents">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
     </div>
-</body>
+  </div>
+</section>
 
 <script>
-  const grid = document.getElementById('grid');
-  const toggleButton = document.getElementById('toggleGrid');
-  const resetButton = document.getElementById('resetGrid');
-  const toggleButtonScreen = document.getElementById('toggle-bth');
-  const helpBtn = document.getElementById('helpBtn');
-  const COLS = 25;
-  const ROWS = 25;
-  const helpButton = document.querySelector('.btn-green1');
-  const helpOverlay = document.getElementById('helpOverlay');
+const grid = document.getElementById('grid');
+const toggleButton = document.getElementById('toggleGrid');
+const resetButton = document.getElementById('resetGrid');
+const toggleButtonScreen = document.getElementById('toggle-bth');
+const helpBtn = document.getElementById('helpBtn');
+const COLS = 25;
+const ROWS = 25;
+const helpButton = document.querySelector('.btn-green1');
+const helpOverlay = document.getElementById('helpOverlay');
 
-  helpButton.addEventListener('click', () => {
-    helpOverlay.classList.toggle('hidden');
-  });
-  // массив ячеек для быстрого доступа
-  let cells = [];
+helpButton.addEventListener('click', () => {
+  helpOverlay.classList.toggle('hidden');
+});
 
-  // состояния рисования
-  let isDrawing = false;
-  let startCell = null; // {row, col}
-  let lastLine = []; // массив {x,y}
-  let hadMoveDuringPointer = false;
-  let tooltip = null;
-  let lastPointerClient = { clientX: 0, clientY: 0 };
+let cells = [];
+let isDrawing = false;
+let startCell = null;
+let lastLine = [];
+let hadMoveDuringPointer = false;
+let lastPointerClient = { clientX: 0, clientY: 0 };
 
-  function createGrid(cols, rows) {
-    grid.innerHTML = '';
-    cells = [];
-    grid.style.setProperty('grid-template-columns', `repeat(${cols}, 1fr)`);
-    grid.style.setProperty('grid-template-rows', `repeat(${rows}, 1fr)`);
-
-    for (let i = 0; i < rows * cols; i++) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
-      cells.push(cell);
-      grid.appendChild(cell);
-      // НЕ вешаем click — реализуем click через pointerup (чтобы избежать конфликтов drag vs click)
-    }
+function createGrid(cols, rows) {
+  grid.innerHTML = '';
+  cells = [];
+  grid.style.setProperty('grid-template-columns', `repeat(${cols}, 1fr)`);
+  grid.style.setProperty('grid-template-rows', `repeat(${rows}, 1fr)`);
+  for (let i = 0; i < rows * cols; i++) {
+    const cell = document.createElement('div');
+    cell.classList.add('cell');
+    cells.push(cell);
+    grid.appendChild(cell);
   }
+}
 
-  // === утилита: найти клетку под clientX/clientY ===
-  function getCellUnderClientXY(clientX, clientY) {
-    const rect = grid.getBoundingClientRect();
-    const style = getComputedStyle(grid);
-    const padLeft = parseFloat(style.paddingLeft) || 0;
-    const padTop = parseFloat(style.paddingTop) || 0;
-    const padRight = parseFloat(style.paddingRight) || 0;
-    const padBottom = parseFloat(style.paddingBottom) || 0;
-    const gap = parseFloat(style.gap) || 0;
+function getCellUnderClientXY(clientX, clientY) {
+  const rect = grid.getBoundingClientRect();
+  const style = getComputedStyle(grid);
+  const padLeft = parseFloat(style.paddingLeft) || 0;
+  const padTop = parseFloat(style.paddingTop) || 0;
+  const padRight = parseFloat(style.paddingRight) || 0;
+  const padBottom = parseFloat(style.paddingBottom) || 0;
+  const gap = parseFloat(style.gap) || 0;
+  const innerWidth = rect.width - padLeft - padRight;
+  const innerHeight = rect.height - padTop - padBottom;
+  if (innerWidth <= 0 || innerHeight <= 0) return null;
+  const cellW = (innerWidth - (COLS - 1) * gap) / COLS;
+  const cellH = (innerHeight - (ROWS - 1) * gap) / ROWS;
+  const x = clientX - rect.left - padLeft;
+  const y = clientY - rect.top - padTop;
+  if (x < -1 || y < -1 || x > innerWidth + 1 || y > innerHeight + 1) return null;
+  let col = Math.floor(x / (cellW + gap));
+  let row = Math.floor(y / (cellH + gap));
+  col = Math.max(0, Math.min(COLS - 1, col));
+  row = Math.max(0, Math.min(ROWS - 1, row));
+  return { row, col };
+}
 
-    const innerWidth = rect.width - padLeft - padRight;
-    const innerHeight = rect.height - padTop - padBottom;
+function coordToIndex(row, col) {
+  return row * COLS + col;
+}
 
-    if (innerWidth <= 0 || innerHeight <= 0) return null;
-
-    const cellW = (innerWidth - (COLS - 1) * gap) / COLS;
-    const cellH = (innerHeight - (ROWS - 1) * gap) / ROWS;
-
-    const x = clientX - rect.left - padLeft;
-    const y = clientY - rect.top - padTop;
-
-    if (x < -1 || y < -1 || x > innerWidth + 1 || y > innerHeight + 1) return null;
-
-    let col = Math.floor(x / (cellW + gap));
-    let row = Math.floor(y / (cellH + gap));
-    col = Math.max(0, Math.min(COLS - 1, col));
-    row = Math.max(0, Math.min(ROWS - 1, row));
-    return { row, col };
+function getLine(x0, y0, x1, y1) {
+  const points = [];
+  let dx = Math.abs(x1 - x0);
+  let dy = Math.abs(y1 - y0);
+  let sx = (x0 < x1) ? 1 : -1;
+  let sy = (y0 < y1) ? 1 : -1;
+  let err = dx - dy;
+  while (true) {
+    points.push({ x: x0, y: y0 });
+    if (x0 === x1 && y0 === y1) break;
+    let e2 = 2 * err;
+    if (e2 > -dy) { err -= dy; x0 += sx; }
+    if (e2 < dx)  { err += dx; y0 += sy; }
   }
+  return points;
+}
 
-  function coordToIndex(row, col) {
-    return row * COLS + col;
-  }
+function onPointerDown(e) {
+  if (window.getComputedStyle(grid).display === 'none') return;
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  const pos = getCellUnderClientXY(e.clientX, e.clientY);
+  if (!pos) return;
+  e.preventDefault();
+  isDrawing = true;
+  hadMoveDuringPointer = false;
+  startCell = pos;
+  lastLine = [];
+  lastPointerClient = { clientX: e.clientX, clientY: e.clientY };
+  updateDrawing(e.clientX, e.clientY);
+  try { grid.setPointerCapture && grid.setPointerCapture(e.pointerId); } catch (err) {}
+}
 
-  // Брезенхем (x — колонка, y — строка)
-  function getLine(x0, y0, x1, y1) {
-    const points = [];
-    let dx = Math.abs(x1 - x0);
-    let dy = Math.abs(y1 - y0);
-    let sx = (x0 < x1) ? 1 : -1;
-    let sy = (y0 < y1) ? 1 : -1;
-    let err = dx - dy;
+function onPointerMove(e) {
+  if (!isDrawing) return;
+  hadMoveDuringPointer = true;
+  lastPointerClient = { clientX: e.clientX, clientY: e.clientY };
+  updateDrawing(e.clientX, e.clientY);
+}
 
-    while (true) {
-      points.push({ x: x0, y: y0 });
-      if (x0 === x1 && y0 === y1) break;
-      let e2 = 2 * err;
-      if (e2 > -dy) { err -= dy; x0 += sx; }
-      if (e2 < dx)  { err += dx; y0 += sy; }
-    }
-    return points;
-  }
-
-  // --- pointer handlers ---
-  function onPointerDown(e) {
-    // Если сетка скрыта — не рисуем
-    const styleDisplay = window.getComputedStyle(grid).display;
-    if (styleDisplay === 'none') return;
-
-    // мышь — только левая кнопка
-    if (e.pointerType === 'mouse' && e.button !== 0) return;
-
-    const pos = getCellUnderClientXY(e.clientX, e.clientY);
-    if (!pos) return;
-
-    e.preventDefault();
-
-    isDrawing = true;
-    hadMoveDuringPointer = false;
-    startCell = pos;
-    lastLine = [];
-    lastPointerClient = { clientX: e.clientX, clientY: e.clientY };
-
-    // временно подсветим стартовую клетку
-    updateDrawing(e.clientX, e.clientY);
-
-    // tooltip
-    if (!tooltip) {
-      tooltip = document.createElement('div');
-      tooltip.style.position = 'absolute';
-      tooltip.style.padding = '4px 7px';
-      tooltip.style.background = 'rgba(0,0,0,0.75)';
-      tooltip.style.color = '#fff';
-      tooltip.style.borderRadius = '6px';
-      tooltip.style.fontSize = '12px';
-      tooltip.style.pointerEvents = 'none';
-      tooltip.style.zIndex = 9999;
-      document.body.appendChild(tooltip);
-    }
-
-    // попытка захвата указателя (не критично)
-    try { grid.setPointerCapture && grid.setPointerCapture(e.pointerId); } catch (err) {}
-  }
-
-  function onPointerMove(e) {
-    if (!isDrawing) return;
-    hadMoveDuringPointer = true;
-    lastPointerClient = { clientX: e.clientX, clientY: e.clientY };
-    updateDrawing(e.clientX, e.clientY);
-  }
-
-  function onPointerUp(e) {
-    if (!isDrawing) return;
-    // если было движение — фиксируем линию; иначе — это клик (toggle)
-    if (hadMoveDuringPointer) {
-      // commit lastLine -> черные
-      lastLine.forEach(p => {
-        const idx = coordToIndex(p.y, p.x);
-        if (cells[idx]) {
-          cells[idx].classList.remove('temp-black');
-          cells[idx].classList.add('black');
-        }
-      });
-    } else {
-      // клик: определим клетку (по клиентским координатам указателя или по стартовой)
-      const upPos = getCellUnderClientXY(e.clientX, e.clientY) || startCell;
-      if (upPos) {
-        const idx = coordToIndex(upPos.row, upPos.col);
-        const cell = cells[idx];
-        if (cell) {
-          // уберем возможную temp подсветку и переключим состояние
-          cell.classList.remove('temp-black');
-          cell.classList.toggle('black');
-        }
+function onPointerUp(e) {
+  if (!isDrawing) return;
+  if (hadMoveDuringPointer) {
+    lastLine.forEach(p => {
+      const idx = coordToIndex(p.y, p.x);
+      if (cells[idx]) {
+        cells[idx].classList.remove('temp-black');
+        cells[idx].classList.add('black');
+      }
+    });
+  } else {
+    const upPos = getCellUnderClientXY(e.clientX, e.clientY) || startCell;
+    if (upPos) {
+      const idx = coordToIndex(upPos.row, upPos.col);
+      const cell = cells[idx];
+      if (cell) {
+        cell.classList.remove('temp-black');
+        cell.classList.toggle('black');
       }
     }
-
-    // очистка временной подсветки
-    lastLine.forEach(p => {
-      const idx = coordToIndex(p.y, p.x);
-      if (cells[idx]) cells[idx].classList.remove('temp-black');
-    });
-
-    // сброс состояний
-    lastLine = [];
-    startCell = null;
-    isDrawing = false;
-
-    // удаляем tooltip
-    if (tooltip) { tooltip.remove(); tooltip = null; }
-
-    // release pointer capture
-    try { grid.releasePointerCapture && grid.releasePointerCapture(e.pointerId); } catch (err) {}
-
-    // сброс флага движения после обработки (чтобы не мешало в будущих операциях)
-    setTimeout(() => { hadMoveDuringPointer = false; }, 0);
   }
-
-  function onPointerCancel(e) {
-    // аккуратно отменяем текущее рисование (аналогично up но без фиксации)
-    lastLine.forEach(p => {
-      const idx = coordToIndex(p.y, p.x);
-      if (cells[idx]) cells[idx].classList.remove('temp-black');
-    });
-    lastLine = [];
-    startCell = null;
-    isDrawing = false;
-    if (tooltip) { tooltip.remove(); tooltip = null; }
-    try { grid.releasePointerCapture && grid.releasePointerCapture(e.pointerId); } catch (err) {}
-  }
-
-  // рисование (обновление временной разметки)
-  function updateDrawing(clientX, clientY) {
-    const pos = getCellUnderClientXY(clientX, clientY);
-    if (!pos || !startCell) return;
-
-    const line = getLine(startCell.col, startCell.row, pos.col, pos.row);
-
-    // убрать прошлую temp-разметку
-    lastLine.forEach(p => {
-      const idx = coordToIndex(p.y, p.x);
-      if (cells[idx]) cells[idx].classList.remove('temp-black');
-    });
-
-    // нанести новую temp-разметку
-    line.forEach(p => {
-      const idx = coordToIndex(p.y, p.x);
-      if (cells[idx]) cells[idx].classList.add('temp-black');
-    });
-
-    lastLine = line;
-
-    // тултип с длиной
-    if (tooltip) {
-      tooltip.textContent = line.length;
-      tooltip.style.left = (clientX + 12) + 'px';
-      tooltip.style.top = (clientY - 18) + 'px';
-    }
-  }
-
-  // === кнопки управления (сохранены твои обработчики) ===
-  toggleButton.addEventListener('click', () => {
-    const currentlyNoLines = grid.classList.toggle('no-grid-lines');
-    // сохраняем визуальную логику текста кнопки
-    toggleButton.textContent = currentlyNoLines ? 'Hide' : 'Show';
+  lastLine.forEach(p => {
+    const idx = coordToIndex(p.y, p.x);
+    if (cells[idx]) cells[idx].classList.remove('temp-black');
   });
+  lastLine = [];
+  startCell = null;
+  isDrawing = false;
+  // Обнуляем поле длины линии после завершения
+  const lineLengthInput = document.getElementById('lineLength');
+  // if (lineLengthInput) lineLengthInput.value = 0;
+  try { grid.releasePointerCapture && grid.releasePointerCapture(e.pointerId); } catch (err) {}
+  setTimeout(() => { hadMoveDuringPointer = false; }, 0);
+}
 
-  toggleButtonScreen.addEventListener('click', () => {
-    const currentDisplay = window.getComputedStyle(grid).display;
-    if (currentDisplay === "none") {
-      grid.style.display = "grid";
-    } else {
-      grid.style.display = "none";
-    }
+function onPointerCancel(e) {
+  lastLine.forEach(p => {
+    const idx = coordToIndex(p.y, p.x);
+    if (cells[idx]) cells[idx].classList.remove('temp-black');
   });
+  lastLine = [];
+  startCell = null;
+  isDrawing = false;
+  try { grid.releasePointerCapture && grid.releasePointerCapture(e.pointerId); } catch (err) {}
+}
 
-  resetButton.addEventListener('click', () => {
-    document.querySelectorAll('.cell').forEach(cell => {
-      cell.classList.remove('black', 'temp-black');
-    });
+function updateDrawing(clientX, clientY) {
+  const pos = getCellUnderClientXY(clientX, clientY);
+  if (!pos || !startCell) return;
+  const line = getLine(startCell.col, startCell.row, pos.col, pos.row);
+  lastLine.forEach(p => {
+    const idx = coordToIndex(p.y, p.x);
+    if (cells[idx]) cells[idx].classList.remove('temp-black');
   });
-  // Help
-  helpBtn.addEventListener('click', () => {
-    if (helpOverlay.style.display === "flex") {
-      helpOverlay.style.display = "none";
-    } else {
-      helpOverlay.style.display = "flex";
-    }
+  line.forEach(p => {
+    const idx = coordToIndex(p.y, p.x);
+    if (cells[idx]) cells[idx].classList.add('temp-black');
   });
+  lastLine = line;
+  const lineLengthInput = document.getElementById('lineLength');
+  if (lineLengthInput) lineLengthInput.value = line.length;
+}
 
-  // Закрыть по клику на фон
-  helpOverlay.addEventListener('click', (e) => {
-    if (e.target === helpOverlay) {
-      helpOverlay.style.display = "none";
-    }
+// Управление кнопками
+toggleButton.addEventListener('click', () => {
+  const currentlyNoLines = grid.classList.toggle('no-grid-lines');
+  toggleButton.textContent = currentlyNoLines ? 'Hide' : 'Show';
+});
+
+toggleButtonScreen.addEventListener('click', () => {
+  const currentDisplay = window.getComputedStyle(grid).display;
+  grid.style.display = currentDisplay === "none" ? "grid" : "none";
+});
+
+resetButton.addEventListener('click', () => {
+  document.querySelectorAll('.cell').forEach(cell => {
+    cell.classList.remove('black', 'temp-black');
   });
+  const lineLengthInput = document.getElementById('lineLength');
+  if (lineLengthInput) lineLengthInput.value = 0;
+});
 
-  // === инициализация ===
-  createGrid(COLS, ROWS);
+helpBtn.addEventListener('click', () => {
+  helpOverlay.style.display = helpOverlay.style.display === "flex" ? "none" : "flex";
+});
 
-  // pointer listeners: поддерживает мышь и тач через Pointer Events
-  grid.addEventListener('pointerdown', onPointerDown);
-  window.addEventListener('pointermove', onPointerMove);
-  window.addEventListener('pointerup', onPointerUp);
-  window.addEventListener('pointercancel', onPointerCancel);
+helpOverlay.addEventListener('click', (e) => {
+  if (e.target === helpOverlay) helpOverlay.style.display = "none";
+});
 
+// Инициализация
+createGrid(COLS, ROWS);
+grid.addEventListener('pointerdown', onPointerDown);
+window.addEventListener('pointermove', onPointerMove);
+window.addEventListener('pointerup', onPointerUp);
+window.addEventListener('pointercancel', onPointerCancel);
 </script>
+</body>
 </html>
