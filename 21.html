@@ -76,6 +76,9 @@
 
     /* Заменили кнопку на input */
     .input-yellow {
+      margin: 5px 5px 5px 40px;
+    }
+    .input{
       padding: 5px 15px;
       font-size: 18px;
       border: 2px solid #717171;
@@ -87,11 +90,10 @@
       text-align: center;
       font-weight: bold;
       height: 15px;
-      margin: 5px 5px 5px 40px;
       width: 20px;
     }
 
-    .btn-joystick { width: 80px; height: 70px; background-color: #FBD369; box-shadow: 0px 4px 0px #D1AE53, 3px 4px 0px #D1AE53; border: solid 1px #D1AE53; border-radius: 50%; margin: 0px 3px 3px 3px; }
+    .btn-joystick { width: 60px; height: 50px; background-color: #FBD369; box-shadow: 0px 4px 0px #D1AE53, 3px 4px 0px #D1AE53; border: solid 1px #D1AE53; border-radius: 50%; margin: 0px 3px 3px 3px; }
     .btn-red { grid-column: 1; grid-row: 2; background-color: #F16760; box-shadow: 0px 4px 0px #BB524A, 3px 4px 0px #BB524A; border: solid 1px #BB524A; }
     .btn-red1 { background-color: #F16760; box-shadow: 1px -4px 0px #BB524A, -1px -4px 0px #BB524A; border: solid 1px #BB524A; width: 20px; margin: 10px 0px 0px 0px; height: 20px; }
     .btn-red1:active { transform: translateY(-4px); }
@@ -108,7 +110,7 @@
     .vents{ justify-self: end; display: grid; grid-auto-flow: column; gap: 8px; padding-right: 6px; } .vents span{ width: 6px; height: 28px; background: var(--ink); border-radius: 3px; opacity: .28; }
 
     .down-blue{ display: flex; width: 200px; height: 25px; margin: 4px 29px -10px 29px; border-bottom: 25px solid #365a7a; border-left: 20px solid transparent; border-right: 20px solid transparent; }
-    .joystick { background-color: #365a7a; display: flex; width: 90px; height: 80px; margin: 5px 5px 5px 5px; padding: 5px; border-radius: 50%; }
+    .joystick { background-color: #365a7a; display: flex; width: 70px; height: 60px; margin: 5px 5px 5px 5px; padding: 5px; border-radius: 50%; }
     .title_dev { font-size: 12px; font-weight: 700; margin: 17px 0px 10px 40px; justify-content: center; display: flex; color: #365a7a; z-index: 20;left:64%; transform: translateX(-50%); width:auto; top: -3%; position: absolute; }
     .buttom-panel { display: flex; justify-content: space-around; }
 
@@ -154,6 +156,49 @@
       width: 90%;
       line-height: 1.4;
     }
+    .btn-up {
+      background-color: #FFFFFF;
+      box-shadow: 0px 4px 0px #E2E2E4, 3px 4px 0px #E2E2E4;
+      border: solid 1px #E2E2E4;
+      width: 13px;
+      height: 20px;
+      border-radius: 5px 0px 0px 5px;
+      color: black;
+
+    }
+
+    .btn-down {
+    background-color: #FFFFFF;
+    box-shadow: 0px 4px 0px #E2E2E4, 3px 4px 0px #E2E2E4;
+    border: solid 1px #E2E2E4;
+   width: 13px;
+    height: 20px;
+
+    border-radius: 5px;
+    color: black;
+    border-radius: 0px 5px 5px 0px;
+
+    }
+    .panel-joystick{
+      display: flex;
+      flex-direction: column;
+    }
+    .controls-joystick{
+      display: flex;
+      flex-direction: row;
+      margin: 10px 15px 5px 15px;
+    }
+    .input-joystick{
+    width: 24px;
+    height: 16px;
+    font-size: 12px;
+    padding: 2px;
+    margin: 0px 0px 0px 0px;
+    border-radius: 0px;
+    border: 1px solid #9c9c9c;
+      box-shadow: 0px 4px 0px #E2E2E4, 3px 4px 0px #E2E2E4;
+
+    }
   </style>
 </head>
 <body>
@@ -173,15 +218,23 @@
       <div class="controls">
         <div class="pad" aria-hidden="true">
           <div class="btn btn-blue1" id="toggleGrid" >Hide</div>
-          <input type="text" id="lineLength" class="input-yellow" value="0" readonly />
+          <input type="text" id="lineLength" class="input input-yellow" value="0" readonly />
           <div class="btn btn-red" id="resetGrid">
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAYAAABzJ5OsAAAACXBIWXMAAAsTAAALEwEAmpwYAAABtElEQVR4nO2Yv04CQRCHPxIKaOzAwkRbE1u15nwAqSxEwwMYeQstqQUKK+MrGNRCC0ArewV5A2OljZczlwwJuewBYWfxT/ZLpryZ387OzO4eeDwej8fzz9gBWkAX6AODOawv3zeBYBGil4EbIHJgbaDoUvirI+GR2MDVAq4dC4/GdkC9xqMFWqApvmkIEAJnQAXYm8Mq4jc0+G5oiu8ZAsTCXSWmiyLPhgBVJd9Vg+84nhr3hgAlS5+XM9T+O7BpK74MfCW2NWvpsz9j8x6gwDZwAhwBeQV/5RmEPyokyRnnE4R/AhuawdaUsj5iCRimiK+hyL7M5Ccgp+i3ZJj1t0BGK8AK8DbmvI4u9cSEWdVynJFMJE9X21E5Tk52NJQdVqOWUpNDqVkt8tJTaqwDHxMmQjwtfiVZmbPTZnE8rzWyfgycynlizeGMJ+CLQpIeEv20ayt+Szp/mvgLyziBwecdivzpW2XPECC+h2vQcn2fbxgChLIAm5dUK+UlpfXQSa1Ll1ZCmfaChF/hgKL8V3EpfAAUXIgfLaDtMOMFFkAgTdyx/FfZkeZUr3GPx+PxePhJvgG7nrfxbYJDJQAAAABJRU5ErkJggg==" style="width: 36px; height: 36px;" alt="refresh">
           </div>
           <div class="btn btn-green1" id="helpBtn">help</div>
         </div>
-        <div class="joystick">
-          <div class="btn btn-joystick">
-            <div class="crosshair" aria-hidden="true"></div>
+
+        <div class="panel-joystick">
+          <div class="controls-joystick">
+            <div class="btn btn-up" id="down">◀</div>
+            <input class="input input-joystick" id="cols_rows" value="25" max="50" min="10">
+            <div class="btn btn-down" id="up">▶</div>
+          </div>
+          <div class="joystick">
+            <div class="btn btn-joystick" id="apply">
+              <div class="crosshair" aria-hidden="true"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -204,10 +257,14 @@ const toggleButton = document.getElementById('toggleGrid');
 const resetButton = document.getElementById('resetGrid');
 const toggleButtonScreen = document.getElementById('toggle-bth');
 const helpBtn = document.getElementById('helpBtn');
-const COLS = 25;
-const ROWS = 25;
+const upBtn = document.getElementById('up');
+const downBtn = document.getElementById('down')
+let COLS = 25;
+let ROWS = 25;
 const helpButton = document.querySelector('.btn-green1');
 const helpOverlay = document.getElementById('helpOverlay');
+const applyButton = document.getElementById('apply');
+const ColsRowsInput = document.getElementById('cols_rows');
 
 helpButton.addEventListener('click', () => {
   helpOverlay.classList.toggle('hidden');
@@ -381,12 +438,33 @@ resetButton.addEventListener('click', () => {
   if (lineLengthInput) lineLengthInput.value = 0;
 });
 
+upBtn.addEventListener('click', () => {
+  ColsRowsInput.value ++
+  // const currentlyNoLines = grid.classList.toggle('no-grid-lines');
+  // toggleButton.textContent = currentlyNoLines ? 'Hide' : 'Show';
+});
+downBtn.addEventListener('click', () => {
+  ColsRowsInput.value --
+  // const currentlyNoLines = grid.classList.toggle('no-grid-lines');
+  // toggleButton.textContent = currentlyNoLines ? 'Hide' : 'Show';
+});
+
 helpBtn.addEventListener('click', () => {
   helpOverlay.style.display = helpOverlay.style.display === "flex" ? "none" : "flex";
 });
 
 helpOverlay.addEventListener('click', (e) => {
   if (e.target === helpOverlay) helpOverlay.style.display = "none";
+});
+applyButton.addEventListener('click', () => {
+  COLS = parseInt(ColsRowsInput.value)
+  ROWS = parseInt(ColsRowsInput.value)
+  const max = 50;
+  if (COLS < 1 || COLS < 1 || ROWS > max || ROWS > max) {
+    return;
+  }
+
+  createGrid(COLS, ROWS);
 });
 
 // Инициализация
