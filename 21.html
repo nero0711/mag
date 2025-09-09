@@ -283,10 +283,9 @@
       height: 1px;
       background: transparent;
       border: 2px solid #e0574c;
-      border-radius: 50%;
       pointer-events: none;
       z-index: 30;
-      transform: translate(-50%, -50%);
+      transform: translate(-1000%, -1000%);
       box-shadow: 0 0 6px rgba(224,87,76,0.8);
       display: none;
       animation: pulse 1.5s infinite;
@@ -366,7 +365,7 @@
         z-index: 99;
         margin: 0px;
     }
-        .crosshair-mini { width: 10px; height: 12px; border-color: var(--ink); border-right-style: solid; border-right-width: 3px; border-left-style: solid; border-left-width: 3px; border-bottom-style: solid; border-bottom-width: 3px; border-radius: 50%; background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%); position: relative; }
+    .crosshair-mini { width: 10px; height: 12px; border-color: var(--ink); border-right-style: solid; border-right-width: 3px; border-left-style: solid; border-left-width: 3px; border-bottom-style: solid; border-bottom-width: 3px; border-radius: 50%; background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%); position: relative; }
     .crosshair-mini::before, .crosshair-mini::after{ content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--ink); } .crosshair-mini::before{ width: 3px; height: 8px; top: 4px }
   </style>
 </head>
