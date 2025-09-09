@@ -278,14 +278,14 @@
     }
 
     .cursor {
-      position: absolute;
-      width: 1px;
-      height: 1px;
+      position: relative;
+      width: 0px;
+      height: 0px;
       background: transparent;
-      border: 2px solid #e0574c;
+      border: 0px solid #e0574c;
       pointer-events: none;
       z-index: 30;
-      transform: translate(-1000%, -1000%);
+      transform: translate(-50%, -50%);
       box-shadow: 0 0 6px rgba(224,87,76,0.8);
       display: none;
       animation: pulse 1.5s infinite;
@@ -371,7 +371,7 @@
 </head>
 <body>
 <section class="device" role="img" aria-label="Панель устройства с экраном и кнопками">
-  <div class="title_dev"> Module06091</div>
+  <div class="title_dev"> Module06092</div>
   <div class="panel">
     <div class="position-items">
       <div class="screen" aria-hidden="true">
