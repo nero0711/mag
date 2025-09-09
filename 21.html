@@ -365,6 +365,21 @@
         z-index: 99;
         margin: 0px;
     }
+   .input-yellow {
+      margin: 5px 5px 5px 40px;
+     padding: 5px 15px;
+      font-size: 18px;
+      border: 2px solid #717171;
+      border-radius: 10px;
+      background-color: #f1f1e9;
+      color: #696969;
+      box-shadow: inset 2px 2px 0px 2px #b2aea7, 0px 3px 0px #c4bfb9;
+      outline: none;
+      text-align: center;
+      font-weight: bold;
+      height: 15px;
+      width: 20px;
+    }
     .crosshair-mini { width: 10px; height: 12px; border-color: var(--ink); border-right-style: solid; border-right-width: 3px; border-left-style: solid; border-left-width: 3px; border-bottom-style: solid; border-bottom-width: 3px; border-radius: 50%; background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%); position: relative; }
     .crosshair-mini::before, .crosshair-mini::after{ content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--ink); } .crosshair-mini::before{ width: 3px; height: 8px; top: 4px }
   </style>
@@ -385,7 +400,7 @@
         </div>
         <div class="confirm-overlay" id="confirmOverlay">
           <div class="confirm-content">
-            <div>Очистить сетку?</div>
+            <div>Очистить все?</div>
             <div class="confirm-buttons">
               <button class="confirm-btn no" id="confirmYes">Да</button>
               <button class="confirm-btn yes " id="confirmNo">Нет</button>
@@ -399,11 +414,12 @@
           <div class="pad-btn">
             <div class="btn btn-blue1" id="toggleGrid"><img width="28px" height="28px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAhUlEQVR4nO2TMQrDQAzA/P9nJfRd6lTIUi7tEnFI4M2DBPZMRPzKa2ZYzAce2j3vhDwl9+9uIch2v2KQoxCZHIXsGBI2EJwL/YhMjkJkchQik6OQHUPCBoJzoR+RyVGITI5CZHIUsmNI2EBwLvQjMjkKkclRiEyOQi6cAjkWc1yFI2KWvAHyqgpN9WqBeQAAAABJRU5ErkJggg==" alt="grid"></div>
             <div class="toggle-container">
-              <div class="btn btn-red" id="toggleSwitch"><img width="28px" height="28px" src="data:image/png;base64,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" alt="pencil-tip"></div>
+              <div class="btn btn-red" id="toggleSwitch">P</div>
               <div class="toggle-label"></div>
             </div>
             <div class="btn btn-green1" id="helpBtn"><img width="24px" height="24px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAABwElEQVR4nO2XTShEURTHf6wkjGJl1GwoZYE0Q8rO906RjAUr2UhkQ9lYW4kpC1sWPpasSRYilJ2N1YwSCzPKRz66daZer5k77z7vvSz862zePe/8/nPfuec2EIxGgHPgFUgBCaA6IDaLwHeOuA3CRD3wIcB1oAUYApLyLOGmaAUwBWwDR8AhsAxU5cidFdAZUGR5PizPk6bwAeAhz5beyS8stuTXAV1Ao61Os7yTNoHHgPc8cGvcABFNHbUTW5J7bGLgxAE8GweaOquS8wX0OoVHDOAqPoFwjjpLlhzVH441aGhARZ+tRq3lE85jqAkXBsZtNVQjbgAruFC/CwPqxHimciBjAH+ReeGZYtJYJk0YtdVoAnaABTcGelx8gm5bjVPLWqepgRLg2gB+Je9YtSdr6m5ocLMLIYeT8E1yc/XRJNDGL5RwYGANH1UOXGrgF0AZPiuqMWDvfF/UqjGg1nxXXGNg1E9wqVwiaY2BZ2BOcj1RCBgDdmW8Op0DGZl68TxHsqDCcuRM5r/OjDqaNU7hHcCTB2B7PALtheCVwL0P8GykCt2SMz7CszGtM7AfgAF1KeXVpvyH8zMU419/Rz92M3oJ/RyKrwAAAABJRU5ErkJggg==" alt="why-us-male"></div>
             <div class="btn btn-red" id="resetGrid"><img width="24px" height="24px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAACMklEQVR4nO2azUobURSAP8EiTd+hEQrtzoKbtrtsahLaV7DNwq3VbTXu20ajPkQg4LbxFWITVy6UCr6DIG5EbbnlCjaMd0z0nLlMzgcHApnJ+Zk75+fegGEYhmEYhmEYxsOZBmrAGvDtkcX95mevIzo+AH3gj5L0gCoR8AzYUXR8UNpAIUvnf2Xo/I3sZRWEnQicv70SVPkYgdODUtEMQD8ChwfFvY4qTKcYcgX8BBqPWAIb/jevAnqvgaJGAGopzpcFdVdSguD6BHFWAwa4pyTNbkD/ioJ+NgIGbCro3wzod7aJ8zVggPtOgmXgCDgBTgP6T/01h8AXIVt46xNOUhJ6I9RwXY5QFS4lG6RGgsLvQromgOMRAvDb3ytGGdgGtoA5SUVAKSX7J1Ujd0+uaA4RgHVyyBRwcA/nXQJ8qmXUay9azAIXAecv/DUqLPjMf+0/a7EWCEBdy4gXwNktxefAKyXdk0A3wfl94ImWAXtZGnDHA3ippJt6YAm65ZnrV3A2piTkE/DMWJehWBuRJjmjFGErWvGt+LZ0Kz7hB4thh5FjwWEkaU/ih5AuYhtH3ymP4/9Y8sltmA2JRWRYyWBD5j/GfktsNWBAZxw2RWsp2V/yhKaaUo0+EcnBSEfgYKRzj4OR5yjRG6EqSIsb0NSoRuDwoLxHmXYETt9Iiwwo3LEvoC3dLIevQsYroRXL5FlRXg1dhbOIkSj6WlwX+Juca8DmNUudYRiGYRiGYRjklr+uFy9wh62WZwAAAABJRU5ErkJggg==" alt="refresh"></div>
+            <input type="text" id="lineLength" class="input-yellow" value="0" readonly/>
           </div>
 
           <!-- Джойстик вместо стрелок -->
@@ -458,7 +474,8 @@ let cells = [];
 let lastPointerClient = { clientX: 0, clientY: 0 };
 let paintMode = false;
 let idA = {last: 0 , next: 0};
-let system_on = false
+let system_on = false;
+let moveCount = 0; // ✅ Счётчик перемещений
 
 // Спрятать курсор
 function hideCursor() {
@@ -538,7 +555,7 @@ function moveJoystick(dx, dy) {
   updateCellColorUnderCursor();
 }
 
-// Универсальный обработчик для джойстика
+// ✅ Обновлённая функция: считает только реальные перемещения
 function handleArrowClick(dx, dy) {
   moveJoystick(dx, dy);
   idA.last = idA.next;
@@ -547,11 +564,16 @@ function handleArrowClick(dx, dy) {
     const id = coordToIndex(pos.row, pos.col);
     idA.next = id;
 
-    if (idA.last !== idA.next && cells[idA.last]) {
-      cells[idA.last].innerHTML = '';
-    }
-    if (cells[idA.next]) {
-      cells[idA.next].innerHTML = '<p class="actionCells"></p>';
+    if (idA.last !== idA.next) { // Только если переместились
+      moveCount++;
+      document.getElementById('lineLength').value = moveCount;
+
+      if (cells[idA.last]) {
+        cells[idA.last].innerHTML = '';
+      }
+      if (cells[idA.next]) {
+        cells[idA.next].innerHTML = '<p class="actionCells"></p>';
+      }
     }
   }
 }
@@ -640,6 +662,9 @@ function startPainting() {
   if (isPainting) return; // защита от повторного вызова
   isPainting = true;
   paintMode = true;
+  moveCount = 0; // ✅ СБРОС СЧЁТЧИКА ПРИ ЗАЖАТИИ
+  document.getElementById('lineLength').value = moveCount; // ✅ ОБНОВИТЬ UI
+
   // Визуальное нажатие кнопки
   toggleSwitch.style.transform = 'translateY(4px)';
   toggleSwitch.style.boxShadow = '0px 0px 0px var(--shadow-dark)';
@@ -650,6 +675,9 @@ function stopPainting() {
   if (!isPainting) return;
   isPainting = false;
   paintMode = false;
+  moveCount = 0; // ✅ СБРОС СЧЁТЧИКА ПРИ ОТЖАТИИ
+  document.getElementById('lineLength').value = moveCount; // ✅ ОБНОВИТЬ UI
+
   // Возврат кнопки в исходное состояние
   toggleSwitch.style.transform = '';
   toggleSwitch.style.boxShadow = '';
@@ -808,6 +836,8 @@ toggleButtonScreen.addEventListener('click', () => {
     if (cells.length > 0) {
       cells[0].innerHTML = '<p class="actionCells"></p>';
     }
+    moveCount = 0; // ✅ Сброс при включении
+    document.getElementById('lineLength').value = moveCount;
   } else {
     setButtonsEnabled(false);
     hideCursor();
@@ -816,6 +846,8 @@ toggleButtonScreen.addEventListener('click', () => {
       lightStart.classList.add('actionCells');
       cells[0].append(lightStart);
     }
+    moveCount = 0; // ✅ Сброс при выключении
+    document.getElementById('lineLength').value = moveCount;
   }
 });
 </script>
