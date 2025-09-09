@@ -68,13 +68,21 @@
 
     .controls { position: relative; display: flex; flex-direction: row; gap: 12px; }
 
-    .pad { position: relative; width: 160px; height: 120px; border-radius: 12px; background: #f8f8fa; border: 2.5px solid var(--ink); display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); padding: 5px; box-sizing: border-box; }
+    .pad { position: relative; width: 270px; height: 120px; border-radius: 12px; background: #f8f8fa; border: 2.5px solid var(--ink); display: flex;  padding: 5px; box-sizing: border-box; }
+    .pad-btn { position: relative;
+    width: 150px;
+    height: 100px;
+    display: grid
+;
+    grid-template-columns: repeat(3, 50px);
+    grid-template-rows: repeat(2, 50px);
+    margin: 0px 10px 0px 0px;
+    }
 
-    .btn { width: 40px; height: 40px; background-color: var(--control-bg); color: white; font-size: 15px; font-weight: bold; border: 1px solid #4d4d4d; border-radius: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
+    .btn { width: 40px; height: 40px; background-color: var(--control-bg); color: white; font-size: 15px; font-weight: bold; border: 1px solid #4d4d4d; border-radius: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s, opacity 0.2s; }
 
     .btn:active { transform: translateY(4px); box-shadow: 0px 3px 0px var(--shadow-dark); }
 
-    /* Заменили кнопку на input */
     .input-yellow {
       margin: 5px 5px 5px 40px;
     }
@@ -93,24 +101,92 @@
       width: 20px;
     }
 
-    .btn-joystick { width: 60px; height: 50px; background-color: #FBD369; box-shadow: 0px 4px 0px #D1AE53, 3px 4px 0px #D1AE53; border: solid 1px #D1AE53; border-radius: 50%; margin: 0px 3px 3px 3px; }
-    .btn-red { grid-column: 1; grid-row: 2; background-color: #F16760; box-shadow: 0px 4px 0px #BB524A, 3px 4px 0px #BB524A; border: solid 1px #BB524A; }
-    .btn-red1 { background-color: #F16760; box-shadow: 1px -4px 0px #BB524A, -1px -4px 0px #BB524A; border: solid 1px #BB524A; width: 20px; margin: 10px 0px 0px 0px; height: 20px; }
-    .btn-red1:active { transform: translateY(-4px); }
-    .btn-green1 { width: 80px; grid-column: 1; grid-row: 2; background-color: #7DD879; box-shadow: 0px 4px 0px #6BBB63, 3px 4px 0px #6BBB63; border: solid 1px #6BBB63; position: absolute; left: 60px; }
-    .btn-blue1 { width: 80px; grid-column: 1; grid-row: 1; background-color: #578CF8; box-shadow: 0px 4px 0px #4369B6, 3px 4px 0px #4369B6; border: solid 1px #4369B6; }
+    .btn-joystick { width: 60px; height: 50px; margin: 0px 3px 3px 3px; }
+    .btn-red { grid-column: 3; grid-row: 1; background-color: #F16760; box-shadow: 0px 4px 0px #BB524A, 3px 4px 0px #BB524A; border: solid 1px #BB524A; font-size: 30px; }
+    .btn-red_on_off { background-color: #F16760; box-shadow: 1px -4px 0px #BB524A, -1px -4px 0px #BB524A; border: solid 1px #BB524A; width: 20px; margin: 10px 0px 0px 0px; height: 20px; }
+    .btn-red_on_off:active { transform: translateY(-4px); }
+    .btn-green1 { width: 40px; grid-column: 2; grid-row: 1; background-color: #7DD879; box-shadow: 0px 4px 0px #6BBB63, 3px 4px 0px #6BBB63; border: solid 1px #6BBB63; position: relative;  }
+    .btn-blue1 { width: 40px; grid-column: 1; grid-row: 1; background-color: #578CF8; box-shadow: 0px 4px 0px #4369B6, 3px 4px 0px #4369B6; border: solid 1px #4369B6; }
 
-    .crosshair{ width: 38px; height: 38px; border: 3px solid var(--ink); border-radius: 50%; background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%); position: relative; }
-    .crosshair::before, .crosshair::after{ content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--ink); }
-    .crosshair::before{ width: 3px; height: 42px; } .crosshair::after{ height: 3px; width: 42px; }
+    /* ===== Джойстик ===== */
+    .joystick{
+      justify-self: center;
+      width: 70px;
+      aspect-ratio: 1/1;
+      position: relative;
+      border-radius: 50%;
+      background: var(--ring);
+      border: 3px solid var(--ink);
+      box-shadow: inset 0 0 0 8px rgba(0,0,0,.06);
+      display: grid;
+      place-items: center;
+      margin: auto;
+    }
+    .joystick .inner{
+      width: 44px;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      border: 3px solid var(--ink);
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+    .crosshair{
+      width: 30px;
+      height: 30px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%);
+      position: relative;
+      transition: transform 0.1s ease-out;
+    }
+    .crosshair::before,
+    .crosshair::after{
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--ink);
+    }
+    .crosshair::before{ width: 2px; height: 20px; }
+    .crosshair::after{ height: 2px; width: 20px; }
 
-    .crosshair-mini { width: 10px; height: 12px; border-color: var(--ink); border-right-style: solid; border-right-width: 3px; border-left-style: solid; border-left-width: 3px; border-bottom-style: solid; border-bottom-width: 3px; border-radius: 50%; background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%); position: relative; }
-    .crosshair-mini::before, .crosshair-mini::after{ content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--ink); } .crosshair-mini::before{ width: 3px; height: 8px; top: 4px }
+    /* Анимация крестовины при нажатии */
+    .crosshair.moved {
+      transition: transform 0.1s ease-out;
+    }
+    .crosshair.moved-up    { transform: translateY(-6px); }
+    .crosshair.moved-down  { transform: translateY(6px); }
+    .crosshair.moved-left  { transform: translateX(-6px); }
+    .crosshair.moved-right { transform: translateX(6px); }
 
-    .vents{ justify-self: end; display: grid; grid-auto-flow: column; gap: 8px; padding-right: 6px; } .vents span{ width: 6px; height: 28px; background: var(--ink); border-radius: 3px; opacity: .28; }
+    .vents{ justify-self: end; display: grid; grid-auto-flow: column; gap: 8px; padding-right: 6px; }
+    .vents span{ width: 6px; height: 28px; background: var(--ink); border-radius: 3px; opacity: .28; }
 
     .down-blue{ display: flex; width: 200px; height: 25px; margin: 4px 29px -10px 29px; border-bottom: 25px solid #365a7a; border-left: 20px solid transparent; border-right: 20px solid transparent; }
-    .joystick { background-color: #365a7a; display: flex; width: 70px; height: 60px; margin: 5px 5px 5px 5px; padding: 5px; border-radius: 50%; }
+    .joystick-container {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 6px 0px 10px 0px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .joystick-zone {
+      position: absolute;
+      cursor: pointer;
+      z-index: 2;
+      transition: opacity 0.2s;
+    }
+
+    .joystick-zone.disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
     .title_dev { font-size: 12px; font-weight: 700; margin: 17px 0px 10px 40px; justify-content: center; display: flex; color: #365a7a; z-index: 20;left:64%; transform: translateX(-50%); width:auto; top: -3%; position: absolute; }
     .buttom-panel { display: flex; justify-content: space-around; }
 
@@ -123,6 +199,7 @@
       box-sizing: border-box;
       touch-action: none;
       cursor: crosshair;
+      position: relative;
     }
 
     .cell {
@@ -131,6 +208,7 @@
       width: 100%;
       height: 100%;
       box-sizing: border-box;
+      position: relative;
     }
 
     .cell.black { background-color: #000; }
@@ -139,7 +217,7 @@
 
     .grid.no-grid-lines { gap: 0; background-color: transparent; }
 
-    .help-overlay {
+    .help-overlay, .confirm-overlay {
       position: absolute;
       inset: 0;
       background: rgba(0,0,0,0.7);
@@ -148,57 +226,148 @@
       align-items: center;
       z-index: 10;
     }
-    .help-content {
-      font-size: 12px;
-      margin: 15px;
-      color: #5dc9ae;
-      text-align: left;
-      width: 90%;
-      line-height: 1.4;
-    }
-    .btn-up {
-      background-color: #FFFFFF;
-      box-shadow: 0px 4px 0px #E2E2E4, 3px 4px 0px #E2E2E4;
-      border: solid 1px #E2E2E4;
-      width: 13px;
-      height: 20px;
-      border-radius: 5px 0px 0px 5px;
-      color: black;
 
+    .help-content, .confirm-content {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      color: #fff;
+      text-align: center;
+      max-width: 80%;
     }
 
-    .btn-down {
-    background-color: #FFFFFF;
-    box-shadow: 0px 4px 0px #E2E2E4, 3px 4px 0px #E2E2E4;
-    border: solid 1px #E2E2E4;
-   width: 13px;
-    height: 20px;
-
-    border-radius: 5px;
-    color: black;
-    border-radius: 0px 5px 5px 0px;
-
-    }
-    .panel-joystick{
+    .confirm-content {
       display: flex;
       flex-direction: column;
+      gap: 15px;
     }
-    .controls-joystick{
-      display: flex;
-      flex-direction: row;
-      margin: 10px 15px 5px 15px;
-    }
-    .input-joystick{
-    width: 24px;
-    height: 16px;
-    font-size: 12px;
-    padding: 2px;
-    margin: 0px 0px 0px 0px;
-    border-radius: 0px;
-    border: 1px solid #9c9c9c;
-      box-shadow: 0px 4px 0px #E2E2E4, 3px 4px 0px #E2E2E4;
 
+    .confirm-buttons {
+      display: flex;
+      justify-content: space-around;
     }
+
+    .confirm-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .confirm-btn.yes {
+      background-color: #e0574c;
+      color: white;
+    }
+
+    .confirm-btn.no {
+      background-color: #7fca75;
+      color: white;
+    }
+
+    .line-length-label {
+      position: absolute;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      pointer-events: none;
+      z-index: 5;
+      display: none;
+    }
+
+    .cursor {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      background: transparent;
+      border: 2px solid #e0574c;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 30;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 6px rgba(224,87,76,0.8);
+      display: none;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
+
+    .toggle-container {
+      grid-column: 1;
+      grid-row: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toggle-label {
+      font-size: 10px;
+      text-align: center;
+      margin-top: 5px;
+      color: #333;
+    }
+
+    #resizeConfirmOverlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    #resizeConfirmContent {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      color: #fff;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    #resizeConfirmButtons {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 15px;
+    }
+
+    #resizeConfirmYes, #resizeConfirmNo {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #resizeConfirmYes {
+      background-color: #e0574c;
+      color: white;
+    }
+
+    #resizeConfirmNo {
+      background-color: #7fca75;
+      color: white;
+    }
+
+    p.actionCells {
+        box-shadow: 0px 0px 9px #d93838;
+        border: 2px solid #a34242;
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        z-index: 99;
+        margin: 0px;
+    }
+        .crosshair-mini { width: 10px; height: 12px; border-color: var(--ink); border-right-style: solid; border-right-width: 3px; border-left-style: solid; border-left-width: 3px; border-bottom-style: solid; border-bottom-width: 3px; border-radius: 50%; background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 60%); position: relative; }
+    .crosshair-mini::before, .crosshair-mini::after{ content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--ink); } .crosshair-mini::before{ width: 3px; height: 8px; top: 4px }
   </style>
 </head>
 <body>
@@ -208,39 +377,57 @@
     <div class="position-items">
       <div class="screen" aria-hidden="true">
         <div class="grid" id="grid"></div>
+        <div class="cursor" id="cursor"></div>
+        <div class="line-length-label" id="lineLengthLabel"></div>
         <div class="help-overlay" id="helpOverlay">
           <div class="help-content">
-            О модуле: <br>
-            Управление "сенсорный экран" используется для переноса qrкодматерии
+            это блять подсказка, хули тут смотреть
           </div>
         </div>
-      </div>
-      <div class="controls">
-        <div class="pad" aria-hidden="true">
-          <div class="btn btn-blue1" id="toggleGrid" >Hide</div>
-          <input type="text" id="lineLength" class="input input-yellow" value="0" readonly />
-          <div class="btn btn-red" id="resetGrid">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAYAAABzJ5OsAAAACXBIWXMAAAsTAAALEwEAmpwYAAABtElEQVR4nO2Yv04CQRCHPxIKaOzAwkRbE1u15nwAqSxEwwMYeQstqQUKK+MrGNRCC0ArewV5A2OljZczlwwJuewBYWfxT/ZLpryZ387OzO4eeDwej8fzz9gBWkAX6AODOawv3zeBYBGil4EbIHJgbaDoUvirI+GR2MDVAq4dC4/GdkC9xqMFWqApvmkIEAJnQAXYm8Mq4jc0+G5oiu8ZAsTCXSWmiyLPhgBVJd9Vg+84nhr3hgAlS5+XM9T+O7BpK74MfCW2NWvpsz9j8x6gwDZwAhwBeQV/5RmEPyokyRnnE4R/AhuawdaUsj5iCRimiK+hyL7M5Ccgp+i3ZJj1t0BGK8AK8DbmvI4u9cSEWdVynJFMJE9X21E5Tk52NJQdVqOWUpNDqVkt8tJTaqwDHxMmQjwtfiVZmbPTZnE8rzWyfgycynlizeGMJ+CLQpIeEv20ayt+Szp/mvgLyziBwecdivzpW2XPECC+h2vQcn2fbxgChLIAm5dUK+UlpfXQSa1Ll1ZCmfaChF/hgKL8V3EpfAAUXIgfLaDtMOMFFkAgTdyx/FfZkeZUr3GPx+PxePhJvgG7nrfxbYJDJQAAAABJRU5ErkJggg==" style="width: 36px; height: 36px;" alt="refresh">
-          </div>
-          <div class="btn btn-green1" id="helpBtn">help</div>
-        </div>
-
-        <div class="panel-joystick">
-          <div class="controls-joystick">
-            <div class="btn btn-up" id="down">◀</div>
-            <input class="input input-joystick" id="cols_rows" value="25" max="50" min="10">
-            <div class="btn btn-down" id="up">▶</div>
-          </div>
-          <div class="joystick">
-            <div class="btn btn-joystick" id="apply">
-              <div class="crosshair" aria-hidden="true"></div>
+        <div class="confirm-overlay" id="confirmOverlay">
+          <div class="confirm-content">
+            <div>Очистить сетку?</div>
+            <div class="confirm-buttons">
+              <button class="confirm-btn no" id="confirmYes">Да</button>
+              <button class="confirm-btn yes " id="confirmNo">Нет</button>
             </div>
           </div>
         </div>
       </div>
+      <div class="controls">
+
+        <div class="pad" aria-hidden="true">
+          <div class="pad-btn">
+            <div class="btn btn-blue1" id="toggleGrid">Hide</div>
+            <div class="toggle-container">
+              <div class="btn btn-red" id="toggleSwitch">✎</div>
+              <div class="toggle-label"></div>
+            </div>
+            <div class="btn btn-green1" id="helpBtn">help</div>
+            <div class="btn btn-red" id="resetGrid">⟳</div>
+          </div>
+
+          <!-- Джойстик вместо стрелок -->
+          <div class="joystick-container">
+            <div class="joystick" aria-label="Джойстик навигации">
+              <div class="inner">
+                <div class="crosshair" id="joystick-crosshair"></div>
+              </div>
+            </div>
+            <!-- Невидимые зоны для кликов -->
+            <div class="joystick-zone" data-dir="up"    style="top: 0; left: 50%; width: 40px; height: 30px; transform: translateX(-50%);"></div>
+            <div class="joystick-zone" data-dir="down"  style="bottom: 0; left: 50%; width: 40px; height: 30px; transform: translateX(-50%);"></div>
+            <div class="joystick-zone" data-dir="left"  style="top: 50%; left: 0; width: 30px; height: 40px; transform: translateY(-50%);"></div>
+            <div class="joystick-zone" data-dir="right" style="top: 50%; right: 0; width: 30px; height: 40px; transform: translateY(-50%);"></div>
+          </div>
+
+        </div>
+
+
+      </div>
       <div class="down-blue"></div>
       <div class="buttom-panel">
-        <div class="btn btn-red1" id="toggle-bth">
+        <div class="btn btn-red_on_off" id="toggle-bth">
           <div class="crosshair-mini"></div>
         </div>
         <div class="vents">
@@ -257,39 +444,40 @@ const toggleButton = document.getElementById('toggleGrid');
 const resetButton = document.getElementById('resetGrid');
 const toggleButtonScreen = document.getElementById('toggle-bth');
 const helpBtn = document.getElementById('helpBtn');
-const upBtn = document.getElementById('up');
-const downBtn = document.getElementById('down')
+const toggleSwitch = document.getElementById('toggleSwitch');
+const cursor = document.getElementById('cursor');
+const lineLengthLabel = document.getElementById('lineLengthLabel');
+const helpOverlay = document.getElementById('helpOverlay');
+const confirmOverlay = document.getElementById('confirmOverlay');
+const confirmYes = document.getElementById('confirmYes');
+const confirmNo = document.getElementById('confirmNo');
+const joystickCrosshair = document.getElementById('joystick-crosshair');
+
 let COLS = 25;
 let ROWS = 25;
-const helpButton = document.querySelector('.btn-green1');
-const helpOverlay = document.getElementById('helpOverlay');
-const applyButton = document.getElementById('apply');
-const ColsRowsInput = document.getElementById('cols_rows');
-
-helpButton.addEventListener('click', () => {
-  helpOverlay.classList.toggle('hidden');
-});
-
 let cells = [];
-let isDrawing = false;
-let startCell = null;
-let lastLine = [];
-let hadMoveDuringPointer = false;
 let lastPointerClient = { clientX: 0, clientY: 0 };
+let paintMode = false;
+let idA = {last: 0 , next: 0};
 
-function createGrid(cols, rows) {
-  grid.innerHTML = '';
-  cells = [];
-  grid.style.setProperty('grid-template-columns', `repeat(${cols}, 1fr)`);
-  grid.style.setProperty('grid-template-rows', `repeat(${rows}, 1fr)`);
-  for (let i = 0; i < rows * cols; i++) {
-    const cell = document.createElement('div');
-    cell.classList.add('cell');
-    cells.push(cell);
-    grid.appendChild(cell);
-  }
+// Спрятать курсор
+function hideCursor() {
+  cursor.style.display = 'none';
 }
 
+// Обновить положение курсора
+function updateCursor(clientX, clientY) {
+  const rect = grid.getBoundingClientRect();
+  // Ограничиваем курсор внутри сетки
+  const boundedX = Math.max(rect.left, Math.min(rect.right, clientX));
+  const boundedY = Math.max(rect.top, Math.min(rect.bottom, clientY));
+  cursor.style.left = boundedX + 'px';
+  cursor.style.top = boundedY + 'px';
+  cursor.style.display = 'block';
+  lastPointerClient = { clientX: boundedX, clientY: boundedY };
+}
+
+// Получить ячейку под курсором
 function getCellUnderClientXY(clientX, clientY) {
   const rect = grid.getBoundingClientRect();
   const style = getComputedStyle(grid);
@@ -317,136 +505,115 @@ function coordToIndex(row, col) {
   return row * COLS + col;
 }
 
-function getLine(x0, y0, x1, y1) {
-  const points = [];
-  let dx = Math.abs(x1 - x0);
-  let dy = Math.abs(y1 - y0);
-  let sx = (x0 < x1) ? 1 : -1;
-  let sy = (y0 < y1) ? 1 : -1;
-  let err = dx - dy;
-  while (true) {
-    points.push({ x: x0, y: y0 });
-    if (x0 === x1 && y0 === y1) break;
-    let e2 = 2 * err;
-    if (e2 > -dy) { err -= dy; x0 += sx; }
-    if (e2 < dx)  { err += dx; y0 += sy; }
+function createGrid(cols, rows) {
+  grid.innerHTML = '';
+  cells = [];
+  grid.style.setProperty('grid-template-columns', `repeat(${cols}, 1fr)`);
+  grid.style.setProperty('grid-template-rows', `repeat(${rows}, 1fr)`);
+  for (let i = 0; i < rows * cols; i++) {
+    const cell = document.createElement('div');
+    cell.classList.add('cell');
+    cells.push(cell);
+    grid.appendChild(cell);
   }
-  return points;
 }
 
-function onPointerDown(e) {
-  if (window.getComputedStyle(grid).display === 'none') return;
-  if (e.pointerType === 'mouse' && e.button !== 0) return;
-  const pos = getCellUnderClientXY(e.clientX, e.clientY);
+// Функция для установки цвета ячейки в зависимости от состояния переключателя
+function updateCellColorUnderCursor() {
+  const pos = getCellUnderClientXY(lastPointerClient.clientX, lastPointerClient.clientY);
   if (!pos) return;
-  e.preventDefault();
-  isDrawing = true;
-  hadMoveDuringPointer = false;
-  startCell = pos;
-  lastLine = [];
-  lastPointerClient = { clientX: e.clientX, clientY: e.clientY };
-  updateDrawing(e.clientX, e.clientY);
-  try { grid.setPointerCapture && grid.setPointerCapture(e.pointerId); } catch (err) {}
-}
-
-function onPointerMove(e) {
-  if (!isDrawing) return;
-  hadMoveDuringPointer = true;
-  lastPointerClient = { clientX: e.clientX, clientY: e.clientY };
-  updateDrawing(e.clientX, e.clientY);
-}
-
-function onPointerUp(e) {
-  if (!isDrawing) return;
-  if (hadMoveDuringPointer) {
-    lastLine.forEach(p => {
-      const idx = coordToIndex(p.y, p.x);
-      if (cells[idx]) {
-        cells[idx].classList.remove('temp-black');
-        cells[idx].classList.add('black');
-      }
-    });
-  } else {
-    const upPos = getCellUnderClientXY(e.clientX, e.clientY) || startCell;
-    if (upPos) {
-      const idx = coordToIndex(upPos.row, upPos.col);
-      const cell = cells[idx];
-      if (cell) {
-        cell.classList.remove('temp-black');
-        cell.classList.toggle('black');
-      }
+  const idx = coordToIndex(pos.row, pos.col);
+  if (cells[idx]) {
+    if (paintMode) {
+      cells[idx].classList.add('black');
+    } else {
+      cells[idx].classList.remove('black');
     }
   }
-  lastLine.forEach(p => {
-    const idx = coordToIndex(p.y, p.x);
-    if (cells[idx]) cells[idx].classList.remove('temp-black');
-  });
-  lastLine = [];
-  startCell = null;
-  isDrawing = false;
-  // Обнуляем поле длины линии после завершения
-  const lineLengthInput = document.getElementById('lineLength');
-  // if (lineLengthInput) lineLengthInput.value = 0;
-  try { grid.releasePointerCapture && grid.releasePointerCapture(e.pointerId); } catch (err) {}
-  setTimeout(() => { hadMoveDuringPointer = false; }, 0);
 }
 
-function onPointerCancel(e) {
-  lastLine.forEach(p => {
-    const idx = coordToIndex(p.y, p.x);
-    if (cells[idx]) cells[idx].classList.remove('temp-black');
-  });
-  lastLine = [];
-  startCell = null;
-  isDrawing = false;
-  try { grid.releasePointerCapture && grid.releasePointerCapture(e.pointerId); } catch (err) {}
+// Функция движения джойстика
+function moveJoystick(dx, dy) {
+  updateCursor(lastPointerClient.clientX + dx, lastPointerClient.clientY + dy);
+  updateCellColorUnderCursor();
 }
 
-function updateDrawing(clientX, clientY) {
-  const pos = getCellUnderClientXY(clientX, clientY);
-  if (!pos || !startCell) return;
-  const line = getLine(startCell.col, startCell.row, pos.col, pos.row);
-  lastLine.forEach(p => {
-    const idx = coordToIndex(p.y, p.x);
-    if (cells[idx]) cells[idx].classList.remove('temp-black');
-  });
-  line.forEach(p => {
-    const idx = coordToIndex(p.y, p.x);
-    if (cells[idx]) cells[idx].classList.add('temp-black');
-  });
-  lastLine = line;
-  const lineLengthInput = document.getElementById('lineLength');
-  if (lineLengthInput) lineLengthInput.value = line.length;
+// Универсальный обработчик для джойстика
+function handleArrowClick(dx, dy) {
+  moveJoystick(dx, dy);
+  idA.last = idA.next;
+  const pos = getCellUnderClientXY(lastPointerClient.clientX, lastPointerClient.clientY);
+  if (pos) {
+    const id = coordToIndex(pos.row, pos.col);
+    idA.next = id;
+
+    if (idA.last !== idA.next && cells[idA.last]) {
+      cells[idA.last].innerHTML = '';
+    }
+    if (cells[idA.next]) {
+      cells[idA.next].innerHTML = '<p class="actionCells"></p>';
+    }
+  }
 }
+
+// Обработчик кликов по зонам джойстика
+function handleJoystickClick(direction) {
+  let dx = 0, dy = 0;
+  let moveClass = '';
+
+  switch(direction) {
+    case 'up':    dy = -10; moveClass = 'moved-up'; break;
+    case 'down':  dy = 10;  moveClass = 'moved-down'; break;
+    case 'left':  dx = -10; moveClass = 'moved-left'; break;
+    case 'right': dx = 10;  moveClass = 'moved-right'; break;
+  }
+
+  // Анимация крестовины
+  joystickCrosshair.classList.add('moved', moveClass);
+  setTimeout(() => {
+    joystickCrosshair.classList.remove('moved', moveClass);
+  }, 150);
+
+  // Вызов существующей логики движения
+  handleArrowClick(dx, dy);
+}
+
+// Назначаем обработчики на зоны джойстика
+document.querySelectorAll('.joystick-zone').forEach(zone => {
+  const dir = zone.dataset.dir;
+  zone.addEventListener('click', () => handleJoystickClick(dir));
+  // Для тач-устройств
+  zone.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    handleJoystickClick(dir);
+  });
+});
 
 // Управление кнопками
 toggleButton.addEventListener('click', () => {
   const currentlyNoLines = grid.classList.toggle('no-grid-lines');
-  toggleButton.textContent = currentlyNoLines ? 'Hide' : 'Show';
-});
-
-toggleButtonScreen.addEventListener('click', () => {
-  const currentDisplay = window.getComputedStyle(grid).display;
-  grid.style.display = currentDisplay === "none" ? "grid" : "none";
+  toggleButton.textContent = currentlyNoLines ? 'Show' : 'Hide';
 });
 
 resetButton.addEventListener('click', () => {
-  document.querySelectorAll('.cell').forEach(cell => {
-    cell.classList.remove('black', 'temp-black');
-  });
-  const lineLengthInput = document.getElementById('lineLength');
-  if (lineLengthInput) lineLengthInput.value = 0;
+  confirmOverlay.style.display = 'flex';
 });
 
-upBtn.addEventListener('click', () => {
-  ColsRowsInput.value ++
-  // const currentlyNoLines = grid.classList.toggle('no-grid-lines');
-  // toggleButton.textContent = currentlyNoLines ? 'Hide' : 'Show';
+confirmYes.addEventListener('click', () => {
+  document.querySelectorAll('.cell').forEach(cell => {
+    cell.classList.remove('black', 'temp-black');
+    cell.innerHTML = '';
+  });
+  if (cells.length > 0) {
+    cells[0].innerHTML = '<p class="actionCells"></p>';
+    idA.next = 0;
+    idA.last = 0;
+  }
+  confirmOverlay.style.display = 'none';
 });
-downBtn.addEventListener('click', () => {
-  ColsRowsInput.value --
-  // const currentlyNoLines = grid.classList.toggle('no-grid-lines');
-  // toggleButton.textContent = currentlyNoLines ? 'Hide' : 'Show';
+
+confirmNo.addEventListener('click', () => {
+  confirmOverlay.style.display = 'none';
 });
 
 helpBtn.addEventListener('click', () => {
@@ -456,23 +623,196 @@ helpBtn.addEventListener('click', () => {
 helpOverlay.addEventListener('click', (e) => {
   if (e.target === helpOverlay) helpOverlay.style.display = "none";
 });
-applyButton.addEventListener('click', () => {
-  COLS = parseInt(ColsRowsInput.value)
-  ROWS = parseInt(ColsRowsInput.value)
-  const max = 50;
-  if (COLS < 1 || COLS < 1 || ROWS > max || ROWS > max) {
-    return;
-  }
 
-  createGrid(COLS, ROWS);
+confirmOverlay.addEventListener('click', (e) => {
+  if (e.target === confirmOverlay) confirmOverlay.style.display = "none";
 });
+
+let isPainting = false;
+
+function startPainting() {
+  if (isPainting) return; // защита от повторного вызова
+  isPainting = true;
+  paintMode = true;
+  // Визуальное нажатие кнопки
+  toggleSwitch.style.transform = 'translateY(4px)';
+  toggleSwitch.style.boxShadow = '0px 0px 0px var(--shadow-dark)';
+  updateCellColorUnderCursor();
+}
+
+function stopPainting() {
+  if (!isPainting) return;
+  isPainting = false;
+  paintMode = false;
+  // Возврат кнопки в исходное состояние
+  toggleSwitch.style.transform = '';
+  toggleSwitch.style.boxShadow = '';
+  updateCellColorUnderCursor();
+}
+
+// Для мыши
+toggleSwitch.addEventListener('mousedown', (e) => {
+  e.preventDefault();
+  startPainting();
+});
+
+toggleSwitch.addEventListener('mouseup', () => {
+  stopPainting();
+});
+
+toggleSwitch.addEventListener('mouseleave', () => {
+  if (isPainting) stopPainting();
+});
+
+// Для тач-устройств
+toggleSwitch.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  startPainting();
+});
+
+toggleSwitch.addEventListener('touchend', () => {
+  stopPainting();
+});
+
+// Обработчики клавиатуры
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' && !isPainting) {
+    e.preventDefault(); // отключаем скролл пробелом
+    startPainting();
+  }
+});
+
+document.addEventListener('keyup', (e) => {
+  if (e.code === 'Space' && isPainting) {
+    e.preventDefault();
+    stopPainting();
+  }
+});
+
+
+document.addEventListener('keydown', (e) => {
+  switch (e.code) {
+    case 'ArrowUp':
+      e.preventDefault();
+      handleJoystickClick('up');
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      handleJoystickClick('down');
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      handleJoystickClick('left');
+      break;
+    case 'ArrowRight':
+      e.preventDefault();
+      handleJoystickClick('right');
+      break;
+  }
+});
+
+function getCellSize() {
+  const rect = grid.getBoundingClientRect();
+  const style = getComputedStyle(grid);
+  const padLeft = parseFloat(style.paddingLeft) || 0;
+  const padTop = parseFloat(style.paddingTop) || 0;
+  const gap = parseFloat(style.gap) || 0;
+  const cellW = (rect.width - padLeft - parseFloat(style.paddingRight) - (COLS - 1) * gap) / COLS;
+  const cellH = (rect.height - padTop - parseFloat(style.paddingBottom) - (ROWS - 1) * gap) / ROWS;
+  return { cellW, cellH };
+}
+
+function updateCursorSize() {
+  const { cellW, cellH } = getCellSize();
+  const size = Math.min(cellW, cellH) * 0.8;
+  cursor.style.width = size + "px";
+  cursor.style.height = size + "px";
+}
+
+// Функция управления активностью кнопок
+function setButtonsEnabled(enabled) {
+  const buttons = [
+    toggleButton,
+    resetButton,
+    toggleSwitch,
+    helpBtn
+  ];
+
+  buttons.forEach(btn => {
+    if (btn) {
+      btn.disabled = !enabled;
+      if (btn.classList && btn.classList.contains('btn')) {
+        btn.style.opacity = enabled ? 1 : 0.5;
+      }
+    }
+  });
+
+  // Для зон джойстика — управляем через класс и pointer-events
+  document.querySelectorAll('.joystick-zone').forEach(zone => {
+    if (enabled) {
+      zone.classList.remove('disabled');
+      zone.style.pointerEvents = 'auto';
+    } else {
+      zone.classList.add('disabled');
+      zone.style.pointerEvents = 'none';
+    }
+  });
+}
 
 // Инициализация
 createGrid(COLS, ROWS);
-grid.addEventListener('pointerdown', onPointerDown);
-window.addEventListener('pointermove', onPointerMove);
-window.addEventListener('pointerup', onPointerUp);
-window.addEventListener('pointercancel', onPointerCancel);
+updateCursorSize();
+
+// Установим курсор в левый верхний угол сетки при загрузке
+setTimeout(() => {
+  const rect = grid.getBoundingClientRect();
+  const style = getComputedStyle(grid);
+  const padLeft = parseFloat(style.paddingLeft) || 0;
+  const padTop = parseFloat(style.paddingTop) || 0;
+  const gap = parseFloat(style.gap) || 0;
+  const cellW = ((rect.width - padLeft - parseFloat(style.paddingRight)) - (COLS - 1) * gap) / COLS;
+  const cellH = ((rect.height - padTop - parseFloat(style.paddingBottom)) - (ROWS - 1) * gap) / ROWS;
+
+  const x = rect.left + padLeft + cellW / 2;
+  const y = rect.top + padTop + cellH / 2;
+
+  lastPointerClient = { clientX: x, clientY: y };
+  updateCursor(x, y);
+
+  // Поставим индикатор на первую ячейку
+  if (cells.length > 0) {
+    cells[0].innerHTML = '<p class="actionCells"></p>';
+    idA.next = 0;
+    idA.last = 0;
+  }
+}, 100);
+
+// --- НОВОЕ: Изначально отключаем все кнопки ---
+setButtonsEnabled(false);
+
+// Обработчик кнопки включения/выключения
+toggleButtonScreen.addEventListener('click', () => {
+  const currentDisplay = window.getComputedStyle(grid).display;
+  const isTurningOn = currentDisplay === "none";
+
+  grid.style.display = isTurningOn ? "grid" : "none";
+
+  if (isTurningOn) {
+    setButtonsEnabled(true);
+    updateCursor(lastPointerClient.clientX, lastPointerClient.clientY);
+    if (cells.length > 0) {
+      cells[0].innerHTML = '<p class="actionCells"></p>';
+    }
+  } else {
+    setButtonsEnabled(false);
+    hideCursor();
+    if (cells.length > 0) {
+      const lightStart = document.createElement('p');
+      lightStart.classList.add('actionCells');
+      cells[0].append(lightStart);
+    }
+  }
+});
 </script>
 </body>
 </html>
